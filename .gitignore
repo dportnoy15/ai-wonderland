@@ -2,4 +2,5 @@ shap_e_model_cache/*
 target/*
 
 *.ply
-*.obj
+*.glb
+playtestLog.txt

@@ -23,54 +23,38 @@
 # 6. Go back into the directory containing this file and run it using:
 #    - python generate-model.py {model description}
 
+import sys, torch, trimesh
+from diffusers import ShapEPipeline
+from diffusers.utils import export_to_ply
+
 print("Generating a 3D model...")
 
-import torch, sys
-
-print("importing shap-e libraries...")
+deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 
 print(torch.version.cuda)
-print("cuda" if torch.cuda.is_available() else "cpu")
-
-from shap_e.diffusion.sample import sample_latents
-from shap_e.diffusion.gaussian_diffusion import diffusion_from_config
-from shap_e.models.download import load_model, load_config
+print(deviceName)
 
 prompt = ' '.join(sys.argv[1:])
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device(deviceName)
 
-xm = load_model('transmitter', device=device)
-model = load_model('text300M', device=device)
-diffusion = diffusion_from_config(load_config('diffusion'))
+pipe = ShapEPipeline.from_pretrained("openai/shap-e", torch_dtype=torch.float16, variant="fp16")
+pipe = pipe.to(device)
 
-batch_size = 4
 guidance_scale = 15.0
 
-latents = sample_latents(
-    batch_size=batch_size,
-    model=model,
-    diffusion=diffusion,
+images = pipe(
+    prompt,
     guidance_scale=guidance_scale,
-    model_kwargs=dict(texts=[prompt] * batch_size),
-    progress=True,
-    clip_denoised=True,
-    use_fp16=True,
-    use_karras=True,
-    karras_steps=64,
-    sigma_min=1e-3,
-    sigma_max=160,
-    s_churn=0,
-)
+    num_inference_steps=64,
+    frame_size=256,
+    output_type="mesh"
+).images
 
-print("Generated latents")
+model_name = "3d_model"
+model_path = export_to_ply(images[0], model_name + ".ply")
 
-# Example of saving the latents as meshes.
-from shap_e.util.notebooks import decode_latent_mesh
+print(f"saved file: {model_path}/{model_name}.ply")
 
-for i, latent in enumerate(latents):
-    t = decode_latent_mesh(xm, latent).tri_mesh()
-    with open(f'example_mesh_{i}.ply', 'wb') as f:
-        t.write_ply(f)
-    with open(f'example_mesh_{i}.obj', 'w') as f:
-        t.write_obj(f)
+mesh = trimesh.load(model_name + ".ply")
+mesh.export(model_name + ".glb", file_type="glb")
