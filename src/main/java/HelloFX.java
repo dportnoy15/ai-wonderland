@@ -9,15 +9,10 @@ import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.awt.Desktop;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,18 +24,30 @@ public class HelloFX extends Application {
 
     String message;
 
+    Process curProcess;
+    ProcessHandle processHandle;
+
+    Thread bgThread;
+    Task<Void> pythonTask;
+
     public static void main(String[] args) {
         launch();
     }
 
     @Override
     public void start(Stage stage) {
+        curProcess = null;
+        processHandle = null;
+
+        bgThread = null;
+        pythonTask = null;
+
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
-        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
+        message = "Generating 3D model... (may take about a minute)";
 
-        /**********************************************/
+        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -49,8 +56,6 @@ public class HelloFX extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Scene scene = new Scene(grid, 640, 480);
-
-        /**********************************************/
         
         Text scenetitle = new Text("Welcome");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
@@ -78,31 +83,53 @@ public class HelloFX extends Application {
         
             @Override
             public void handle(Event event) {
-                status.setText("Generating 3D model... (may take about a minute)");
+                status.setText(message);
 
-                // hacky way to force UI referesh
-                //scene.getWindow().setWidth(scene.getWidth() + 0.001);
+                try {
+                    pythonTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            System.out.println("Starting python process...");
 
-                 Task<Void> aiWorker = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        logPrompt(descriptionInput.getText());
+                            String description = descriptionInput.getText();
 
-                        try {
-                            invokePythonToGenerateModel(descriptionInput.getText());       
-                        } catch(Exception e) {
-                            e.printStackTrace();
+                            logPrompt(description);
+
+                            try {
+                                int exitCode = invokeScript("python", new File("generate-model.py").getAbsolutePath(), description);
+
+                                if (exitCode == 0) {
+                                    message = "Model generated successfully";
+                                } else {
+                                    message = "Error geenerating model: " + exitCode;
+                                }
+
+                                System.out.println("3D model generation finished. Showing model now...");
+
+                                showModel("3d_model.glb");
+                            } catch(Exception e) {
+                                System.out.println("Error generating model");
+                                e.printStackTrace();
+
+                                System.exit(0);
+                            }
+
+                            return null;
                         }
-                        return null;
-                    }
-                };
+                    };
 
-                aiWorker.setOnSucceeded(ev -> {
-                    System.out.println(message);
-                    status.setText(message);
-                });
+                    pythonTask.setOnSucceeded(ev -> {
+                        System.out.println(message);
+                        status.setText(message);
+                    });
 
-                new Thread(aiWorker).start();
+                    bgThread = new Thread(pythonTask);
+                    bgThread.setDaemon(true);
+                    bgThread.start();
+                } catch(Exception e) {
+                    System.out.println("ERROR BERRPR");
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -111,12 +138,25 @@ public class HelloFX extends Application {
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 12);
 
-        /**********************************************/
-
         stage.setTitle("AI Wonderland");
         stage.setScene(scene);
 
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        if (pythonTask != null) {
+            bgThread.stop();
+
+            while (bgThread.isAlive()) {
+                try {
+                    Thread.sleep(50);
+                } catch(InterruptedException e) {
+                    System.out.println("NIGHTMARE");
+                }
+            }
+        }
     }
 
     private void logPrompt(String userPrompt) {
@@ -138,47 +178,32 @@ public class HelloFX extends Application {
         }
     }
 
-    private void invokePythonToGenerateModel(String description) throws Exception {
-        System.out.println("Genereating a 3D model based on the following description:");
-        System.out.println(description);
+    private int invokeScript(String... cliArgs) throws Exception {
+        System.out.println("CLI command: " + cliArgs);
 
-        ProcessBuilder processBuilder = new ProcessBuilder("python", new File("generate-model.py").getAbsolutePath(), description);
-        processBuilder.redirectErrorStream(true);
+        Process process = new ProcessBuilder().inheritIO().command(cliArgs).start();
 
-        Process process = processBuilder.start();
+        processHandle = process.toHandle();
 
         int exitCode = process.waitFor();
 
         System.out.println("Process finished running");
 
-        BufferedReader bri = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        BufferedReader bre = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        //process.destroy();
+        processHandle.destroyForcibly();
 
-        String line;
+        return exitCode;
+    }
 
-        /*
-        while ((line = bri.readLine()) != null) {
-            System.out.println("Output: " + line);
+    private void showModel(String modelName) {
+        System.out.println("Showing 3D model: " + modelName);
+
+        try {
+            Desktop.getDesktop().open(new File(modelName));
+        } catch(IOException ioe) {
+            System.out.println("Error showing model");
+            ioe.printStackTrace();
         }
-        */
-        bri.close();
-
-        System.out.println();
-
-        while ((line = bre.readLine()) != null) {
-            System.out.println(" Error: " + line);
-        }
-        bre.close();
-
-        System.out.println();
-
-        if (exitCode == 0) {
-            message = "Model generated successfully";
-        } else {
-            message = "Error geenerating model: " + exitCode;
-        }
-
-        process.destroy();
     }
 
 }

@@ -58,3 +58,5 @@ print(f"saved file: {model_path}/{model_name}.ply")
 
 mesh = trimesh.load(model_name + ".ply")
 mesh.export(model_name + ".glb", file_type="glb")
+
+print("Finished entire python script")
