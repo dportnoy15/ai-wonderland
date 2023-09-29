@@ -13,6 +13,7 @@ SETUP INSTRUCTIONS
    3. Run the following commands in "x86 Native Tools Command Prompt for VS 2019" to install pytorch3d
       - git clone https://github.com/facebookresearch/pytorch3d.git
       - cd pytorch3d
+      - set DISTUTILS_USE_SDK=1
       - python setup.py install
    4. Run the following commands to install shap-e
       - git clone https://github.com/openai/shap-e

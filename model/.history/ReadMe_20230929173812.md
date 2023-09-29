@@ -1,0 +1,5 @@
+1. install Blender and copy the location where you install the Blender
+    * in most cases it should be C:\Program Files\Blender Foundation\Blender 'x.x'(the version of the blender)
+2. Use CML to cd to the location above, and run:
+    blender --background --python C: (...)\ai-wonderland\model\format.py
+    *(...) means where you clone the github repo
