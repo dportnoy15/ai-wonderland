@@ -4,4 +4,5 @@
     blender --background --python C: (...)\ai-wonderland\model\format.py
     *(...) means where you clone the github repo
 
+another file conversion tool trial in format2.py (aspose-3d but failed)
 if we want to integrate this into generate-model.py, we probably need subprocess
