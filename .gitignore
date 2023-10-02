@@ -1,5 +1,6 @@
 shap_e_model_cache/*
 target/*
+gen-model/*
 
 3d_model.*
 playtestLog.txt

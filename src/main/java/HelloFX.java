@@ -95,8 +95,10 @@ public class HelloFX extends Application {
 
                             logPrompt(description);
 
+                            int exitCode = 999;
+
                             try {
-                                int exitCode = invokeScript("python", new File("generate-model.py").getAbsolutePath(), description);
+                                exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), description);
 
                                 if (exitCode == 0) {
                                     message = "Model generated successfully";
@@ -104,9 +106,19 @@ public class HelloFX extends Application {
                                     message = "Error geenerating model: " + exitCode;
                                 }
 
-                                System.out.println("3D model generation finished. Showing model now...");
+                                System.out.println("GLB model generation finished. Converting to DAE now...");
 
-                                showModel("3d_model.glb");
+                                exitCode = invokeScript("blender", "--background", "--python", "model/format.py");
+
+                                if (exitCode == 0) {
+                                    message = "Model converted successfully";
+                                } else {
+                                    message = "Error  model: " + exitCode;
+                                }
+
+                                System.out.println("Conversion to DAE finished. Showing model now...");
+
+                                showModel("model.glb");
                             } catch(Exception e) {
                                 System.out.println("Error generating model");
                                 e.printStackTrace();
@@ -179,7 +191,7 @@ public class HelloFX extends Application {
     }
 
     private int invokeScript(String... cliArgs) throws Exception {
-        System.out.println("CLI command: " + cliArgs);
+        System.out.println("CLI command: " + String.join(" ", cliArgs));
 
         Process process = new ProcessBuilder().inheritIO().command(cliArgs).start();
 
@@ -189,7 +201,6 @@ public class HelloFX extends Application {
 
         System.out.println("Process finished running");
 
-        //process.destroy();
         processHandle.destroyForcibly();
 
         return exitCode;
@@ -199,7 +210,7 @@ public class HelloFX extends Application {
         System.out.println("Showing 3D model: " + modelName);
 
         try {
-            Desktop.getDesktop().open(new File(modelName));
+            Desktop.getDesktop().open(new File("gen-model/" + modelName));
         } catch(IOException ioe) {
             System.out.println("Error showing model");
             ioe.printStackTrace();
