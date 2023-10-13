@@ -98,6 +98,7 @@ public class HelloFX extends Application {
                             int exitCode = 999;
 
                             try {
+                                // exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), description);
                                 exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), description);
 
                                 if (exitCode == 0) {
@@ -119,7 +120,7 @@ public class HelloFX extends Application {
                                 System.out.println("Conversion to DAE finished. Showing model now...");
 
                                 showModel("model.glb");
-                            } catch(Exception e) {
+                            } catch(InterruptedException | IOException e) {
                                 System.out.println("Error generating model");
                                 e.printStackTrace();
 
@@ -190,10 +191,10 @@ public class HelloFX extends Application {
         }
     }
 
-    private int invokeScript(String... cliArgs) throws Exception {
+    private int invokeScript(String... cliArgs) throws InterruptedException, IOException {
         System.out.println("CLI command: " + String.join(" ", cliArgs));
 
-        Process process = new ProcessBuilder().inheritIO().command(cliArgs).start();
+        Process process = new ProcessBuilder(cliArgs).inheritIO().start();
 
         processHandle = process.toHandle();
 

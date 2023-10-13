@@ -25,21 +25,21 @@
 
 import sys, time, requests, torch
 
-API_KEY = "msy_wDUftZGYBMefP7Aaz2UiBpl5ysVFWGgtu7rN"
+API_KEY = "msy_uuAfEaHJKIBEMNx8K0auCHz0ObeZVMdQXYaN"
 
-def generate_model(model_description, texture_style):
-    print("Generating Meshy model;")
+def generate_model(model_name, model_description, texture_style, negative_prompt):
+    print(f"Generating a Meshy.ai model: {model_name}", flush=True)
 
     headers = {
         'Authorization': f"Bearer {API_KEY}"
     }
 
+    # TODO: Try different art styles
     payload = {
         "object_prompt": model_description,
         "style_prompt": texture_style,
-        "enable_pbr": True,
         "art_style": "generic",
-        "negative_prompt": "low quality, low resolution, low poly, ugly"
+        "negative_prompt": negative_prompt
     }
 
     response = requests.post(
@@ -48,9 +48,9 @@ def generate_model(model_description, texture_style):
         json=payload,
     )
 
-    print(response.json())
+    print(response.json(), flush=True)
     task_id = response.json()['result']
-    print(f"Task ID: {task_id}")
+    print(f"Task ID: {task_id}", flush=True)
 
     model_created = False
 
@@ -63,27 +63,33 @@ def generate_model(model_description, texture_style):
             headers=headers,
         )
 
-        #print(f"Error: {response.raise_for_status()}")
-        print(f"{response.json()['status']}: {response.json()['progress']}")
+        print(f"{response.json()['status']}: {response.json()['progress']}", flush=True)
 
         model_created = bool(response.json()['status'] == "SUCCEEDED")
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
     open('gen-model/model.glb', 'wb').write(r.content)
 
-print("Generating a 3D model...")
-
 deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 
-print(torch.version.cuda)
-print(deviceName)
+print(torch.version.cuda, flush=True)
+print(deviceName, flush=True)
 
-prompt = ' '.join(sys.argv[1:])
+model_name = "model"
 
-model_description = prompt
-texture_style = "high-poly cartoony"
-#texture_style = "high fantasy, cartoony, magic"
 #model_description = "a japanese battle mech"
-#texture_style = "red fangs, Samurai outfit that fused with japanese batik style"
+model_description = ' '.join(sys.argv[1:])
 
-generate_model(model_description, texture_style)
+#texture_style = "high-poly cartoony"
+#texture_style = "high fantasy, cartoony, magic"
+#texture_style = "medieval small house, ancient, best quality, 4k, trending on artstation"
+#texture_style = "fantasy, cartoony, game assets"
+#texture_style = "red fangs, Samurai outfit that fused with japanese batik style"
+texture_style = "modern, clean, metallic"
+
+#negative_prompt = "low quality, low resolution, ugly"
+negative_prompt = "ugly, low quality, melting"
+
+generate_model(model_name, model_description, texture_style, negative_prompt)
+
+print("Finished entire python script", flush=True)
