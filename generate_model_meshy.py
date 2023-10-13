@@ -10,18 +10,8 @@
 #
 # 3. pip install ipywidgets pyyaml ninja
 #
-# 4. Run the following commands in "x86 Native Tools Command Prompt for VS 2019" to install pytorch3d
-#    - git clone https://github.com/facebookresearch/pytorch3d.git
-#    - cd pytorch3d
-#    - python setup.py install
-#
-# 5. Run the following commands to install shap-e
-#    - git clone https://github.com/openai/shap-e
-#    - cd shap-e
-#    - pip install -e .
-#
-# 6. Go back into the directory containing this file and run it using:
-#    - python generate-model.py {model description}
+# 4. Go back into the directory containing this file and run it using:
+#    - python generate_model_meshy.py {model description}
 
 import sys, time, requests, torch
 

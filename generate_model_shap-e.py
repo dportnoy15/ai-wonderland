@@ -21,7 +21,7 @@
 #    - pip install -e .
 #
 # 6. Go back into the directory containing this file and run it using:
-#    - python generate-model.py {model description}
+#    - python generate_model_shap-e.py {model description}
 
 import os, sys, trimesh, torch
 
