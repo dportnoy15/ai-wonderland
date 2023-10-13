@@ -61,22 +61,34 @@ public class HelloFX extends Application {
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
 
-        Label description = new Label("Model Description:");
-        grid.add(description, 0, 1);
+        Label objectPromptDescription = new Label("Model Description:");
+        grid.add(objectPromptDescription, 0, 1);
 
-        TextField descriptionInput = new TextField();
-        grid.add(descriptionInput, 1, 1);
+        TextField objectPromptInput = new TextField();
+        grid.add(objectPromptInput, 1, 1);
+
+        Label texturePromptDescription = new Label("Texture Description:");
+        grid.add(texturePromptDescription, 0, 2);
+
+        TextField texturePromptInput = new TextField();
+        grid.add(texturePromptInput, 1, 2);
+
+        Label negativePromptDescription = new Label("Texture Description:");
+        grid.add(negativePromptDescription, 0, 3);
+
+        TextField negativePromptInput = new TextField();
+        grid.add(negativePromptInput, 1, 3);
 
         status = new Label("");
         grid.add(status, 1, 5);
 
-        /*
-        Label pw = new Label("Password:");
-        grid.add(pw, 0, 2);
+        Label progressDescription = new Label("Generation Progress:");
+        grid.add(progressDescription, 0, 7);
 
-        PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);
-        */
+        ProgressBar progress = new ProgressBar();
+        progress.setProgress(0.75F);
+
+        grid.add(progress, 1, 7);
 
         Button btn = new Button("Generate Model");
         btn.setOnAction(new EventHandler() {
@@ -91,15 +103,15 @@ public class HelloFX extends Application {
                         protected Void call() throws Exception {
                             System.out.println("Starting python process...");
 
-                            String description = descriptionInput.getText();
+                            String objectPrompt = objectPromptInput.getText();
 
-                            logPrompt(description);
+                            logPrompt(objectPrompt);
 
                             int exitCode = 999;
 
                             try {
-                                // exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), description);
-                                exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), description);
+                                // exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
+                                exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
 
                                 if (exitCode == 0) {
                                     message = "Model generated successfully";
