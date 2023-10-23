@@ -20,7 +20,6 @@ import java.util.List;
 public class HelloFX extends Application {
 
     Scene scene;
-    Label status;
 
     String message;
 
@@ -29,6 +28,17 @@ public class HelloFX extends Application {
 
     Thread bgThread;
     Task<Void> pythonTask;
+
+    // UI Elements
+
+    Label status;
+
+    TextField objectPromptInput;
+    TextField texturePromptInput;
+    TextField negativePromptInput;
+
+    Button modelBtn;
+    Button textureBtn;
 
     public static void main(String[] args) {
         launch();
@@ -44,8 +54,6 @@ public class HelloFX extends Application {
 
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
-
-        message = "Generating 3D model... (may take about a minute)";
 
         Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
@@ -64,19 +72,19 @@ public class HelloFX extends Application {
         Label objectPromptDescription = new Label("Model Description:");
         grid.add(objectPromptDescription, 0, 1);
 
-        TextField objectPromptInput = new TextField();
+        objectPromptInput = new TextField();
         grid.add(objectPromptInput, 1, 1);
 
         Label texturePromptDescription = new Label("Texture Description:");
         grid.add(texturePromptDescription, 0, 2);
 
-        TextField texturePromptInput = new TextField();
+        texturePromptInput = new TextField();
         grid.add(texturePromptInput, 1, 2);
 
-        Label negativePromptDescription = new Label("Texture Description:");
+        Label negativePromptDescription = new Label("Negative Prompt:");
         grid.add(negativePromptDescription, 0, 3);
 
-        TextField negativePromptInput = new TextField();
+        negativePromptInput = new TextField();
         grid.add(negativePromptInput, 1, 3);
 
         status = new Label("");
@@ -90,11 +98,65 @@ public class HelloFX extends Application {
 
         grid.add(progress, 1, 7);
 
-        Button btn = new Button("Generate Model");
-        btn.setOnAction(new EventHandler() {
-        
+        modelBtn = new Button("Generate Model");
+        textureBtn = new Button("Regenerate Texture");
+
+        addButtonActions();
+
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbBtn.getChildren().add(modelBtn);
+        hbBtn.getChildren().add(textureBtn);
+        grid.add(hbBtn, 1, 12);
+
+        stage.setTitle("AI Wonderland");
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
+    @Override
+    public void stop() {
+        if (pythonTask != null) {
+            bgThread.stop();
+
+            while (bgThread.isAlive()) {
+                try {
+                    Thread.sleep(50);
+                } catch(InterruptedException e) {
+                    System.out.println("NIGHTMARE");
+                }
+            }
+        }
+    }
+
+    private void logPrompt(String userPrompt) {
+        Path path = Paths.get("playtestLog.txt");
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
+            Date curTime = new Date();
+
+            String day = new SimpleDateFormat("MM/dd/yyyy").format(curTime);
+            String time = new SimpleDateFormat("HH:mm").format(curTime);
+
+            String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
+            String prompt = "Prompt: " + userPrompt + System.getProperty("line.separator");;
+
+            writer.write(header);
+            writer.write(prompt);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addButtonActions() {
+
+        modelBtn.setOnAction(new EventHandler() {
+
             @Override
             public void handle(Event event) {
+                message = "Generating 3D model ... (may take about a minute)";
+
                 status.setText(message);
 
                 try {
@@ -107,11 +169,9 @@ public class HelloFX extends Application {
 
                             logPrompt(objectPrompt);
 
-                            int exitCode = 999;
-
                             try {
-                                // exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
-                                exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
+                                //int exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
+                                int exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
 
                                 if (exitCode == 0) {
                                     message = "Model generated successfully";
@@ -158,49 +218,59 @@ public class HelloFX extends Application {
             }
         });
 
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_LEFT);
-        hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 12);
+        textureBtn.setOnAction(new EventHandler() {
 
-        stage.setTitle("AI Wonderland");
-        stage.setScene(scene);
+            @Override
+            public void handle(Event event) {
+                message = "Generating a new texture for the model ...";
 
-        stage.show();
-    }
+                status.setText(message);
 
-    @Override
-    public void stop() {
-        if (pythonTask != null) {
-            bgThread.stop();
-
-            while (bgThread.isAlive()) {
                 try {
-                    Thread.sleep(50);
-                } catch(InterruptedException e) {
-                    System.out.println("NIGHTMARE");
+                    pythonTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            System.out.println("Starting python process...");
+
+                            String texturePrompt = texturePromptInput.getText();
+
+                            //logTexturePrompt(texturePrompt);
+
+                            try {
+                                int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
+
+                                if (exitCode == 0) {
+                                    message = "Texture generated successfully";
+                                } else {
+                                    message = "Error geenerating texture: " + exitCode;
+                                }
+
+                                System.out.println("Texture generation complete");
+                            } catch(InterruptedException | IOException e) {
+                                System.out.println("Error generating model");
+                                e.printStackTrace();
+
+                                System.exit(0);
+                            }
+
+                            return null;
+                        }
+                    };
+
+                    pythonTask.setOnSucceeded(ev -> {
+                        System.out.println(message);
+                        status.setText(message);
+                    });
+
+                    bgThread = new Thread(pythonTask);
+                    bgThread.setDaemon(true);
+                    bgThread.start();
+                } catch(Exception e) {
+                    System.out.println("ERROR GENERATING TEXTURE");
+                    e.printStackTrace();
                 }
             }
-        }
-    }
-
-    private void logPrompt(String userPrompt) {
-        Path path = Paths.get("playtestLog.txt");
-
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
-            Date curTime = new Date();
-
-            String day = new SimpleDateFormat("MM/dd/yyyy").format(curTime);
-            String time = new SimpleDateFormat("HH:mm").format(curTime);
-
-            String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
-            String prompt = "Prompt: " + userPrompt + System.getProperty("line.separator");;
-
-            writer.write(header);
-            writer.write(prompt);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private int invokeScript(String... cliArgs) throws InterruptedException, IOException {
