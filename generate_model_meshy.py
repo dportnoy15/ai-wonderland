@@ -15,7 +15,7 @@
 
 import sys, time, requests, torch
 
-API_KEY = "msy_uuAfEaHJKIBEMNx8K0auCHz0ObeZVMdQXYaN"
+API_KEY = "msy_pS6Mne8d4CZawova3JDUIuxrya9mTSR8NK0G"
 
 def generate_model(model_description, texture_style, negative_prompt):
     print(f"Generating a Meshy.ai model ...", flush=True)
@@ -46,7 +46,7 @@ def generate_model(model_description, texture_style, negative_prompt):
 
     while model_created == False:
         # pause to give the texture time to generate
-        time.sleep(1)
+        time.sleep(10)
 
         response = requests.get(
             f"https://api.meshy.ai/v1/text-to-3d/{task_id}",
@@ -58,6 +58,11 @@ def generate_model(model_description, texture_style, negative_prompt):
         model_created = bool(response.json()['status'] == "SUCCEEDED")
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
+
+    modelDescFile = open('model-desc.txt', 'w')
+    lines = modelDescFile.writelines([response.json()['model_url'] + '\n', model_description + '\n'])
+    modelDescFile.close()
+
     open('gen-model/model.glb', 'wb').write(r.content)
 
 deviceName = "cuda" if torch.cuda.is_available() else "cpu"

@@ -81,15 +81,18 @@ public class HelloFX extends Application {
         texturePromptInput = new TextField();
         grid.add(texturePromptInput, 1, 2);
 
+        /*
         Label negativePromptDescription = new Label("Negative Prompt:");
         grid.add(negativePromptDescription, 0, 3);
 
         negativePromptInput = new TextField();
         grid.add(negativePromptInput, 1, 3);
+        */
 
         status = new Label("");
         grid.add(status, 1, 5);
 
+        /*
         Label progressDescription = new Label("Generation Progress:");
         grid.add(progressDescription, 0, 7);
 
@@ -97,9 +100,12 @@ public class HelloFX extends Application {
         progress.setProgress(0.75F);
 
         grid.add(progress, 1, 7);
+        */
 
         modelBtn = new Button("Generate Model");
         textureBtn = new Button("Regenerate Texture");
+
+        textureBtn.setDisable(true);
 
         addButtonActions();
 
@@ -130,7 +136,7 @@ public class HelloFX extends Application {
         }
     }
 
-    private void logPrompt(String userPrompt) {
+    private void logPrompt(String objectPrompt) {
         Path path = Paths.get("playtestLog.txt");
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
@@ -140,10 +146,35 @@ public class HelloFX extends Application {
             String time = new SimpleDateFormat("HH:mm").format(curTime);
 
             String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
-            String prompt = "Prompt: " + userPrompt + System.getProperty("line.separator");;
+            String label = "Generating new object..." + System.getProperty("line.separator");
+            String objectPromptStr = "Prompt: " + objectPrompt + System.getProperty("line.separator");
 
             writer.write(header);
-            writer.write(prompt);
+            writer.write(label);
+            writer.write(objectPromptStr);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logTexturePrompt(String objectPrompt, String texturePrompt) {
+        Path path = Paths.get("playtestLog.txt");
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
+            Date curTime = new Date();
+
+            String day = new SimpleDateFormat("MM/dd/yyyy").format(curTime);
+            String time = new SimpleDateFormat("HH:mm").format(curTime);
+
+            String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
+            String label = "Generating texture for existing object..." + System.getProperty("line.separator");
+            String objectPromptStr = "Object prompt: " + objectPrompt + System.getProperty("line.separator");
+            String texturePromptStr = "Texture prompt: " + texturePrompt + System.getProperty("line.separator");
+
+            writer.write(header);
+            writer.write(label);
+            writer.write(objectPromptStr);
+            writer.write(texturePromptStr);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -192,6 +223,9 @@ public class HelloFX extends Application {
                                 System.out.println("Conversion to DAE finished. Showing model now...");
 
                                 showModel("model.glb");
+
+                                // enable regenerating textures for the current model
+                                textureBtn.setDisable(false);
                             } catch(InterruptedException | IOException e) {
                                 System.out.println("Error generating model");
                                 e.printStackTrace();
@@ -222,7 +256,7 @@ public class HelloFX extends Application {
 
             @Override
             public void handle(Event event) {
-                message = "Generating a new texture for the model ...";
+                message = "Generating a new texture for the model ... (may take about a minute)";
 
                 status.setText(message);
 
@@ -232,9 +266,12 @@ public class HelloFX extends Application {
                         protected Void call() throws Exception {
                             System.out.println("Starting python process...");
 
+                            String objectPrompt = objectPromptInput.getText();
                             String texturePrompt = texturePromptInput.getText();
 
-                            //logTexturePrompt(texturePrompt);
+                            System.out.println(texturePrompt);
+
+                            logTexturePrompt(objectPrompt, texturePrompt);
 
                             try {
                                 int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
@@ -246,6 +283,8 @@ public class HelloFX extends Application {
                                 }
 
                                 System.out.println("Texture generation complete");
+
+                                showModel("model.glb");
                             } catch(InterruptedException | IOException e) {
                                 System.out.println("Error generating model");
                                 e.printStackTrace();
