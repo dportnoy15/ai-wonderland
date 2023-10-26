@@ -30,7 +30,7 @@ SETUP INSTRUCTIONS
    [comment]: <> (   - python setup.py install)
    [comment]: <> (4. Run the following commands to install shap-e)
    [comment]: <> (   - git clone https://github.com/openai/shap-e)
-   [comment]: <> (   - cd shap-e
+   [comment]: <> (   - cd shap-e)
    [comment]: <> (   - pip install -e .)
  - Open a terminal, go to this folder, and run "mvn clean javafx:run" to run the program
 
