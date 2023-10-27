@@ -14,7 +14,9 @@
 #    - python generate_model_meshy.py {model description}
 
 import sys, time, requests, torch
+from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
+# use this key next: msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP
 API_KEY = "msy_XwyMLovQW6UIw75vK21B38hhyujKvIzE6Gtq"
 
 def generate_model(model_description, texture_style, negative_prompt):

@@ -2,6 +2,7 @@
 
 import sys, time, requests, torch
 
+# use this key next: msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP
 API_KEY = "msy_XwyMLovQW6UIw75vK21B38hhyujKvIzE6Gtq"
 
 def generate_texture(model_url, model_description, texture_style, negative_prompt):
