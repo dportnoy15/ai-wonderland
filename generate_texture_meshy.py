@@ -2,7 +2,7 @@
 
 import sys, time, requests, torch
 
-API_KEY = "msy_pS6Mne8d4CZawova3JDUIuxrya9mTSR8NK0G"
+API_KEY = "msy_XwyMLovQW6UIw75vK21B38hhyujKvIzE6Gtq"
 
 def generate_texture(model_url, model_description, texture_style, negative_prompt):
     print(f"Generating a Meshy.ai texture ...", flush=True)
@@ -98,6 +98,10 @@ def generate_texture_temp(model_url, model_description, texture_style, negative_
 
         texture_created = bool(response.json()['status'] == "SUCCEEDED")
 
+    r = requests.get(response.json()['model_url'], allow_redirects=True)
+
+    open('gen-model/model.glb', 'wb').write(r.content)
+
 deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 
 print(torch.version.cuda, flush=True)
@@ -110,8 +114,14 @@ modelDescFile.close()
 model_url = lines[0]
 model_description = lines[1]
 
-model_url = 'https://assets.meshy.ai/email%7C652989eb2f2bbf73ed6c2901/tasks/018b6464-6406-7470-b7e9-c6770ce41d0f/output/model.glb?Expires=1698456274&Signature=BKsrlaXFnf4we2VDMV5Cso6bxLp7IYxGMk52Qho7TXz7sdlkq6BbzDOWcgr3TIrGFU0I9i-IFlf69IC9sSsia2~~BB4aYlzfY9qOp~p8WmQv5w9S-E~zvi1vfL6xibf-GWy6dflC7VWLHtStpDVN0cltwpBVl~Rw9mWPdHcw5e47Pj73BTGKXaCWcG6q8CkBnnMT~OkX1EETon9V7HbrWI--F-n7LEhUb3OzSiQT-13m-7TanTfI8MTc6xzdUzVRSXhG5VG7cFB8YWsGzwUbsYFHEnhnlK-w3HF6tCicVUOGrUwbVvPICvIspyBQ2J5kwxBkRhYWxrKuQ7xaVtdj7Q__&Key-Pair-Id=KL5I0C8H7HX83'
-model_description = 'tactical battle submarine'
+model_url = model_url[:-1]
+model_description = model_description[:-1]
+
+print(model_url, flush=True)
+print(model_description, flush=True)
+
+#model_url = 'https://assets.meshy.ai/email%7C6538765000df208a7ec2f3fc/tasks/018b7247-e810-7ce5-b8ee-e2e87b5e75d2/output/model.glb?Expires=1698688697&Signature=dSPOYzJN89WlIw9u483wWkNuANSethanQGlL~PMT6z8-m2zScHU9QAQpRaSL-04I1lbCGAHoWAgLUt2xvQdmz6R6bFwvLWISj4h9HLntBLNUqYaB~JWE~xxqbB2mBZ4h103DAo9KyzfLAzmE6lJwkZXUJnzPx1aMnBegCer8Uq~XrsQi72B5eM1nHp-AhLOBrIKPeaRTYHoDa7rds4o03cbCBBXDyVy0RNtUDuCVMBucFNOPl-tmRkHo-Y~hmw6PNq5jMVxACni5djxO-T5wBVO0HqT7OO9UviR~0fzn6plVOXqHCvJ5~Cz9QuZR~blWK~Ru74RVL~qHbJzAbjKkPA__&Key-Pair-Id=KL5I0C8H7HX83'
+#model_description = 'a kettle'
 
 texture_style = ' '.join(sys.argv[1:])
 

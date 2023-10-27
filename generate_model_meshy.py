@@ -15,7 +15,7 @@
 
 import sys, time, requests, torch
 
-API_KEY = "msy_pS6Mne8d4CZawova3JDUIuxrya9mTSR8NK0G"
+API_KEY = "msy_XwyMLovQW6UIw75vK21B38hhyujKvIzE6Gtq"
 
 def generate_model(model_description, texture_style, negative_prompt):
     print(f"Generating a Meshy.ai model ...", flush=True)
