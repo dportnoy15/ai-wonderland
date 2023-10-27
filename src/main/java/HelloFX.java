@@ -1,3 +1,5 @@
+import py4j.GatewayServer;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -19,6 +21,8 @@ import java.util.List;
 
 public class HelloFX extends Application {
 
+    static HelloFX self;
+
     Scene scene;
 
     String message;
@@ -26,16 +30,21 @@ public class HelloFX extends Application {
     Process curProcess;
     ProcessHandle processHandle;
 
+    GatewayServer gatewayServer;
+
     Thread bgThread;
     Task<Void> pythonTask;
 
     // UI Elements
 
-    Label status;
-
     TextField objectPromptInput;
     TextField texturePromptInput;
     TextField negativePromptInput;
+
+    Label status;
+    Label progressStatus;
+
+    ProgressBar progress;
 
     Button modelBtn;
     Button textureBtn;
@@ -46,6 +55,8 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) {
+        HelloFX.self = this;
+
         curProcess = null;
         processHandle = null;
 
@@ -92,15 +103,18 @@ public class HelloFX extends Application {
         status = new Label("");
         grid.add(status, 1, 5);
 
-        /*
+        progressStatus = new Label("");
+        grid.add(progressStatus, 0, 7);
+        progressStatus.setVisible(false);
+
         Label progressDescription = new Label("Generation Progress:");
-        grid.add(progressDescription, 0, 7);
+        grid.add(progressDescription, 0, 8);
 
-        ProgressBar progress = new ProgressBar();
-        progress.setProgress(0.75F);
+        progress = new ProgressBar();
+        progress.setProgress(0.0F);
+        progress.setVisible(false);
 
-        grid.add(progress, 1, 7);
-        */
+        grid.add(progress, 1, 8);
 
         modelBtn = new Button("Generate Model");
         textureBtn = new Button("Regenerate Texture");
@@ -119,10 +133,16 @@ public class HelloFX extends Application {
         stage.setScene(scene);
 
         stage.show();
+
+        gatewayServer = new GatewayServer(new HelloFX());
+        gatewayServer.start();
+        System.out.println("Gateway Server Started");
     }
 
     @Override
     public void stop() {
+        gatewayServer.shutdown();
+
         if (pythonTask != null) {
             bgThread.stop();
 
@@ -226,6 +246,8 @@ public class HelloFX extends Application {
 
                                 // enable regenerating textures for the current model
                                 textureBtn.setDisable(false);
+
+                                resetProgress();
                             } catch(InterruptedException | IOException e) {
                                 System.out.println("Error generating model");
                                 e.printStackTrace();
@@ -337,6 +359,29 @@ public class HelloFX extends Application {
             System.out.println("Error showing model");
             ioe.printStackTrace();
         }
+    }
+
+    public void setProgress(String status, int percent) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
+
+                HelloFX.self.progressStatus.setVisible(true);
+                HelloFX.self.progressStatus.setText(status);
+
+                HelloFX.self.progress.setVisible(true);
+                HelloFX.self.progress.setProgress(percent / 100f);
+            }
+        });
+    }
+
+    private void resetProgress() {
+        progressStatus.setVisible(false);
+        progressStatus.setText("");
+
+        progress.setVisible(false);
+        progress.setProgress(0f);
     }
 
 }

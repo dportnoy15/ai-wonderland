@@ -46,6 +46,9 @@ def generate_model(model_description, texture_style, negative_prompt):
 
     model_created = False
 
+    gateway = JavaGateway(
+        callback_server_parameters=CallbackServerParameters())
+
     while model_created == False:
         # pause to give the texture time to generate
         time.sleep(10)
@@ -58,6 +61,10 @@ def generate_model(model_description, texture_style, negative_prompt):
         print(f"{response.json()['status']}: {response.json()['progress']}", flush=True)
 
         model_created = bool(response.json()['status'] == "SUCCEEDED")
+
+        gateway.entry_point.setProgress(response.json()['status'], response.json()['progress'])
+
+    gateway.close()
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
