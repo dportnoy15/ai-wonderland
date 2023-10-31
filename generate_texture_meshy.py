@@ -3,8 +3,8 @@
 import sys, time, requests, torch
 from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
-# use this key next: msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP
-API_KEY = "msy_XwyMLovQW6UIw75vK21B38hhyujKvIzE6Gtq"
+# use this key next: msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv
+API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
 
 # This regenerates the whole model. Temporary workaround until we figure out how to correctly use the text-to-texture api
 def generate_texture(model_url, model_description, texture_style, negative_prompt):
