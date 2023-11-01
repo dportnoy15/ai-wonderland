@@ -68,9 +68,7 @@ def generate_model(model_description, texture_style, negative_prompt):
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
-    modelDescFile = open('model-desc.txt', 'w')
-    lines = modelDescFile.writelines([response.json()['model_url'] + '\n', model_description + '\n'])
-    modelDescFile.close()
+    gateway.entry_point.setObjectUrl(response.json()['model_url'])
 
     open('gen-model/model.glb', 'wb').write(r.content)
 

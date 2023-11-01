@@ -6,6 +6,9 @@ from py4j.java_gateway import JavaGateway, CallbackServerParameters
 # use this key next: msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv
 API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
 
+gateway = JavaGateway(
+    callback_server_parameters=CallbackServerParameters())
+
 # This regenerates the whole model. Temporary workaround until we figure out how to correctly use the text-to-texture api
 def generate_texture(model_url, model_description, texture_style, negative_prompt):
     print(f"Generating a Meshy.ai texture ...", flush=True)
@@ -39,9 +42,6 @@ def generate_texture(model_url, model_description, texture_style, negative_promp
 
     texture_created = False
 
-    gateway = JavaGateway(
-        callback_server_parameters=CallbackServerParameters())
-
     while texture_created == False:
         # pause to give the texture time to generate
         time.sleep(10)
@@ -66,15 +66,8 @@ deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 print(torch.version.cuda, flush=True)
 print(deviceName, flush=True)
 
-modelDescFile = open('model-desc.txt', 'r')
-lines = modelDescFile.readlines()
-modelDescFile.close()
-
-model_url = lines[0]
-model_description = lines[1]
-
-model_url = model_url[:-1]
-model_description = model_description[:-1]
+model_url = gateway.entry_point.getObjectUrl()
+model_description = gateway.entry_point.getObjectDescription()
 
 print(model_url, flush=True)
 print(model_description, flush=True)

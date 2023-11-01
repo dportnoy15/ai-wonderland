@@ -37,17 +37,19 @@ public class HelloFX extends Application {
 
     // UI Elements
 
-    TextField objectPromptInput;
-    TextField texturePromptInput;
-    TextField negativePromptInput;
+    private TextField objectPromptInput;
+    private TextField texturePromptInput;
+    private TextField negativePromptInput;
 
-    Label status;
-    Label progressStatus;
+    private Label status;
+    private Label progressStatus;
 
-    ProgressBar progress;
+    private ProgressBar progress;
 
-    Button modelBtn;
-    Button textureBtn;
+    private Button modelBtn;
+    private Button textureBtn;
+
+    private String objectUrl;
 
     public static void main(String[] args) {
         launch();
@@ -62,6 +64,8 @@ public class HelloFX extends Application {
 
         bgThread = null;
         pythonTask = null;
+
+        objectUrl = "";
 
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
@@ -154,6 +158,37 @@ public class HelloFX extends Application {
                 }
             }
         }
+    }
+
+    public void setProgress(String status, int percent) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
+
+                HelloFX.self.progressStatus.setVisible(true);
+                HelloFX.self.progressStatus.setText(status);
+
+                HelloFX.self.progress.setVisible(true);
+                HelloFX.self.progress.setProgress(percent / 100f);
+            }
+        });
+    }
+
+    public String getObjectUrl() {
+        return objectUrl;
+    }
+
+    public void setObjectUrl(String objectUrl) {
+        this.objectUrl = objectUrl;
+    }
+
+    public String getObjectDescription() {
+        return HelloFX.self.objectPromptInput.getText();
+    }
+
+    public String getTextureDescription() {
+        return HelloFX.self.texturePromptInput.getText();
     }
 
     private void logPrompt(String objectPrompt) {
@@ -288,8 +323,8 @@ public class HelloFX extends Application {
                         protected Void call() throws Exception {
                             System.out.println("Starting python process...");
 
-                            String objectPrompt = objectPromptInput.getText();
-                            String texturePrompt = texturePromptInput.getText();
+                            String objectPrompt = getObjectDescription();
+                            String texturePrompt = getTextureDescription();
 
                             System.out.println(texturePrompt);
 
@@ -361,27 +396,18 @@ public class HelloFX extends Application {
         }
     }
 
-    public void setProgress(String status, int percent) {
+    // TODO: Wrap this in Platform.runLater
+    private void resetProgress() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
+                progressStatus.setVisible(false);
+                progressStatus.setText("");
 
-                HelloFX.self.progressStatus.setVisible(true);
-                HelloFX.self.progressStatus.setText(status);
-
-                HelloFX.self.progress.setVisible(true);
-                HelloFX.self.progress.setProgress(percent / 100f);
+                progress.setVisible(false);
+                progress.setProgress(0f);
             }
         });
-    }
-
-    private void resetProgress() {
-        progressStatus.setVisible(false);
-        progressStatus.setText("");
-
-        progress.setVisible(false);
-        progress.setProgress(0f);
     }
 
 }
