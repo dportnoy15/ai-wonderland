@@ -20,7 +20,7 @@ SETUP INSTRUCTIONS
  - Either use Command Prompt as the terminal or download Git for Windows (https://gitforwindows.org/)
  - Open a terminal and run the following commands (copy-paste and then press Enter)
    1. pip install torch==1.13.0+cu117 torchvision==0.14.0+cu117 torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu117
-   2. pip install ipywidgets pyyaml ninja
+   2. pip install ipywidgets pyyaml ninja py4j
    <!--
    1. pip install torch==1.13.0+cu117 torchvision==0.14.0+cu117 torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu117
    2. pip install ipywidgets pyyaml ninja transformers
