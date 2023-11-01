@@ -30,7 +30,7 @@ def generate_model(model_description, texture_style, negative_prompt):
     payload = {
         "object_prompt": model_description,
         "style_prompt": texture_style,
-        "art_style": "generic",
+        "art_style": "cartoon-line-art",
         "negative_prompt": negative_prompt
     }
 
