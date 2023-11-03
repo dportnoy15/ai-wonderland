@@ -10,11 +10,11 @@
     <children>
       <component id="418cd" class="javax.swing.JLabel" binding="titleText">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="24" style="1"/>
-          <text value="Welcome"/>
+          <text value="3D Object Generation Tool"/>
         </properties>
       </component>
       <component id="7a168" class="javax.swing.JLabel" binding="modelDesTxt">
@@ -23,7 +23,7 @@
         </constraints>
         <properties>
           <font size="16" style="0"/>
-          <text value="Model Description:"/>
+          <text value="Object Description:"/>
         </properties>
       </component>
       <component id="2b03" class="javax.swing.JLabel" binding="textureDesTxt">
@@ -32,7 +32,7 @@
         </constraints>
         <properties>
           <font size="16" style="0"/>
-          <text value="Texture Description:"/>
+          <text value="Object Style Description:"/>
         </properties>
       </component>
       <component id="f8f3e" class="javax.swing.JTextField" binding="textField1" default-binding="true">
