@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Prototype">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="10" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="10">
+    <margin top="80" left="90" bottom="80" right="80"/>
+    <constraints>
+      <xy x="20" y="20" width="837" height="664"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="418cd" class="javax.swing.JLabel" binding="titleText">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="24" style="1"/>
+          <text value="Welcome"/>
+        </properties>
+      </component>
+      <component id="7a168" class="javax.swing.JLabel" binding="modelDesTxt">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="16" style="0"/>
+          <text value="Model Description:"/>
+        </properties>
+      </component>
+      <component id="2b03" class="javax.swing.JLabel" binding="textureDesTxt">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="16" style="0"/>
+          <text value="Texture Description:"/>
+        </properties>
+      </component>
+      <component id="f8f3e" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="fc24b" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <hspacer id="8b1d6">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="10"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <component id="bb76b" class="javax.swing.JLabel" binding="processTxt">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="16" style="0"/>
+          <text value="Generation Progress:"/>
+        </properties>
+      </component>
+      <component id="725f6" class="javax.swing.JLabel" binding="timeWaitedTxt">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="16" style="0"/>
+          <text value="Time you waited:"/>
+        </properties>
+      </component>
+      <component id="f81c5" class="javax.swing.JButton" binding="modelGenBtn">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font size="16" style="0"/>
+          <text value="Generate Model"/>
+        </properties>
+      </component>
+      <component id="94744" class="javax.swing.JProgressBar" binding="progressBar">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <maximum-size width="150" height="20"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="44c4f" class="javax.swing.JButton" binding="texRegenBtn">
+        <constraints>
+          <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+          <font size="16" style="0"/>
+          <text value="Regenerate Texture"/>
+        </properties>
+      </component>
+      <component id="396f7" class="javax.swing.JButton" binding="cancelGenerationBtn">
+        <constraints>
+          <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="2" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="100" height="30"/>
+          </grid>
+        </constraints>
+        <properties>
+          <label value="Cancel"/>
+          <text value="Cancel"/>
+        </properties>
+      </component>
+      <hspacer id="e137a">
+        <constraints>
+          <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="30"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <vspacer id="4128d">
+        <constraints>
+          <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="50" height="-1"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <component id="ad30f" class="javax.swing.JLabel" binding="timeWaited">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+          <text value="00:00"/>
+          <visible value="false"/>
+        </properties>
+      </component>
+      <component id="b8950" class="javax.swing.JLabel" binding="status">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="18" style="1"/>
+          <text value="PENDING"/>
+        </properties>
+      </component>
+      <component id="24550" class="javax.swing.JLabel" binding="genStatTxt">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+          <font size="16" style="0"/>
+          <text value="Generation Status:"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
