@@ -19,8 +19,14 @@ from py4j.java_gateway import JavaGateway, CallbackServerParameters
 # use this key next: msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv
 API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
 
-def generate_model(model_description, texture_style, negative_prompt):
+gateway = JavaGateway(
+    callback_server_parameters=CallbackServerParameters())
+
+def generate_model(model_description, style_prompt, negative_prompt):
     print(f"Generating a Meshy.ai model ...", flush=True)
+
+    print(f"Model Description: {model_description}", flush=True)
+    print(f"Texture Style: {style_prompt}", flush=True)
 
     headers = {
         'Authorization': f"Bearer {API_KEY}"
@@ -29,9 +35,10 @@ def generate_model(model_description, texture_style, negative_prompt):
     # TODO: Try different art styles
     payload = {
         "object_prompt": model_description,
-        "style_prompt": texture_style,
+        "style_prompt": style_prompt,
         "art_style": "cartoon-line-art",
-        "negative_prompt": negative_prompt
+        "negative_prompt": negative_prompt,
+        "enable_pbr": False
     }
 
     response = requests.post(
@@ -45,9 +52,6 @@ def generate_model(model_description, texture_style, negative_prompt):
     print(f"Task ID: {task_id}", flush=True)
 
     model_created = False
-
-    gateway = JavaGateway(
-        callback_server_parameters=CallbackServerParameters())
 
     while model_created == False:
         # pause to give the texture time to generate
@@ -64,8 +68,6 @@ def generate_model(model_description, texture_style, negative_prompt):
 
         gateway.entry_point.setProgress(response.json()['status'], response.json()['progress'])
 
-    gateway.close()
-
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
     gateway.entry_point.setObjectUrl(response.json()['model_url'])
@@ -77,19 +79,14 @@ deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 print(torch.version.cuda, flush=True)
 print(deviceName, flush=True)
 
-#model_description = "a japanese battle mech"
-model_description = ' '.join(sys.argv[1:])
-
-#texture_style = "high-poly cartoony"
-#texture_style = "high fantasy, cartoony, magic"
-#texture_style = "medieval small house, ancient, best quality, 4k, trending on artstation"
-#texture_style = "fantasy, cartoony, game assets"
-#texture_style = "red fangs, Samurai outfit that fused with japanese batik style"
-texture_style = "modern, clean, metallic"
+model_description = gateway.entry_point.getObjectDescription()
+style_prompt = gateway.entry_point.getTextureDescription()
 
 #negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"
 
-generate_model(model_description, texture_style, negative_prompt)
+generate_model(model_description, style_prompt, negative_prompt)
+
+gateway.close()
 
 print("Finished entire python script", flush=True)
