@@ -1,3 +1,7 @@
+package modelimport;
+
+import com.jcraft.jsch.*;
+
 import py4j.GatewayServer;
 
 import javafx.application.Application;
@@ -9,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.awt.Desktop;
@@ -23,6 +28,7 @@ public class HelloFX extends Application {
 
     static HelloFX self;
 
+    Stage stage;
     Scene scene;
 
     String message;
@@ -48,6 +54,7 @@ public class HelloFX extends Application {
 
     private Button modelBtn;
     private Button textureBtn;
+    private Button newBtn;
 
     private String objectUrl;
 
@@ -58,6 +65,8 @@ public class HelloFX extends Application {
     @Override
     public void start(Stage stage) {
         HelloFX.self = this;
+
+        this.stage = stage;
 
         curProcess = null;
         processHandle = null;
@@ -122,6 +131,7 @@ public class HelloFX extends Application {
 
         modelBtn = new Button("Generate Model");
         textureBtn = new Button("Regenerate Texture");
+        newBtn = new Button("Upload Model");
 
         textureBtn.setDisable(true);
 
@@ -131,6 +141,7 @@ public class HelloFX extends Application {
         hbBtn.setAlignment(Pos.BOTTOM_LEFT);
         hbBtn.getChildren().add(modelBtn);
         hbBtn.getChildren().add(textureBtn);
+        hbBtn.getChildren().add(newBtn);
         grid.add(hbBtn, 1, 12);
 
         stage.setTitle("AI Wonderland");
@@ -365,6 +376,39 @@ public class HelloFX extends Application {
                     System.out.println("ERROR GENERATING TEXTURE");
                     e.printStackTrace();
                 }
+            }
+        });
+
+        newBtn.setOnAction(new EventHandler() {
+
+            @Override
+            public void handle(Event event) {
+                System.out.println("Creating an awesome FTP connection");
+
+                FileChooser filePicker = new FileChooser();
+
+                File file = filePicker.showOpenDialog(self.stage);
+ 
+                if (file != null) {
+                    System.out.println(file.getAbsolutePath());
+
+                    FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
+
+                    try {
+                        uploader.connect("username", "password");
+
+                        System.out.println("Connection established, uploading file...");
+
+                        uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
+                    } catch (JSchException | SftpException ex) {
+                        System.out.println("ERROR UPLOADING FILER");
+                        ex.printStackTrace();
+                    }
+
+                    uploader.disconnect();
+                }
+
+                System.out.println("DONE");
             }
         });
     }
