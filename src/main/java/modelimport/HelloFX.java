@@ -21,7 +21,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public class HelloFX extends Application {
 
@@ -48,12 +48,18 @@ public class HelloFX extends Application {
 
     private Label status;
     private Label progressStatus;
+    private Label elapsedTime;
 
     private ProgressBar progress;
 
     private Button modelBtn;
     private Button textureBtn;
     private Button newBtn;
+
+    private Timer waitTimer;
+    private TimerTask waitTask;
+
+    int elapsedSec;
 
     private String objectUrl;
 
@@ -136,12 +142,31 @@ public class HelloFX extends Application {
 
         addButtonActions();
 
+        elapsedTime = new Label("");
+        grid.add(elapsedTime, 0, 10);
+
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_LEFT);
         hbBtn.getChildren().add(modelBtn);
         hbBtn.getChildren().add(textureBtn);
         hbBtn.getChildren().add(newBtn);
         grid.add(hbBtn, 1, 12);
+
+        waitTimer = new Timer();
+
+        elapsedSec = 0;
+
+        Timer waitTimer = new Timer();
+        waitTask = new TimerTask() {
+            @Override
+            public void run() {
+                String timeString = String.format("Waiting for %d sec ...", elapsedSec);
+                elapsedSec++;
+
+                System.out.println(timeString);
+                Platform.runLater(() -> elapsedTime.setText(timeString));
+            }
+        };
 
         stage.setTitle("AI Wonderland");
         stage.setScene(scene);
@@ -155,6 +180,10 @@ public class HelloFX extends Application {
 
     @Override
     public void stop() {
+        System.out.println("Stopping application");
+
+        stopTimer();
+
         gatewayServer.shutdown();
 
         if (pythonTask != null) {
@@ -168,29 +197,32 @@ public class HelloFX extends Application {
                 }
             }
         }
+
+        try {
+            super.stop();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setProgress(String status, int percent) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
+        Platform.runLater(() -> {
+            System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
 
-                HelloFX.self.progressStatus.setVisible(true);
-                HelloFX.self.progressStatus.setText(status);
+            HelloFX.self.progressStatus.setVisible(true);
+            HelloFX.self.progressStatus.setText(status);
 
-                HelloFX.self.progress.setVisible(true);
-                HelloFX.self.progress.setProgress(percent / 100f);
-            }
+            HelloFX.self.progress.setVisible(true);
+            HelloFX.self.progress.setProgress(percent / 100f);
         });
     }
 
     public String getObjectUrl() {
-        return objectUrl;
+        return HelloFX.self.objectUrl;
     }
 
     public void setObjectUrl(String objectUrl) {
-        this.objectUrl = objectUrl;
+        HelloFX.self.objectUrl = objectUrl;
     }
 
     public String getObjectDescription() {
@@ -266,8 +298,12 @@ public class HelloFX extends Application {
                             logPrompt(objectPrompt);
 
                             try {
+                                startTimer();
+
                                 //int exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
                                 int exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
+
+                                stopTimer();
 
                                 if (exitCode == 0) {
                                     message = "Model generated successfully";
@@ -341,7 +377,11 @@ public class HelloFX extends Application {
                             logTexturePrompt(objectPrompt, texturePrompt);
 
                             try {
+                                startTimer();
+
                                 int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
+
+                                stopTimer();
 
                                 if (exitCode == 0) {
                                     message = "Texture generated successfully";
@@ -394,11 +434,18 @@ public class HelloFX extends Application {
                     FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
 
                     try {
-                        uploader.connect("username", "password");
+                        uploader.connect("username", "password!");
 
                         System.out.println("Connection established, uploading file...");
 
                         uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
+
+                        String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
+
+                        System.out.println(webUrl);
+
+                        setObjectUrl(webUrl);
+                        textureBtn.setDisable(false);
                     } catch (JSchException | SftpException ex) {
                         System.out.println("ERROR UPLOADING FILER");
                         ex.printStackTrace();
@@ -440,16 +487,22 @@ public class HelloFX extends Application {
     }
 
     private void resetProgress() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                progressStatus.setVisible(false);
-                progressStatus.setText("");
+        Platform.runLater(() -> {
+            progressStatus.setVisible(false);
+            progressStatus.setText("");
 
-                progress.setVisible(false);
-                progress.setProgress(0f);
-            }
+            progress.setVisible(false);
+            progress.setProgress(0f);
         });
+    }
+
+    private void startTimer() {
+        waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
+    }
+
+    private void stopTimer() {
+        waitTask.cancel();
+        Platform.runLater(() -> elapsedTime.setText(""));
     }
 
 }

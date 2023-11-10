@@ -16,8 +16,8 @@
 import sys, time, requests, torch
 from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
-# use this key next: msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv
-API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
+API_KEY = "msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv"
+#API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
 
 gateway = JavaGateway(
     callback_server_parameters=CallbackServerParameters())
