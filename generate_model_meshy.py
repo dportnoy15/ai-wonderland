@@ -36,7 +36,7 @@ def generate_model(model_description, style_prompt, negative_prompt):
     payload = {
         "object_prompt": model_description,
         "style_prompt": style_prompt,
-        "art_style": "cartoon-line-art",
+        "art_style": art_style,
         "negative_prompt": negative_prompt,
         "enable_pbr": False
     }
@@ -81,6 +81,7 @@ print(deviceName, flush=True)
 
 model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
+art_style = gateway.entry_point.getArtStyle()
 
 #negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"

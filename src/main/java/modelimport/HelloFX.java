@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class HelloFX extends Application {
 
@@ -62,6 +63,10 @@ public class HelloFX extends Application {
     int elapsedSec;
 
     private String objectUrl;
+
+
+    // Temp solution
+    private ChoiceBox<String> styleSelectBox;
 
     public static void main(String[] args) {
         launch();
@@ -109,6 +114,10 @@ public class HelloFX extends Application {
 
         texturePromptInput = new TextField();
         grid.add(texturePromptInput, 1, 2);
+
+        // Test for art style add
+        SetupArtStyleBox();
+        grid.add(styleSelectBox, 0, 3);
 
         /*
         Label negativePromptDescription = new Label("Negative Prompt:");
@@ -178,6 +187,12 @@ public class HelloFX extends Application {
         System.out.println("Gateway Server Started");
     }
 
+    private void SetupArtStyleBox(){
+        styleSelectBox = new ChoiceBox<>();
+        styleSelectBox.getItems().addAll("Realistic", "Voxel", "2.5D Cartoon", "Japanese Anime", "Cartoon Line Art", "Realistic Hand-drawn", "2.5D Hand-drawn", "Oriental Comic Ink");
+        styleSelectBox.setValue("Realistic");
+    }
+
     @Override
     public void stop() {
         System.out.println("Stopping application");
@@ -216,6 +231,17 @@ public class HelloFX extends Application {
             HelloFX.self.progress.setProgress(percent / 100f);
         });
     }
+
+    public String getArtStyle() {
+        AtomicReference<String> returnVal = new AtomicReference<>();;
+        Platform.runLater(() -> {
+            System.out.println(styleSelectBox.getValue());
+            returnVal.set(styleSelectBox.getValue());
+        });
+        return returnVal.get();
+    }
+
+    public void setArtStyle(String style) {this.styleSelectBox.setValue(style);}
 
     public String getObjectUrl() {
         return HelloFX.self.objectUrl;
@@ -294,7 +320,6 @@ public class HelloFX extends Application {
                             System.out.println("Starting python process...");
 
                             String objectPrompt = objectPromptInput.getText();
-
                             logPrompt(objectPrompt);
 
                             try {
