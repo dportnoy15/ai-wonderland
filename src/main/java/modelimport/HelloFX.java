@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class HelloFX extends Application {
 
@@ -440,7 +439,6 @@ public class HelloFX extends Application {
         }
     }
 
-    // TODO: Wrap this in Platform.runLater
     private void resetProgress() {
         Platform.runLater(new Runnable() {
             @Override
