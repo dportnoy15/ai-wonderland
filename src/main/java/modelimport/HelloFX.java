@@ -57,6 +57,10 @@ public class HelloFX extends Application {
 
     private String objectUrl;
 
+
+    // Temp solution
+    private ChoiceBox<String> styleSelectBox;
+
     public static void main(String[] args) {
         launch();
     }
@@ -103,6 +107,13 @@ public class HelloFX extends Application {
 
         texturePromptInput = new TextField();
         grid.add(texturePromptInput, 1, 2);
+
+        // Test for art style add
+        styleSelectBox = new ChoiceBox();
+        styleSelectBox.getItems().addAll("Realistic", "Voxel", "2.5D Cartoon", "Japanese Anime", "Cartoon Line Art", "Realistic Hand-drawn", "2.5D Hand-drawn", "Oriental Comic Ink");
+        styleSelectBox.setValue("Realistic");
+        grid.add(styleSelectBox, 0, 3);
+
 
         /*
         Label negativePromptDescription = new Label("Negative Prompt:");
@@ -185,6 +196,8 @@ public class HelloFX extends Application {
         });
     }
 
+    public String getArtStyle() {return styleSelectBox.getValue();}
+
     public String getObjectUrl() {
         return objectUrl;
     }
@@ -262,7 +275,6 @@ public class HelloFX extends Application {
                             System.out.println("Starting python process...");
 
                             String objectPrompt = objectPromptInput.getText();
-
                             logPrompt(objectPrompt);
 
                             try {
