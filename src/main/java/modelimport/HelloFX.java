@@ -210,7 +210,7 @@ public class HelloFX extends Application {
         grid.add(prevBtn, 0, 25, 2, 1);
 
         nextBtn = new Button("Next");
-        grid.add(nextBtn, 30, 25, 2, 1);
+        grid.add(nextBtn, 10, 25, 2, 1);
     }
 
     private void initSceneTwo() {
@@ -233,7 +233,7 @@ public class HelloFX extends Application {
 
         Button nextBtn = new Button("Next");
         nextBtn.setVisible(false);;
-        grid.add(nextBtn, 30, 25, 2, 1);
+        grid.add(nextBtn, 10, 25, 2, 1);
     }
 
     private void initTimer() {
@@ -502,7 +502,7 @@ public class HelloFX extends Application {
                     FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
 
                     try {
-                        uploader.connect("username", "password!");
+                        uploader.connect("username", "password");
 
                         System.out.println("Connection established, uploading file...");
 
