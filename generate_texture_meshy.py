@@ -3,14 +3,11 @@
 import sys, time, requests, torch
 from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
-API_KEY = "msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv"
-#API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
-
 gateway = JavaGateway(
     callback_server_parameters=CallbackServerParameters())
 
 # This regenerates the whole model. Temporary workaround until we figure out how to correctly use the text-to-texture api
-def generate_texture(model_url, model_description, style_prompt, negative_prompt):
+def generate_texture(api_key, model_url, model_description, style_prompt, negative_prompt):
     print(f"Generating a Meshy.ai texture ...", flush=True)
 
     print(f"Model URL: {model_url}", flush=True)
@@ -18,7 +15,7 @@ def generate_texture(model_url, model_description, style_prompt, negative_prompt
     print(f"Texture Style: {style_prompt}", flush=True)
 
     headers = {
-        'Authorization': f"Bearer {API_KEY}"
+        'Authorization': f"Bearer {api_key}"
     }
 
     payload = {
@@ -67,6 +64,7 @@ deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 print(torch.version.cuda, flush=True)
 print(deviceName, flush=True)
 
+api_key = gateway.entry_point.getApiKey()
 model_url = gateway.entry_point.getObjectUrl()
 model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
@@ -74,7 +72,7 @@ style_prompt = gateway.entry_point.getTextureDescription()
 #negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"
 
-generate_texture(model_url, model_description, style_prompt, negative_prompt)
+generate_texture(api_key, model_url, model_description, style_prompt, negative_prompt)
 
 gateway.close()
 

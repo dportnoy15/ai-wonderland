@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class HelloFX extends Application {
 
@@ -261,6 +260,10 @@ public class HelloFX extends Application {
         styleSelectBox.setValue("Realistic");
     }
 
+    public String getApiKey() {
+        return "msy_U6ZnHB25nPUMWH8840PSylxRKIJrw2gEydQM";
+    }
+
     public void setProgress(String status, int percent) {
         Platform.runLater(() -> {
             System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
@@ -274,12 +277,20 @@ public class HelloFX extends Application {
     }
 
     public String getArtStyle() {
-        AtomicReference<String> returnVal = new AtomicReference<>();;
-        Platform.runLater(() -> {
-            System.out.println(styleSelectBox.getValue());
-            returnVal.set(styleSelectBox.getValue());
-        });
-        return returnVal.get();
+        String artStyleSelection = HelloFX.self.styleSelectBox.getValue();
+
+        Map<String, String> artStyleValues = Map.of(
+            "Realistic", "realistic",
+            "Voxel", "voxel",
+            "2.5D Cartoon", "fake-3d-cartoon",
+            "Japanese Anime", "japanese-anime",
+            "Cartoon Line Art", "cartoon-line-art",
+            "Realistic Hand-drawn", "realistic-hand-drawn",
+            "2.5D Hand-drawn", "fake-3d-hand-drawn",
+            "Oriental Comic Ink", "oriental-comic-ink"
+        );
+
+        return artStyleValues.get(artStyleSelection);
     }
 
     public void setArtStyle(String style) {

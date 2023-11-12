@@ -16,20 +16,19 @@
 import sys, time, requests, torch
 from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
-API_KEY = "msy_8oC9G40mJu5RlEAdpMMP1fn8xZksOn4CEOKv"
-#API_KEY = "msy_lDwYqkiAL9Ogpl2gIK46OJDrA2EO2G161USP"
-
 gateway = JavaGateway(
     callback_server_parameters=CallbackServerParameters())
 
-def generate_model(model_description, style_prompt, negative_prompt):
+def generate_model(api_key, model_description, style_prompt, art_style, negative_prompt):
     print(f"Generating a Meshy.ai model ...", flush=True)
 
+    print(f"API Key: {api_key}", flush=True)
     print(f"Model Description: {model_description}", flush=True)
-    print(f"Texture Style: {style_prompt}", flush=True)
+    print(f"Texture: {style_prompt}", flush=True)
+    print(f"Art Style: {art_style}", flush=True)
 
     headers = {
-        'Authorization': f"Bearer {API_KEY}"
+        'Authorization': f"Bearer {api_key}"
     }
 
     # TODO: Try different art styles
@@ -79,6 +78,7 @@ deviceName = "cuda" if torch.cuda.is_available() else "cpu"
 print(torch.version.cuda, flush=True)
 print(deviceName, flush=True)
 
+api_key = gateway.entry_point.getApiKey()
 model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
 art_style = gateway.entry_point.getArtStyle()
@@ -86,7 +86,7 @@ art_style = gateway.entry_point.getArtStyle()
 #negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"
 
-generate_model(model_description, style_prompt, negative_prompt)
+generate_model(api_key, model_description, style_prompt, art_style, negative_prompt)
 
 gateway.close()
 
