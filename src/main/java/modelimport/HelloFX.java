@@ -29,7 +29,9 @@ public class HelloFX extends Application {
     static HelloFX self;
 
     Stage stage;
-    Scene scene;
+
+    private Scene sceneOne;
+    private Scene sceneTwo;
 
     String message;
 
@@ -47,23 +49,25 @@ public class HelloFX extends Application {
     private TextField texturePromptInput;
     private TextField negativePromptInput;
 
-    private Label status;
-    private Label progressStatus;
-    private Label elapsedTime;
+    private Text status;
+    private Text progressStatus;
+    private Text elapsedTime;
 
     private ProgressBar progress;
 
     private Button modelBtn;
     private Button textureBtn;
-    private Button newBtn;
+    private Button uploadBtn;
+    private Button prevBtn;
+    private Button nextBtn;
 
     private Timer waitTimer;
     private TimerTask waitTask;
 
     int elapsedSec;
+    boolean isTimerRunning;
 
     private String objectUrl;
-
 
     // Temp solution
     private ChoiceBox<String> styleSelectBox;
@@ -89,108 +93,24 @@ public class HelloFX extends Application {
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
-        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
+        System.out.println("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        initSceneOne();
+        initSceneTwo();
 
-        Scene scene = new Scene(grid, 640, 480);
-        
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        isTimerRunning = false;
+        initTimer();
 
-        Label objectPromptDescription = new Label("Model Description:");
-        grid.add(objectPromptDescription, 0, 1);
-
-        objectPromptInput = new TextField();
-        grid.add(objectPromptInput, 1, 1);
-
-        Label texturePromptDescription = new Label("Texture Description:");
-        grid.add(texturePromptDescription, 0, 2);
-
-        texturePromptInput = new TextField();
-        grid.add(texturePromptInput, 1, 2);
-
-        // Test for art style add
-        SetupArtStyleBox();
-        grid.add(styleSelectBox, 0, 3);
-
-        /*
-        Label negativePromptDescription = new Label("Negative Prompt:");
-        grid.add(negativePromptDescription, 0, 3);
-
-        negativePromptInput = new TextField();
-        grid.add(negativePromptInput, 1, 3);
-        */
-
-        status = new Label("");
-        grid.add(status, 1, 5);
-
-        progressStatus = new Label("");
-        grid.add(progressStatus, 0, 7);
-        progressStatus.setVisible(false);
-
-        Label progressDescription = new Label("Generation Progress:");
-        grid.add(progressDescription, 0, 8);
-
-        progress = new ProgressBar();
-        progress.setProgress(0.0F);
-        progress.setVisible(false);
-
-        grid.add(progress, 1, 8);
-
-        modelBtn = new Button("Generate Model");
-        textureBtn = new Button("Regenerate Texture");
-        newBtn = new Button("Upload Model");
-
-        textureBtn.setDisable(true);
+        stage.setTitle("AI Wonderland");
 
         addButtonActions();
 
-        elapsedTime = new Label("");
-        grid.add(elapsedTime, 0, 10);
-
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_LEFT);
-        hbBtn.getChildren().add(modelBtn);
-        hbBtn.getChildren().add(textureBtn);
-        hbBtn.getChildren().add(newBtn);
-        grid.add(hbBtn, 1, 12);
-
-        waitTimer = new Timer();
-
-        elapsedSec = 0;
-
-        Timer waitTimer = new Timer();
-        waitTask = new TimerTask() {
-            @Override
-            public void run() {
-                String timeString = String.format("Waiting for %d sec ...", elapsedSec);
-                elapsedSec++;
-
-                System.out.println(timeString);
-                Platform.runLater(() -> elapsedTime.setText(timeString));
-            }
-        };
-
-        stage.setTitle("AI Wonderland");
-        stage.setScene(scene);
-
+        stage.setScene(sceneOne);
         stage.show();
 
         gatewayServer = new GatewayServer(new HelloFX());
         gatewayServer.start();
         System.out.println("Gateway Server Started");
-    }
-
-    private void SetupArtStyleBox(){
-        styleSelectBox = new ChoiceBox<>();
-        styleSelectBox.getItems().addAll("Realistic", "Voxel", "2.5D Cartoon", "Japanese Anime", "Cartoon Line Art", "Realistic Hand-drawn", "2.5D Hand-drawn", "Oriental Comic Ink");
-        styleSelectBox.setValue("Realistic");
     }
 
     @Override
@@ -202,6 +122,7 @@ public class HelloFX extends Application {
         gatewayServer.shutdown();
 
         if (pythonTask != null) {
+            // TODO: Find a better way to force the thread to stop
             bgThread.stop();
 
             while (bgThread.isAlive()) {
@@ -213,11 +134,131 @@ public class HelloFX extends Application {
             }
         }
 
-        try {
-            super.stop();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        Platform.exit();
+    }
+
+    private void initSceneOne() {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        sceneOne = new Scene(grid, 800, 600);
+
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        Text scenetitle = new Text("Welcome");
+        scenetitle.setFont(uiFont);
+        grid.add(scenetitle, 0, 0, 5, 1);
+
+        Label objectPromptDescription = new Label("Model Description:");
+        grid.add(objectPromptDescription, 0, 1);
+
+        objectPromptInput = new TextField();
+        grid.add(objectPromptInput, 1, 1);
+
+        Label texturePromptDescription = new Label("Texture Description:");
+        grid.add(texturePromptDescription, 0, 2);
+
+        // Test for art style add
+        setupArtStyleBox();
+        grid.add(styleSelectBox, 0, 3);
+
+        /*
+        Label negativePromptDescription = new Label("Negative Prompt:");
+        grid.add(negativePromptDescription, 0, 3);
+
+        negativePromptInput = new TextField();
+        grid.add(negativePromptInput, 1, 3);
+        */
+
+        texturePromptInput = new TextField();
+        grid.add(texturePromptInput, 1, 2);
+
+        status = new Text("");
+        grid.add(status, 1, 5);
+
+        progressStatus = new Text("");
+        grid.add(progressStatus, 0, 7);
+
+        Label progressDescription = new Label("Generation Progress:");
+        grid.add(progressDescription, 0, 8);
+
+        progress = new ProgressBar();
+        progress.setProgress(0.0F);
+        progress.setVisible(false);
+        grid.add(progress, 1, 8);
+
+        elapsedTime = new Text("");
+        grid.add(elapsedTime, 0, 10);
+
+        modelBtn = new Button("Generate Model");
+        textureBtn = new Button("Regenerate Texture");
+        textureBtn.setDisable(true);
+        uploadBtn = new Button("Upload Model");
+
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbBtn.getChildren().add(modelBtn);
+        hbBtn.getChildren().add(textureBtn);
+        hbBtn.getChildren().add(uploadBtn);
+        grid.add(hbBtn, 1, 12, 5, 1);
+
+        Button prevBtn = new Button("Prev");
+        prevBtn.setVisible(false);;
+        grid.add(prevBtn, 0, 25, 2, 1);
+
+        nextBtn = new Button("Next");
+        grid.add(nextBtn, 30, 25, 2, 1);
+    }
+
+    private void initSceneTwo() {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.BOTTOM_CENTER);
+        grid.setHgap(20);
+        grid.setVgap(20);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        sceneTwo = new Scene(grid, 800, 600);
+
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        Text scenetitle = new Text("Scene Two");
+        scenetitle.setFont(uiFont);
+        grid.add(scenetitle, 0, 0, 5, 1);
+
+        prevBtn = new Button("Prev");
+        grid.add(prevBtn, 0, 25, 2, 1);
+
+        Button nextBtn = new Button("Next");
+        nextBtn.setVisible(false);;
+        grid.add(nextBtn, 30, 25, 2, 1);
+    }
+
+    private void initTimer() {
+        elapsedSec = 0;
+        isTimerRunning = false;
+
+        waitTimer = new Timer();
+
+        waitTask = new TimerTask() {
+            @Override
+            public void run() {
+                String timeString = String.format("Waiting for %d sec ...", elapsedSec);
+                Platform.runLater(() -> elapsedTime.setText(timeString));
+
+                System.out.println(timeString);
+
+                elapsedSec++;
+            }
+        };
+    }
+
+    private void setupArtStyleBox(){
+        styleSelectBox = new ChoiceBox<>();
+        styleSelectBox.getItems().addAll("Realistic", "Voxel", "2.5D Cartoon", "Japanese Anime", "Cartoon Line Art", "Realistic Hand-drawn", "2.5D Hand-drawn", "Oriental Comic Ink");
+        styleSelectBox.setValue("Realistic");
     }
 
     public void setProgress(String status, int percent) {
@@ -241,7 +282,9 @@ public class HelloFX extends Application {
         return returnVal.get();
     }
 
-    public void setArtStyle(String style) {this.styleSelectBox.setValue(style);}
+    public void setArtStyle(String style) {
+        this.styleSelectBox.setValue(style);
+    }
 
     public String getObjectUrl() {
         return HelloFX.self.objectUrl;
@@ -305,10 +348,10 @@ public class HelloFX extends Application {
 
     private void addButtonActions() {
 
-        modelBtn.setOnAction(new EventHandler() {
+        modelBtn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void handle(Event event) {
+            public void handle(ActionEvent event) {
                 message = "Generating 3D model ... (may take about a minute)";
 
                 status.setText(message);
@@ -380,10 +423,10 @@ public class HelloFX extends Application {
             }
         });
 
-        textureBtn.setOnAction(new EventHandler() {
+        textureBtn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void handle(Event event) {
+            public void handle(ActionEvent event) {
                 message = "Generating a new texture for the model ... (may take about a minute)";
 
                 status.setText(message);
@@ -443,10 +486,10 @@ public class HelloFX extends Application {
             }
         });
 
-        newBtn.setOnAction(new EventHandler() {
+        uploadBtn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void handle(Event event) {
+            public void handle(ActionEvent event) {
                 System.out.println("Creating an awesome FTP connection");
 
                 FileChooser filePicker = new FileChooser();
@@ -480,6 +523,20 @@ public class HelloFX extends Application {
                 }
 
                 System.out.println("DONE");
+            }
+        });
+
+        prevBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneOne);
+            }
+        });
+
+        nextBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneTwo);
             }
         });
     }
@@ -522,12 +579,20 @@ public class HelloFX extends Application {
     }
 
     private void startTimer() {
-        waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
+        if (!isTimerRunning) {
+            elapsedSec = 0;
+            waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
+            isTimerRunning = true;
+        }
     }
 
     private void stopTimer() {
-        waitTask.cancel();
-        Platform.runLater(() -> elapsedTime.setText(""));
+        if (isTimerRunning) {
+            waitTask.cancel();
+            Platform.runLater(() -> elapsedTime.setText(""));
+            isTimerRunning = false;
+        }
+        waitTimer.cancel();
     }
 
 }
