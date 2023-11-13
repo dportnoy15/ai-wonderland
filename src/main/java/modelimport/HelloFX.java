@@ -75,6 +75,11 @@ public class HelloFX extends Application {
 
     private static PromptIO promptReader;
 
+    private Button[] artStyleButtons;
+    private int curStyleSelection;
+
+    private static final int ART_STYLE_COUNT = 8;
+
     public static void main(String[] args) {
         promptReader = new PromptIO();
         launch();
@@ -231,9 +236,25 @@ public class HelloFX extends Application {
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
-        Text scenetitle = new Text("Scene Two");
+        Text scenetitle = new Text("Select your art style:");
         scenetitle.setFont(uiFont);
         grid.add(scenetitle, 0, 0, 5, 1);
+
+        artStyleButtons = new Button[ART_STYLE_COUNT];
+        artStyleButtons[0] = new Button("Realistic");
+        artStyleButtons[0].setDisable(true);
+        artStyleButtons[1] = new Button("Voxel");
+        artStyleButtons[2] = new Button("2.5D Cartoon");
+        artStyleButtons[3] = new Button("Japanese Anime");
+        artStyleButtons[4] = new Button("Cartoon Line Art");
+        artStyleButtons[5] = new Button("Realistic Hand-drawn");
+        artStyleButtons[6] = new Button("2.5D Hand-drawn");
+        artStyleButtons[7] = new Button("Oriental Comic Ink");
+        for(int i = 0; i < ART_STYLE_COUNT; i ++){
+            artStyleButtons[i].setMinSize(200, 50);
+            grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
+        }
+
 
         prevBtn = new Button("Prev");
         grid.add(prevBtn, 0, 25, 2, 1);
@@ -285,20 +306,21 @@ public class HelloFX extends Application {
     }
 
     public String getArtStyle() {
-        String artStyleSelection = HelloFX.self.styleSelectBox.getValue();
+        //String artStyleSelection = HelloFX.self.styleSelectBox.getValue();
 
-        Map<String, String> artStyleValues = Map.of(
-            "Realistic", "realistic",
-            "Voxel", "voxel",
-            "2.5D Cartoon", "fake-3d-cartoon",
-            "Japanese Anime", "japanese-anime",
-            "Cartoon Line Art", "cartoon-line-art",
-            "Realistic Hand-drawn", "realistic-hand-drawn",
-            "2.5D Hand-drawn", "fake-3d-hand-drawn",
-            "Oriental Comic Ink", "oriental-comic-ink"
+
+        Map<Integer, String> artStyleValues = Map.of(
+            0, "realistic",
+            1, "voxel",
+            2, "fake-3d-cartoon",
+            3, "japanese-anime",
+            4, "cartoon-line-art",
+            5, "realistic-hand-drawn",
+            6, "fake-3d-hand-drawn",
+            7, "oriental-comic-ink"
         );
 
-        return artStyleValues.get(artStyleSelection);
+        return artStyleValues.get(curStyleSelection);
     }
 
     public void setArtStyle(String style) {
@@ -568,6 +590,18 @@ public class HelloFX extends Application {
                 //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
             }
         });
+
+        for (int i = 0; i < ART_STYLE_COUNT; i++) {
+            int finalI = i;
+            artStyleButtons[i].setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    artStyleButtons[curStyleSelection].setDisable(false);
+                    curStyleSelection = finalI;
+                    artStyleButtons[finalI].setDisable(true);
+                }
+            });
+        }
     }
 
     private int invokeScript(String... cliArgs) throws InterruptedException, IOException {
