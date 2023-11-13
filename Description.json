@@ -1,0 +1,49 @@
+{
+  "DescriptionPair": [
+    {
+      "obj": "gundam",
+      "style": "realistic, metallic",
+      "negative": ""
+    },
+    {
+      "obj": "rock floor",
+      "style": "a little moss, realistic, 8k",
+      "negative": ""
+    },
+    {
+      "obj": "a sword",
+      "style": "fantasy, ornate, high-resolution",
+      "negative": "low quality, animals, humans, whiskers, eyes"
+    },
+    {
+      "obj": "a cup",
+      "style": "Van Gogh's starry sky, ceramics",
+      "negative": "low quality"
+    },
+    {
+      "obj": "a spaceship",
+      "style": "highly detailed, sci-fi, unreal engine",
+      "negative": ""
+    },
+    {
+      "obj": "a delicious hamburger",
+      "style": "HDR, 8k, highest quality",
+      "negative": ""
+    },
+    {
+      "obj": "a sofa",
+      "style": "leather",
+      "negative": ""
+    },
+    {
+      "obj": "a treasure chest",
+      "style": "realistic, wooden, carved, highest quality",
+      "negative": ""
+    },
+    {
+      "obj": "a small house",
+      "style": "medieval, ancient, best quality, 4k, trending on artstation",
+      "negative": "blurry"
+    }
+  ]
+}
