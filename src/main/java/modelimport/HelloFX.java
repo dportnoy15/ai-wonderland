@@ -12,6 +12,7 @@ import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -54,11 +55,11 @@ public class HelloFX extends Application {
 
     private ProgressBar progress;
 
-    private Button randomizeBtn;
-
     private Button modelBtn;
     private Button textureBtn;
     private Button uploadBtn;
+    private Button randomizeBtn;
+
     private Button prevBtn;
     private Button nextBtn;
 
@@ -81,13 +82,14 @@ public class HelloFX extends Application {
     private static final int ART_STYLE_COUNT = 8;
 
     public static void main(String[] args) {
-        promptReader = new PromptIO();
         launch();
     }
 
     @Override
     public void start(Stage stage) {
         HelloFX.self = this;
+
+        promptReader = new PromptIO();
 
         this.stage = stage;
 
@@ -147,28 +149,62 @@ public class HelloFX extends Application {
     }
 
     private void initSceneOne() {
-        GridPane grid = new GridPane();
+        BorderPane layout = new BorderPane();
+
+        HBox topPane = new HBox();
+        HBox bottomPane = new HBox();
+        Pane leftPane = new FlowPane();
+        Pane rightPane = new FlowPane();
+        GridPane centerPane = new GridPane();
+
+        layout.setTop(topPane);    // Title
+        layout.setBottom(bottomPane); // Nav Buttons
+        layout.setLeft(leftPane);
+        layout.setRight(rightPane);
+        layout.setCenter(centerPane); // Main Content
+
+        topPane.setPrefHeight(100);
+        bottomPane.setPrefHeight(100);
+        leftPane.setPrefWidth(0);
+        rightPane.setPrefWidth(0);
+
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        Label scenetitle = new Label("Welcome");
+        scenetitle.setFont(uiFont);
+        topPane.setAlignment(Pos.CENTER);
+        topPane.getChildren().add(scenetitle);
+
+        sceneOne = new Scene(layout, 800, 600);
+
+        /* Start footer definition */
+
+        Button prevBtn = new Button("Prev");
+        prevBtn.setVisible(false);
+        Region region = new Region();
+        nextBtn = new Button("Next");
+
+        HBox.setHgrow(region, Priority.ALWAYS);
+        bottomPane.getChildren().addAll(prevBtn, region, nextBtn);
+        bottomPane.setAlignment(Pos.CENTER);
+        bottomPane.setPadding(new Insets(0, 50, 0, 50));
+
+        /* Start screen customization */
+
+        GridPane grid = centerPane;
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        sceneOne = new Scene(grid, 800, 600);
-
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
-
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(uiFont);
-        grid.add(scenetitle, 0, 0, 5, 1);
-
         Label objectPromptDescription = new Label("Model Description:");
         grid.add(objectPromptDescription, 0, 1);
 
-        randomizeBtn = new Button("Create a random prompt");
-        grid.add(randomizeBtn, 2, 1);
-
         objectPromptInput = new TextField();
         grid.add(objectPromptInput, 1, 1);
+
+        randomizeBtn = new Button("Create a random prompt");
+        grid.add(randomizeBtn, 2, 1);
 
         Label texturePromptDescription = new Label("Texture Description:");
         grid.add(texturePromptDescription, 0, 2);
@@ -216,29 +252,57 @@ public class HelloFX extends Application {
         hbBtn.getChildren().add(textureBtn);
         hbBtn.getChildren().add(uploadBtn);
         grid.add(hbBtn, 1, 12, 5, 1);
-
-        Button prevBtn = new Button("Prev");
-        prevBtn.setVisible(false);;
-        grid.add(prevBtn, 0, 25, 2, 1);
-
-        nextBtn = new Button("Next");
-        grid.add(nextBtn, 10, 25, 2, 1);
     }
 
     private void initSceneTwo() {
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.BOTTOM_CENTER);
-        grid.setHgap(20);
-        grid.setVgap(20);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        BorderPane layout = new BorderPane();
 
-        sceneTwo = new Scene(grid, 800, 600);
+        HBox topPane = new HBox();
+        HBox bottomPane = new HBox();
+        Pane leftPane = new FlowPane();
+        Pane rightPane = new FlowPane();
+        GridPane centerPane = new GridPane();
+
+        layout.setTop(topPane);    // Title
+        layout.setBottom(bottomPane); // Nav Buttons
+        layout.setLeft(leftPane);
+        layout.setRight(rightPane);
+        layout.setCenter(centerPane); // Main Content
+
+        topPane.setPrefHeight(100);
+        bottomPane.setPrefHeight(100);
+        leftPane.setPrefWidth(0);
+        rightPane.setPrefWidth(0);
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
-        Text scenetitle = new Text("Select your art style:");
+        Label scenetitle = new Label("Select your art style");
         scenetitle.setFont(uiFont);
-        grid.add(scenetitle, 0, 0, 5, 1);
+
+        topPane.setAlignment(Pos.CENTER);
+        topPane.getChildren().add(scenetitle);
+
+        sceneTwo = new Scene(layout, 800, 600);
+
+        /* Start footer definition */
+
+        prevBtn = new Button("Prev");
+        Region region = new Region();
+        Button nextBtn = new Button("Next");
+        nextBtn.setVisible(false);
+
+        HBox.setHgrow(region, Priority.ALWAYS);
+        bottomPane.getChildren().addAll(prevBtn, region, nextBtn);
+        bottomPane.setAlignment(Pos.CENTER);
+        bottomPane.setPadding(new Insets(0, 50, 0, 50));
+
+        /* Start screen customization */
+
+        GridPane grid = centerPane;
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
 
         artStyleButtons = new Button[ART_STYLE_COUNT];
         artStyleButtons[0] = new Button("Realistic");
@@ -250,18 +314,17 @@ public class HelloFX extends Application {
         artStyleButtons[5] = new Button("Realistic Hand-drawn");
         artStyleButtons[6] = new Button("2.5D Hand-drawn");
         artStyleButtons[7] = new Button("Oriental Comic Ink");
-        for(int i = 0; i < ART_STYLE_COUNT; i ++){
+
+        for (int i = 0; i < ART_STYLE_COUNT; i++) {
             artStyleButtons[i].setMinSize(200, 50);
             grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
         }
+    }
 
-
-        prevBtn = new Button("Prev");
-        grid.add(prevBtn, 0, 25, 2, 1);
-
-        Button nextBtn = new Button("Next");
-        nextBtn.setVisible(false);;
-        grid.add(nextBtn, 10, 25, 2, 1);
+    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
+    private Background getBackgroundColor(Color c) {
+        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
+        return new Background(backgroundFill);
     }
 
     private void initTimer() {
@@ -290,7 +353,7 @@ public class HelloFX extends Application {
     }
 
     public String getApiKey() {
-        return "msy_U6ZnHB25nPUMWH8840PSylxRKIJrw2gEydQM";
+        return "msy_GoGu6a5H00BUfa3So3alc6l9BqwvNqNq309n";
     }
 
     public void setProgress(String status, int percent) {
@@ -306,9 +369,6 @@ public class HelloFX extends Application {
     }
 
     public String getArtStyle() {
-        //String artStyleSelection = HelloFX.self.styleSelectBox.getValue();
-
-
         Map<Integer, String> artStyleValues = Map.of(
             0, "realistic",
             1, "voxel",
