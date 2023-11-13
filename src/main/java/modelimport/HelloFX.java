@@ -54,6 +54,8 @@ public class HelloFX extends Application {
 
     private ProgressBar progress;
 
+    private Button randomizeBtn;
+
     private Button modelBtn;
     private Button textureBtn;
     private Button uploadBtn;
@@ -71,7 +73,10 @@ public class HelloFX extends Application {
     // Temp solution
     private ChoiceBox<String> styleSelectBox;
 
+    private static PromptIO promptReader;
+
     public static void main(String[] args) {
+        promptReader = new PromptIO();
         launch();
     }
 
@@ -153,6 +158,9 @@ public class HelloFX extends Application {
 
         Label objectPromptDescription = new Label("Model Description:");
         grid.add(objectPromptDescription, 0, 1);
+
+        randomizeBtn = new Button("Create a random prompt");
+        grid.add(randomizeBtn, 2, 1);
 
         objectPromptInput = new TextField();
         grid.add(objectPromptInput, 1, 1);
@@ -548,6 +556,16 @@ public class HelloFX extends Application {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(sceneTwo);
+            }
+        });
+
+        randomizeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int i = (int) (Math.random() * promptReader.objectDataList.size());
+                objectPromptInput.setText(promptReader.objectDataList.get(i).getObjectDescription());
+                texturePromptInput.setText(promptReader.objectDataList.get(i).getTextureDescription());
+                //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
             }
         });
     }
