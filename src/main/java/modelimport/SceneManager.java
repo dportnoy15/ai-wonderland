@@ -2,14 +2,15 @@ package modelimport;
 
 import java.util.ArrayList;
 
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import modelimport.scene.AliceScene;
 
 public class SceneManager {
     private static Stage stage;
     private static SceneManager instance = null;
 
-    private ArrayList<Scene> scenes = null;
+    private ArrayList<AliceScene> scenes = null;
 
     public static void setStage(Stage stage) {
         SceneManager.stage = stage;
@@ -23,15 +24,15 @@ public class SceneManager {
         return instance;
     }
 
-    public void addScene(Scene scene) {
+    public void addScene(AliceScene scene) {
         if (scenes == null) {
-            scenes = new ArrayList<Scene>();
+            scenes = new ArrayList<AliceScene>();
         }
 
         scenes.add(scene);
     }
 
     public void setScene(int sceneIdx) {
-        stage.setScene(scenes.get(sceneIdx));
+        stage.setScene(scenes.get(sceneIdx).getScene());
     }
 }

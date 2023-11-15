@@ -1,12 +1,27 @@
 package modelimport.scene;
 
+import java.io.*;
+
 import javafx.event.*;
 import javafx.scene.control.*;
+import javafx.scene.Scene;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import com.jcraft.jsch.*;
+
+import modelimport.AliceModel;
+import modelimport.FileUploader;
+import modelimport.HelloFX;
 import modelimport.SceneManager;
 
-public class SelectModelScene {
-    public static void registerButtonActions(Button btnGenerateModel, Button btnUploadModel) {
+public class SelectModelScene extends AliceScene {
+
+    public SelectModelScene(Stage stage, Scene scene, HelloFX app) {
+        super(stage, scene, app);
+    }
+
+    public void registerButtonActions(Button btnGenerateModel, Button btnUploadModel) {
         btnGenerateModel.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -23,7 +38,6 @@ public class SelectModelScene {
             public void handle(ActionEvent event) {
                 System.out.println("Uploading a model...");
 
-                /*
                 FileChooser filePicker = new FileChooser();
 
                 File file = filePicker.showOpenDialog(self.stage);
@@ -44,10 +58,15 @@ public class SelectModelScene {
 
                         System.out.println(webUrl);
 
-                        setObjectUrl(webUrl);
-                        textureBtn.setDisable(false);
+                        AliceModel model = new AliceModel("some name", webUrl);
+
+                        app.addModelToLibrary(model);
+                        app.refreshModelLibrary();
+
+                        //setObjectUrl(webUrl);
+                        //textureBtn.setDisable(false); // outdated
                     } catch (JSchException | SftpException ex) {
-                        System.out.println("ERROR UPLOADING FILER");
+                        System.out.println("ERROR UPLOADING FILE");
                         ex.printStackTrace();
                     }
 
@@ -55,7 +74,6 @@ public class SelectModelScene {
                 }
 
                 System.out.println("DONE");
-                */
             }
         });
     }

@@ -24,6 +24,7 @@ import py4j.GatewayServer;
 
 import com.jcraft.jsch.*;
 
+import modelimport.scene.AliceScene;
 import modelimport.scene.SelectModelScene;
 
 public class HelloFX extends Application {
@@ -31,10 +32,6 @@ public class HelloFX extends Application {
     static HelloFX self;
 
     Stage stage;
-
-    private Scene sceneSelectModel;
-    private Scene sceneOne;
-    private Scene sceneTwo;
 
     String message;
 
@@ -72,6 +69,8 @@ public class HelloFX extends Application {
     int elapsedSec;
     boolean isTimerRunning;
 
+    private ArrayList<AliceModel> models;
+
     private String objectUrl;
 
     // Temp solution
@@ -83,6 +82,8 @@ public class HelloFX extends Application {
     private int curStyleSelection;
 
     private int curModel;
+
+    private HBox libraryPane;
 
     private static final int ART_STYLE_COUNT = 8;
 
@@ -97,6 +98,8 @@ public class HelloFX extends Application {
         promptReader = new PromptIO();
 
         this.stage = stage;
+
+        models = new ArrayList<>();
 
         curProcess = null;
         processHandle = null;
@@ -113,9 +116,13 @@ public class HelloFX extends Application {
 
         SceneManager.setStage(stage);
 
-        initSelectModelScene();
-        initSceneOne();
-        initSceneTwo();
+        SelectModelScene sceneSelectModel = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        AliceScene sceneOne = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        AliceScene sceneTwo = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+
+        initLayout_SelectModelScene(sceneSelectModel);
+        initLayout_SceneOne(sceneOne);
+        initLayout_SceneTwo(sceneTwo);
 
         SceneManager.getInstance().addScene(sceneSelectModel);
         SceneManager.getInstance().addScene(sceneOne);
@@ -162,8 +169,8 @@ public class HelloFX extends Application {
         Platform.exit();
     }
 
-    private void initSelectModelScene() {
-        BorderPane layout = new BorderPane();
+    private void initLayout_SelectModelScene(SelectModelScene scene) {
+        BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
         HBox topPane = new HBox();
         HBox bottomPane = new HBox(20);
@@ -189,8 +196,6 @@ public class HelloFX extends Application {
         topPane.setAlignment(Pos.CENTER);
         topPane.getChildren().add(scenetitle);
 
-        sceneSelectModel = new Scene(layout, 800, 600);
-
         /* Start screen customization */
 
         GridPane grid = centerPane;
@@ -212,17 +217,28 @@ public class HelloFX extends Application {
         grid.add(hbBtn, 1, 0, 5, 1);
 
         /* Start footer definition */
-        bottomPane.getChildren().addAll(getExistingModels());
         bottomPane.setAlignment(Pos.CENTER);
         bottomPane.setPadding(new Insets(0, 50, 0, 50));
-
         bottomPane.setMinSize(600, 100);
 
-        SelectModelScene.registerButtonActions(btnGenerateModel, btnUploadModel);
+        libraryPane = bottomPane;
+
+        refreshModelLibrary();
+
+        scene.registerButtonActions(btnGenerateModel, btnUploadModel);
     }
 
-    private void initSceneOne() {
-        BorderPane layout = new BorderPane();
+    public void addModelToLibrary(AliceModel model) {
+        models.add(model);
+    }
+
+    public void refreshModelLibrary() {
+        libraryPane.getChildren().clear();
+        libraryPane.getChildren().addAll(generateModelLibraryButtons());
+    }
+
+    private void initLayout_SceneOne(AliceScene scene) {
+        BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
         HBox topPane = new HBox();
         HBox bottomPane = new HBox();
@@ -247,8 +263,6 @@ public class HelloFX extends Application {
         scenetitle.setFont(uiFont);
         topPane.setAlignment(Pos.CENTER);
         topPane.getChildren().add(scenetitle);
-
-        sceneOne = new Scene(layout, 800, 600);
 
         /* Start footer definition */
 
@@ -327,8 +341,8 @@ public class HelloFX extends Application {
         grid.add(hbBtn, 1, 12, 5, 1);
     }
 
-    private void initSceneTwo() {
-        BorderPane layout = new BorderPane();
+    private void initLayout_SceneTwo(AliceScene scene) {
+        BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
         HBox topPane = new HBox();
         HBox bottomPane = new HBox();
@@ -354,8 +368,6 @@ public class HelloFX extends Application {
 
         topPane.setAlignment(Pos.CENTER);
         topPane.getChildren().add(scenetitle);
-
-        sceneTwo = new Scene(layout, 800, 600);
 
         /* Start footer definition */
 
@@ -429,12 +441,10 @@ public class HelloFX extends Application {
         return "api-key";
     }
 
-    public ArrayList<Button> getExistingModels() {
-        ArrayList<Button> models = new ArrayList<>();
+    public ArrayList<Button> generateModelLibraryButtons() {
+        ArrayList<Button> modelButtons = new ArrayList<>();
 
-        int numModels = 4; // TODO: Show real models here later
-
-        for (int i = 0; i<numModels; i++) {
+        for (int i = 0; i<models.size(); i++) {
             Button btn = new Button("Model " + (i+1));
             btn.setMinSize(100, 100);
 
@@ -445,22 +455,22 @@ public class HelloFX extends Application {
                 @Override
                 public void handle(ActionEvent event) {
                     if (curModel != -1) {
-                        models.get(curModel).setDisable(false);
+                        modelButtons.get(curModel).setDisable(false);
                     }
 
                     if (curModel == modelIdx) {
                         curModel = -1;
                     } else {
                         curModel = modelIdx;
-                        models.get(curModel).setDisable(true);
+                        modelButtons.get(curModel).setDisable(true);
                     }
                 }
             });
 
-            models.add(btn);
+            modelButtons.add(btn);
         }
 
-        return models;
+        return modelButtons;
     }
 
     public void setProgress(String status, int percent) {
