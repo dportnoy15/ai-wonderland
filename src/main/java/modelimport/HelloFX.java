@@ -1,8 +1,11 @@
 package modelimport;
 
-import com.jcraft.jsch.*;
-
-import py4j.GatewayServer;
+import java.awt.Desktop;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,12 +20,11 @@ import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.Desktop;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import py4j.GatewayServer;
+
+import com.jcraft.jsch.*;
+
+import modelimport.scene.SelectModelScene;
 
 public class HelloFX extends Application {
 
@@ -30,6 +32,7 @@ public class HelloFX extends Application {
 
     Stage stage;
 
+    private Scene sceneSelectModel;
     private Scene sceneOne;
     private Scene sceneTwo;
 
@@ -79,6 +82,8 @@ public class HelloFX extends Application {
     private Button[] artStyleButtons;
     private int curStyleSelection;
 
+    private int curModel;
+
     private static final int ART_STYLE_COUNT = 8;
 
     public static void main(String[] args) {
@@ -106,8 +111,15 @@ public class HelloFX extends Application {
 
         System.out.println("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
+        SceneManager.setStage(stage);
+
+        initSelectModelScene();
         initSceneOne();
         initSceneTwo();
+
+        SceneManager.getInstance().addScene(sceneSelectModel);
+        SceneManager.getInstance().addScene(sceneOne);
+        SceneManager.getInstance().addScene(sceneTwo);
 
         isTimerRunning = false;
         initTimer();
@@ -116,12 +128,14 @@ public class HelloFX extends Application {
 
         addButtonActions();
 
-        stage.setScene(sceneOne);
+        SceneManager.getInstance().setScene(0);
         stage.show();
 
         gatewayServer = new GatewayServer(new HelloFX());
         gatewayServer.start();
         System.out.println("Gateway Server Started");
+
+        curModel = -1;
     }
 
     @Override
@@ -146,6 +160,65 @@ public class HelloFX extends Application {
         }
 
         Platform.exit();
+    }
+
+    private void initSelectModelScene() {
+        BorderPane layout = new BorderPane();
+
+        HBox topPane = new HBox();
+        HBox bottomPane = new HBox(20);
+        Pane leftPane = new FlowPane();
+        Pane rightPane = new FlowPane();
+        GridPane centerPane = new GridPane();
+
+        layout.setTop(topPane);    // Title
+        layout.setBottom(bottomPane); // Nav Buttons
+        layout.setLeft(leftPane);
+        layout.setRight(rightPane);
+        layout.setCenter(centerPane); // Main Content
+
+        topPane.setPrefHeight(100);
+        bottomPane.setPrefHeight(100);
+        leftPane.setPrefWidth(0);
+        rightPane.setPrefWidth(0);
+
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        Label scenetitle = new Label("Select a Model");
+        scenetitle.setFont(uiFont);
+        topPane.setAlignment(Pos.CENTER);
+        topPane.getChildren().add(scenetitle);
+
+        sceneSelectModel = new Scene(layout, 800, 600);
+
+        /* Start screen customization */
+
+        GridPane grid = centerPane;
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Button btnGenerateModel = new Button("Generate New Model");
+        btnGenerateModel.setMinSize(150, 100);
+
+        Button btnUploadModel = new Button("Upload Local Model");
+        btnUploadModel.setMinSize(150, 100);
+
+        HBox hbBtn = new HBox(200);
+        hbBtn.setAlignment(Pos.TOP_CENTER);
+        hbBtn.getChildren().add(btnGenerateModel);
+        hbBtn.getChildren().add(btnUploadModel);
+        grid.add(hbBtn, 1, 0, 5, 1);
+
+        /* Start footer definition */
+        bottomPane.getChildren().addAll(getExistingModels());
+        bottomPane.setAlignment(Pos.CENTER);
+        bottomPane.setPadding(new Insets(0, 50, 0, 50));
+
+        bottomPane.setMinSize(600, 100);
+
+        SelectModelScene.registerButtonActions(btnGenerateModel, btnUploadModel);
     }
 
     private void initSceneOne() {
@@ -353,7 +426,41 @@ public class HelloFX extends Application {
     }
 
     public String getApiKey() {
-        return "msy_GoGu6a5H00BUfa3So3alc6l9BqwvNqNq309n";
+        return "api-key";
+    }
+
+    public ArrayList<Button> getExistingModels() {
+        ArrayList<Button> models = new ArrayList<>();
+
+        int numModels = 4; // TODO: Show real models here later
+
+        for (int i = 0; i<numModels; i++) {
+            Button btn = new Button("Model " + (i+1));
+            btn.setMinSize(100, 100);
+
+            int modelIdx = i;
+
+            btn.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    if (curModel != -1) {
+                        models.get(curModel).setDisable(false);
+                    }
+
+                    if (curModel == modelIdx) {
+                        curModel = -1;
+                    } else {
+                        curModel = modelIdx;
+                        models.get(curModel).setDisable(true);
+                    }
+                }
+            });
+
+            models.add(btn);
+        }
+
+        return models;
     }
 
     public void setProgress(String status, int percent) {
@@ -453,7 +560,7 @@ public class HelloFX extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                message = "Generating 3D model ... (may take about a minute)";
+                message = "Generating 3D model ...";
 
                 status.setText(message);
 
@@ -630,14 +737,14 @@ public class HelloFX extends Application {
         prevBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(sceneOne);
+                SceneManager.getInstance().setScene(1);
             }
         });
 
         nextBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(sceneTwo);
+                SceneManager.getInstance().setScene(2);
             }
         });
 
