@@ -20,6 +20,7 @@ import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Screen;
 
 import py4j.GatewayServer;
 
@@ -177,6 +178,14 @@ public class HelloFX extends Application {
         progressStage.setTitle("Generating");
         progressStage.setAlwaysOnTop(true);
         progressStage.initStyle(StageStyle.TRANSPARENT);
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        double desiredX = bounds.getMinX() + 10;
+        double desiredY = bounds.getMaxY() - stage.getHeight() - 50;
+
+        progressStage.setX(desiredX);
+        progressStage.setY(desiredY);
     }
 
     @Override
@@ -431,29 +440,6 @@ public class HelloFX extends Application {
         }
     }
 
-    private void initLayout_SceneThree(AliceScene sceneThree) {
-        BorderPane layout = (BorderPane) sceneThree.getScene().getRoot();
-        GridPane centerPane = new GridPane();
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
-
-        GridPane grid = centerPane;
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(5);
-        grid.setVgap(5);
-        grid.setPadding(new Insets(10,10,10,10));
-
-        layout.setCenter(centerPane);
-        // Should be initiated in scene1
-        grid.add(status, 0, 1);
-        grid.add(progress, 0, 0);
-        grid.add(elapsedTime, 0, 2);
-
-        cancelGeneration = new Button("Cancel");
-        cancelGeneration.setMinSize(50, 30);
-        grid.add(cancelGeneration, 1, 2);
-        sceneThree.getScene().setFill(null);
-    }
-
     public void addModelToLibrary(AliceModel model) {
         models.add(model);
     }
@@ -685,7 +671,7 @@ public class HelloFX extends Application {
                 });
 
                 progressStage.show();
-                stage.hide();
+                stage.setIconified(true);
 
                 bgThread = new Thread(pythonTask);
                 bgThread.setDaemon(true);
@@ -698,6 +684,7 @@ public class HelloFX extends Application {
 
         cancelGeneration.setOnAction((ActionEvent event) -> {
             stage.show();
+            stage.setIconified(false);
             progressStage.hide();
             // TODO: Add api call to cancel
          });
