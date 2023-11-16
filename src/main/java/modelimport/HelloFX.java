@@ -170,6 +170,8 @@ public class HelloFX extends Application {
 
         cancelGeneration = new Button("Cancel");
         centerPane.add(cancelGeneration, 1, 2);
+        layout.setStyle("-fx-background-color: transparent;");
+        centerPane.setStyle("-fx-background-color: transparent;");
 
         progressStage.setScene(progressScene);
         progressStage.setTitle("Generating");
