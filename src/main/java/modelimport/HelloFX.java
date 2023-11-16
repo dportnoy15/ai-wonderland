@@ -262,38 +262,6 @@ public class HelloFX extends Application {
         scene.registerButtonActions(btnGenerateModel, btnUploadModel);
     }
 
-    private void initLayout_SceneThree(AliceScene sceneThree) {
-        BorderPane layout = (BorderPane) sceneThree.getScene().getRoot();
-        GridPane centerPane = new GridPane();
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
-
-        GridPane grid = centerPane;
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(5);
-        grid.setVgap(5);
-        grid.setPadding(new Insets(10,10,10,10));
-
-        layout.setCenter(centerPane);
-        // Should be initiated in scene1
-        grid.add(status, 0, 1);
-        grid.add(progress, 0, 0);
-        grid.add(elapsedTime, 0, 2);
-
-        cancelGeneration = new Button("Cancel");
-        cancelGeneration.setMinSize(50, 30);
-        grid.add(cancelGeneration, 1, 2);
-        sceneThree.getScene().setFill(null);
-    }
-
-    public void addModelToLibrary(AliceModel model) {
-        models.add(model);
-    }
-
-    public void refreshModelLibrary() {
-        libraryPane.getChildren().clear();
-        libraryPane.getChildren().addAll(generateModelLibraryButtons());
-    }
-
     private void initLayout_SceneOne(AliceScene scene) {
         BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
@@ -461,6 +429,38 @@ public class HelloFX extends Application {
             artStyleButtons[i].setMinSize(200, 50);
             grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
         }
+    }
+
+    private void initLayout_SceneThree(AliceScene sceneThree) {
+        BorderPane layout = (BorderPane) sceneThree.getScene().getRoot();
+        GridPane centerPane = new GridPane();
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        GridPane grid = centerPane;
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(10,10,10,10));
+
+        layout.setCenter(centerPane);
+        // Should be initiated in scene1
+        grid.add(status, 0, 1);
+        grid.add(progress, 0, 0);
+        grid.add(elapsedTime, 0, 2);
+
+        cancelGeneration = new Button("Cancel");
+        cancelGeneration.setMinSize(50, 30);
+        grid.add(cancelGeneration, 1, 2);
+        sceneThree.getScene().setFill(null);
+    }
+
+    public void addModelToLibrary(AliceModel model) {
+        models.add(model);
+    }
+
+    public void refreshModelLibrary() {
+        libraryPane.getChildren().clear();
+        libraryPane.getChildren().addAll(generateModelLibraryButtons());
     }
 
     // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
@@ -658,6 +658,9 @@ public class HelloFX extends Application {
                             }
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
+
+                            // the object url should have been set from the Python script
+                            addModelToLibrary(new AliceModel("some name", getObjectUrl()));
 
                             showModel("model.glb");
 
