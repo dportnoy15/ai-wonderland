@@ -19,8 +19,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import javafx.stage.StageStyle;
+
 import py4j.GatewayServer;
 
 import com.jcraft.jsch.*;
@@ -463,9 +463,6 @@ public class HelloFX extends Application {
         }
     }
 
-
-
-
     // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
     private Background getBackgroundColor(Color c) {
         BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
@@ -510,20 +507,16 @@ public class HelloFX extends Application {
 
             int modelIdx = i;
 
-            btn.setOnAction(new EventHandler<ActionEvent>() {
+            btn.setOnAction((ActionEvent event) -> {
+                if (curModel != -1) {
+                    modelButtons.get(curModel).setDisable(false);
+                }
 
-                @Override
-                public void handle(ActionEvent event) {
-                    if (curModel != -1) {
-                        modelButtons.get(curModel).setDisable(false);
-                    }
-
-                    if (curModel == modelIdx) {
-                        curModel = -1;
-                    } else {
-                        curModel = modelIdx;
-                        modelButtons.get(curModel).setDisable(true);
-                    }
+                if (curModel == modelIdx) {
+                    curModel = -1;
+                } else {
+                    curModel = modelIdx;
+                    modelButtons.get(curModel).setDisable(true);
                 }
             });
 
@@ -556,6 +549,7 @@ public class HelloFX extends Application {
             6, "fake-3d-hand-drawn",
             7, "oriental-comic-ink"
         );
+
         return artStyleValues.get(curStyleSelection);
     }
 
@@ -625,230 +619,202 @@ public class HelloFX extends Application {
 
     private void addButtonActions() {
 
-        modelBtn.setOnAction(new EventHandler<ActionEvent>() {
+        modelBtn.setOnAction((ActionEvent event) -> {
+            message = "Generating 3D model ...";
 
-            @Override
-            public void handle(ActionEvent event) {
-                message = "Generating 3D model ...";
+            status.setText(message);
 
-                status.setText(message);
+            try {
+                pythonTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        System.out.println("Starting python process...");
 
-                try {
-                    pythonTask = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            System.out.println("Starting python process...");
+                        String objectPrompt = objectPromptInput.getText();
+                        logPrompt(objectPrompt);
 
-                            String objectPrompt = objectPromptInput.getText();
-                            logPrompt(objectPrompt);
+                        try {
+                            startTimer();
 
-                            try {
-                                startTimer();
+                            //int exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
+                            int exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
 
-                                //int exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
-                                int exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
+                            stopTimer();
 
-                                stopTimer();
-
-                                if (exitCode == 0) {
-                                    message = "Model generated successfully";
-                                } else {
-                                    message = "Error geenerating model: " + exitCode;
-                                }
-
-                                System.out.println("GLB model generation finished. Converting to DAE now...");
-
-                                exitCode = invokeScript("blender", "--background", "--python", "model/format.py");
-
-                                if (exitCode == 0) {
-                                    message = "Model converted successfully";
-                                } else {
-                                    message = "Error  model: " + exitCode;
-                                }
-
-                                System.out.println("Conversion to DAE finished. Showing model now...");
-
-                                showModel("model.glb");
-
-                                // enable regenerating textures for the current model
-                                textureBtn.setDisable(false);
-
-                                resetProgress();
-                            } catch(InterruptedException | IOException e) {
-                                System.out.println("Error generating model");
-                                e.printStackTrace();
-
-                                System.exit(0);
+                            if (exitCode == 0) {
+                                message = "Model generated successfully";
+                            } else {
+                                message = "Error geenerating model: " + exitCode;
                             }
 
-                            return null;
+                            System.out.println("GLB model generation finished. Converting to DAE now...");
+
+                            exitCode = invokeScript("blender", "--background", "--python", "model/format.py");
+
+                            if (exitCode == 0) {
+                                message = "Model converted successfully";
+                            } else {
+                                message = "Error  model: " + exitCode;
+                            }
+
+                            System.out.println("Conversion to DAE finished. Showing model now...");
+
+                            showModel("model.glb");
+
+                            // enable regenerating textures for the current model
+                            textureBtn.setDisable(false);
+
+                            resetProgress();
+                        } catch(InterruptedException | IOException e) {
+                            System.out.println("Error generating model");
+                            e.printStackTrace();
+
+                            System.exit(0);
                         }
-                    };
 
-                    pythonTask.setOnSucceeded(ev -> {
-                        System.out.println(message);
-                        status.setText(message);
-                    });
+                        return null;
+                    }
+                };
 
+                pythonTask.setOnSucceeded(ev -> {
+                    System.out.println(message);
+                    status.setText(message);
+                });
 
-                    progressStage.show();
-                    stage.hide();
+                progressStage.show();
+                stage.hide();
 
-                    bgThread = new Thread(pythonTask);
-                    bgThread.setDaemon(true);
-                    bgThread.start();
-                } catch(Exception e) {
-                    System.out.println("ERROR BERRPR");
-                    e.printStackTrace();
-                }
+                bgThread = new Thread(pythonTask);
+                bgThread.setDaemon(true);
+                bgThread.start();
+            } catch(Exception e) {
+                System.out.println("ERROR BERRPR");
+                e.printStackTrace();
             }
         });
 
-        cancelGeneration.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                stage.show();
-                progressStage.hide();
-                // TODO: Add api call to cancel
-            }
+        cancelGeneration.setOnAction((ActionEvent event) -> {
+            stage.show();
+            progressStage.hide();
+            // TODO: Add api call to cancel
          });
 
-        textureBtn.setOnAction(new EventHandler<ActionEvent>() {
+        textureBtn.setOnAction((ActionEvent event) -> {
+            message = "Generating a new texture for the model ...";
 
-            @Override
-            public void handle(ActionEvent event) {
-                message = "Generating a new texture for the model ... (may take about a minute)";
+            status.setText(message);
 
-                status.setText(message);
+            try {
+                pythonTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        System.out.println("Starting python process...");
 
-                try {
-                    pythonTask = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            System.out.println("Starting python process...");
+                        String objectPrompt = getObjectDescription();
+                        String texturePrompt = getTextureDescription();
 
-                            String objectPrompt = getObjectDescription();
-                            String texturePrompt = getTextureDescription();
+                        System.out.println(texturePrompt);
 
-                            System.out.println(texturePrompt);
+                        logTexturePrompt(objectPrompt, texturePrompt);
 
-                            logTexturePrompt(objectPrompt, texturePrompt);
+                        try {
+                            startTimer();
 
-                            try {
-                                startTimer();
+                            int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
 
-                                int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
+                            stopTimer();
 
-                                stopTimer();
-
-                                if (exitCode == 0) {
-                                    message = "Texture generated successfully";
-                                } else {
-                                    message = "Error geenerating texture: " + exitCode;
-                                }
-
-                                System.out.println("Texture generation complete");
-
-                                showModel("model.glb");
-                            } catch(InterruptedException | IOException e) {
-                                System.out.println("Error generating model");
-                                e.printStackTrace();
-
-                                System.exit(0);
+                            if (exitCode == 0) {
+                                message = "Texture generated successfully";
+                            } else {
+                                message = "Error geenerating texture: " + exitCode;
                             }
 
-                            return null;
+                            System.out.println("Texture generation complete");
+
+                            showModel("model.glb");
+                        } catch(InterruptedException | IOException e) {
+                            System.out.println("Error generating model");
+                            e.printStackTrace();
+
+                            System.exit(0);
                         }
-                    };
 
-                    pythonTask.setOnSucceeded(ev -> {
-                        System.out.println(message);
-                        status.setText(message);
-                    });
-
-                    bgThread = new Thread(pythonTask);
-                    bgThread.setDaemon(true);
-                    bgThread.start();
-                } catch(Exception e) {
-                    System.out.println("ERROR GENERATING TEXTURE");
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        uploadBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Creating an awesome FTP connection");
-
-                FileChooser filePicker = new FileChooser();
-
-                File file = filePicker.showOpenDialog(self.stage);
- 
-                if (file != null) {
-                    System.out.println(file.getAbsolutePath());
-
-                    FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
-
-                    try {
-                        uploader.connect("username", "password");
-
-                        System.out.println("Connection established, uploading file...");
-
-                        uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
-
-                        String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
-
-                        System.out.println(webUrl);
-
-                        setObjectUrl(webUrl);
-                        textureBtn.setDisable(false);
-                    } catch (JSchException | SftpException ex) {
-                        System.out.println("ERROR UPLOADING FILER");
-                        ex.printStackTrace();
+                        return null;
                     }
+                };
 
-                    uploader.disconnect();
+                pythonTask.setOnSucceeded(ev -> {
+                    System.out.println(message);
+                    status.setText(message);
+                });
+
+                bgThread = new Thread(pythonTask);
+                bgThread.setDaemon(true);
+                bgThread.start();
+            } catch(Exception e) {
+                System.out.println("ERROR GENERATING TEXTURE");
+                e.printStackTrace();
+            }
+        });
+
+        uploadBtn.setOnAction((ActionEvent event) -> {
+            System.out.println("Creating an awesome FTP connection");
+
+            FileChooser filePicker = new FileChooser();
+
+            File file = filePicker.showOpenDialog(self.stage);
+
+            if (file != null) {
+                System.out.println(file.getAbsolutePath());
+
+                FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
+
+                try {
+                    uploader.connect("username", "password");
+
+                    System.out.println("Connection established, uploading file...");
+
+                    uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
+
+                    String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
+
+                    System.out.println(webUrl);
+
+                    setObjectUrl(webUrl);
+                    textureBtn.setDisable(false);
+                } catch (JSchException | SftpException ex) {
+                    System.out.println("ERROR UPLOADING FILER");
+                    ex.printStackTrace();
                 }
 
-                System.out.println("DONE");
+                uploader.disconnect();
             }
+
+            System.out.println("DONE");
         });
 
-        prevBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                SceneManager.getInstance().setScene(1);
-            }
+        prevBtn.setOnAction((ActionEvent event) -> {
+            SceneManager.getInstance().setScene(1);
         });
 
-        nextBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                SceneManager.getInstance().setScene(2);
-            }
+        nextBtn.setOnAction((ActionEvent event) -> {
+            SceneManager.getInstance().setScene(2);
         });
 
-        randomizeBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                int i = (int) (Math.random() * promptReader.objectDataList.size());
-                objectPromptInput.setText(promptReader.objectDataList.get(i).getObjectDescription());
-                texturePromptInput.setText(promptReader.objectDataList.get(i).getTextureDescription());
-                //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
-            }
+        randomizeBtn.setOnAction((ActionEvent actionEvent) -> {
+            int i = (int) (Math.random() * promptReader.objectDataList.size());
+            objectPromptInput.setText(promptReader.objectDataList.get(i).getObjectDescription());
+            texturePromptInput.setText(promptReader.objectDataList.get(i).getTextureDescription());
+            //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
         });
 
         for (int i = 0; i < ART_STYLE_COUNT; i++) {
             int finalI = i;
-            artStyleButtons[i].setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    artStyleButtons[curStyleSelection].setDisable(false);
-                    curStyleSelection = finalI;
-                    artStyleButtons[finalI].setDisable(true);
-                }
+            artStyleButtons[i].setOnAction((ActionEvent actionEvent) -> {
+                artStyleButtons[curStyleSelection].setDisable(false);
+                curStyleSelection = finalI;
+                artStyleButtons[finalI].setDisable(true);
             });
         }
     }

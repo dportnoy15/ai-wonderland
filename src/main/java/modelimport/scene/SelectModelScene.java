@@ -22,59 +22,51 @@ public class SelectModelScene extends AliceScene {
     }
 
     public void registerButtonActions(Button btnGenerateModel, Button btnUploadModel) {
-        btnGenerateModel.setOnAction(new EventHandler<ActionEvent>() {
+        btnGenerateModel.setOnAction((ActionEvent event) -> {
+            System.out.println("Generating a model...");
 
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Generating a model...");
-
-                SceneManager.getInstance().setScene(1);
-            }
+            SceneManager.getInstance().setScene(1);
         });
 
-        btnUploadModel.setOnAction(new EventHandler<ActionEvent>() {
+        btnUploadModel.setOnAction((ActionEvent event) -> {
+            System.out.println("Uploading a model...");
 
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Uploading a model...");
+            FileChooser filePicker = new FileChooser();
 
-                FileChooser filePicker = new FileChooser();
+            File file = filePicker.showOpenDialog(self.stage);
 
-                File file = filePicker.showOpenDialog(self.stage);
- 
-                if (file != null) {
-                    System.out.println(file.getAbsolutePath());
+            if (file != null) {
+                System.out.println(file.getAbsolutePath());
 
-                    FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
+                FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
 
-                    try {
-                        uploader.connect("username", "password");
+                try {
+                    uploader.connect("username", "password");
 
-                        System.out.println("Connection established, uploading file...");
+                    System.out.println("Connection established, uploading file...");
 
-                        uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
+                    uploader.uploadFile(file.getAbsolutePath(), "/srv/www/html/ai-wonderland/");
 
-                        String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
+                    String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
 
-                        System.out.println(webUrl);
+                    System.out.println(webUrl);
 
-                        AliceModel model = new AliceModel("some name", webUrl);
+                    AliceModel model = new AliceModel("some name", webUrl);
 
-                        app.addModelToLibrary(model);
-                        app.refreshModelLibrary();
+                    app.addModelToLibrary(model);
+                    app.refreshModelLibrary();
 
-                        //setObjectUrl(webUrl);
-                        //textureBtn.setDisable(false); // outdated
-                    } catch (JSchException | SftpException ex) {
-                        System.out.println("ERROR UPLOADING FILE");
-                        ex.printStackTrace();
-                    }
-
-                    uploader.disconnect();
+                    //setObjectUrl(webUrl);
+                    //textureBtn.setDisable(false); // outdated
+                } catch (JSchException | SftpException ex) {
+                    System.out.println("ERROR UPLOADING FILE");
+                    ex.printStackTrace();
                 }
 
-                System.out.println("DONE");
+                uploader.disconnect();
             }
+
+            System.out.println("DONE");
         });
     }
 }
