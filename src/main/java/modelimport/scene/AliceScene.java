@@ -23,4 +23,5 @@ public class AliceScene {
     public Scene getScene() {
         return scene;
     }
+    public Stage getStage() { return stage;}
 }

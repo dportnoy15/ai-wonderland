@@ -20,6 +20,7 @@ import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import py4j.GatewayServer;
 
 import com.jcraft.jsch.*;
@@ -63,6 +64,8 @@ public class HelloFX extends Application {
     private Button prevBtn;
     private Button nextBtn;
 
+    private Button cancelGeneration;
+
     private Timer waitTimer;
     private TimerTask waitTask;
 
@@ -86,6 +89,8 @@ public class HelloFX extends Application {
     private HBox libraryPane;
 
     private static final int ART_STYLE_COUNT = 8;
+
+    private Stage progressStage;
 
     public static void main(String[] args) {
         launch();
@@ -133,6 +138,8 @@ public class HelloFX extends Application {
 
         stage.setTitle("AI Wonderland");
 
+        SetupSecondStage();
+
         addButtonActions();
 
         SceneManager.getInstance().setScene(0);
@@ -143,6 +150,31 @@ public class HelloFX extends Application {
         System.out.println("Gateway Server Started");
 
         curModel = -1;
+    }
+
+    private void SetupSecondStage() {
+        progressStage = new Stage();
+        BorderPane layout = new BorderPane();
+        Scene progressScene = new Scene(layout, 250, 100);
+        progressScene.setFill(Color.TRANSPARENT);
+        GridPane centerPane = new GridPane();
+        centerPane.setAlignment(Pos.CENTER);
+        centerPane.setHgap(5);
+        centerPane.setVgap(5);
+        centerPane.setPadding(new Insets(10,10,10,10));
+        layout.setCenter(centerPane);
+
+        centerPane.add(progress, 0, 0);
+        centerPane.add(status, 0, 1);
+        centerPane.add(elapsedTime, 0, 2);
+
+        cancelGeneration = new Button("Cancel");
+        centerPane.add(cancelGeneration, 1, 2);
+
+        progressStage.setScene(progressScene);
+        progressStage.setTitle("Generating");
+        progressStage.setAlwaysOnTop(true);
+        progressStage.initStyle(StageStyle.TRANSPARENT);
     }
 
     @Override
@@ -228,6 +260,29 @@ public class HelloFX extends Application {
         scene.registerButtonActions(btnGenerateModel, btnUploadModel);
     }
 
+    private void initLayout_SceneThree(AliceScene sceneThree) {
+        BorderPane layout = (BorderPane) sceneThree.getScene().getRoot();
+        GridPane centerPane = new GridPane();
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+
+        GridPane grid = centerPane;
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(10,10,10,10));
+
+        layout.setCenter(centerPane);
+        // Should be initiated in scene1
+        grid.add(status, 0, 1);
+        grid.add(progress, 0, 0);
+        grid.add(elapsedTime, 0, 2);
+
+        cancelGeneration = new Button("Cancel");
+        cancelGeneration.setMinSize(50, 30);
+        grid.add(cancelGeneration, 1, 2);
+        sceneThree.getScene().setFill(null);
+    }
+
     public void addModelToLibrary(AliceModel model) {
         models.add(model);
     }
@@ -297,8 +352,8 @@ public class HelloFX extends Application {
         grid.add(texturePromptDescription, 0, 2);
 
         // Test for art style add
-        setupArtStyleBox();
-        grid.add(styleSelectBox, 0, 3);
+        //setupArtStyleBox();
+        //grid.add(styleSelectBox, 0, 3);
 
         /*
         Label negativePromptDescription = new Label("Negative Prompt:");
@@ -406,6 +461,9 @@ public class HelloFX extends Application {
         }
     }
 
+
+
+
     // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
     private Background getBackgroundColor(Color c) {
         BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
@@ -496,7 +554,6 @@ public class HelloFX extends Application {
             6, "fake-3d-hand-drawn",
             7, "oriental-comic-ink"
         );
-
         return artStyleValues.get(curStyleSelection);
     }
 
@@ -631,6 +688,10 @@ public class HelloFX extends Application {
                         status.setText(message);
                     });
 
+
+                    progressStage.show();
+                    stage.hide();
+
                     bgThread = new Thread(pythonTask);
                     bgThread.setDaemon(true);
                     bgThread.start();
@@ -640,6 +701,15 @@ public class HelloFX extends Application {
                 }
             }
         });
+
+        cancelGeneration.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.show();
+                progressStage.hide();
+                // TODO: Add api call to cancel
+            }
+         });
 
         textureBtn.setOnAction(new EventHandler<ActionEvent>() {
 
