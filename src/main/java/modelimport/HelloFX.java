@@ -156,7 +156,7 @@ public class HelloFX extends Application {
         progressStage = new Stage();
         BorderPane layout = new BorderPane();
         Scene progressScene = new Scene(layout, 250, 100);
-        progressScene.setFill(Color.TRANSPARENT);
+        progressScene.setFill(Color.color(0.6, 0.6, 0.6, 0.2));
         GridPane centerPane = new GridPane();
         centerPane.setAlignment(Pos.CENTER);
         centerPane.setHgap(5);
@@ -168,7 +168,7 @@ public class HelloFX extends Application {
         centerPane.add(status, 0, 1);
         centerPane.add(elapsedTime, 0, 2);
 
-        cancelGeneration = new Button("Cancel");
+        cancelGeneration = new Button("Back");
         centerPane.add(cancelGeneration, 1, 2);
         layout.setStyle("-fx-background-color: transparent;");
         centerPane.setStyle("-fx-background-color: transparent;");
