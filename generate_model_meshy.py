@@ -31,7 +31,6 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
         'Authorization': f"Bearer {api_key}"
     }
 
-    # TODO: Try different art styles
     payload = {
         "object_prompt": model_description,
         "style_prompt": style_prompt,
