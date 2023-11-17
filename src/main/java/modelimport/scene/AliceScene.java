@@ -23,4 +23,7 @@ public class AliceScene {
     public Scene getScene() {
         return scene;
     }
+
+    public void stopTask() {
+    }
 }

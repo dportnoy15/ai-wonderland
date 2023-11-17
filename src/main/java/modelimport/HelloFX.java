@@ -9,7 +9,6 @@ import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
@@ -18,16 +17,17 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Screen;
 
 import py4j.GatewayServer;
 
 import com.jcraft.jsch.*;
 
-import modelimport.scene.AliceScene;
 import modelimport.scene.SelectModelScene;
+import modelimport.scene.GenerateModelScene;
+import modelimport.scene.GenerateTextureScene;
 
 public class HelloFX extends Application {
 
@@ -35,15 +35,9 @@ public class HelloFX extends Application {
 
     Stage stage;
 
-    String message;
-
     Process curProcess;
-    ProcessHandle processHandle;
 
     GatewayServer gatewayServer;
-
-    Thread bgThread;
-    Task<Void> pythonTask;
 
     // UI Elements
 
@@ -108,10 +102,6 @@ public class HelloFX extends Application {
         models = new ArrayList<>();
 
         curProcess = null;
-        processHandle = null;
-
-        bgThread = null;
-        pythonTask = null;
 
         objectUrl = "";
 
@@ -123,16 +113,16 @@ public class HelloFX extends Application {
         SceneManager.setStage(stage);
 
         SelectModelScene sceneSelectModel = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        AliceScene sceneOne = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        AliceScene sceneTwo = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        GenerateModelScene sceneGenerateModel = new GenerateModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        GenerateTextureScene sceneGenerateTexture = new GenerateTextureScene(stage, new Scene(new BorderPane(), 800, 600), this);
 
         initLayout_SelectModelScene(sceneSelectModel);
-        initLayout_SceneOne(sceneOne);
-        initLayout_SceneTwo(sceneTwo);
+        initLayout_GenerateModelScene(sceneGenerateModel);
+        initLayout_GenerateTextureScene(sceneGenerateTexture);
 
         SceneManager.getInstance().addScene(sceneSelectModel);
-        SceneManager.getInstance().addScene(sceneOne);
-        SceneManager.getInstance().addScene(sceneTwo);
+        SceneManager.getInstance().addScene(sceneGenerateModel);
+        SceneManager.getInstance().addScene(sceneGenerateTexture);
 
         isTimerRunning = false;
         initTimer();
@@ -143,7 +133,7 @@ public class HelloFX extends Application {
 
         addButtonActions();
 
-        SceneManager.getInstance().setScene(0);
+        SceneManager.getInstance().setActiveScene(0);
         stage.show();
 
         gatewayServer = new GatewayServer(new HelloFX());
@@ -177,7 +167,7 @@ public class HelloFX extends Application {
         progressStage.setScene(progressScene);
         progressStage.setTitle("Generating");
         progressStage.setAlwaysOnTop(true);
-        progressStage.initStyle(StageStyle.TRANSPARENT);
+        progressStage.initStyle(StageStyle.TRANSPARENT);;
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
@@ -194,22 +184,15 @@ public class HelloFX extends Application {
 
         stopTimer();
 
+        SceneManager.getInstance().getScene(1).stopTask();
+
         gatewayServer.shutdown();
 
-        if (pythonTask != null) {
-            // TODO: Find a better way to force the thread to stop
-            bgThread.stop();
-
-            while (bgThread.isAlive()) {
-                try {
-                    Thread.sleep(50);
-                } catch(InterruptedException e) {
-                    System.out.println("NIGHTMARE");
-                }
-            }
-        }
-
         Platform.exit();
+    }
+
+    public String getApiKey() {
+        return Data.getApiKey();
     }
 
     private void initLayout_SelectModelScene(SelectModelScene scene) {
@@ -271,7 +254,7 @@ public class HelloFX extends Application {
         scene.registerButtonActions(btnGenerateModel, btnUploadModel);
     }
 
-    private void initLayout_SceneOne(AliceScene scene) {
+    private void initLayout_GenerateModelScene(GenerateModelScene scene) {
         BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
         HBox topPane = new HBox();
@@ -373,9 +356,11 @@ public class HelloFX extends Application {
         hbBtn.getChildren().add(textureBtn);
         hbBtn.getChildren().add(uploadBtn);
         grid.add(hbBtn, 1, 12, 5, 1);
+
+        scene.registerButtonActions(modelBtn, textureBtn);
     }
 
-    private void initLayout_SceneTwo(AliceScene scene) {
+    private void initLayout_GenerateTextureScene(GenerateTextureScene scene) {
         BorderPane layout = (BorderPane) scene.getScene().getRoot();
 
         HBox topPane = new HBox();
@@ -449,13 +434,45 @@ public class HelloFX extends Application {
         libraryPane.getChildren().addAll(generateModelLibraryButtons());
     }
 
-    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
-    private Background getBackgroundColor(Color c) {
-        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
-        return new Background(backgroundFill);
+    public void showModel(String modelName) {
+        System.out.println("Showing 3D model: " + modelName);
+
+        try {
+            Desktop.getDesktop().open(new File("gen-model/" + modelName));
+        } catch(IOException ioe) {
+            System.out.println("Error showing model");
+            ioe.printStackTrace();
+        }
     }
 
-    private void initTimer() {
+    public void setProgress(String status, int percent) {
+        Platform.runLater(() -> {
+            System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
+
+            HelloFX.self.progressStatus.setVisible(true);
+            HelloFX.self.progressStatus.setText(status);
+
+            HelloFX.self.progress.setVisible(true);
+            HelloFX.self.progress.setProgress(percent / 100f);
+        });
+    }
+
+    public void resetProgress() {
+        Platform.runLater(() -> {
+            progressStatus.setVisible(false);
+            progressStatus.setText("");
+
+            progress.setVisible(false);
+            progress.setProgress(0f);
+        });
+    }
+
+    public void setStatusText(String text) {
+        System.out.println(text);
+        status.setText(text);
+    }
+
+    public void initTimer() {
         elapsedSec = 0;
         isTimerRunning = false;
 
@@ -474,14 +491,33 @@ public class HelloFX extends Application {
         };
     }
 
-    private void setupArtStyleBox(){
+    public void startTimer() {
+        if (!isTimerRunning) {
+            elapsedSec = 0;
+            waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
+            isTimerRunning = true;
+        }
+    }
+
+    public void stopTimer() {
+        if (isTimerRunning) {
+            waitTask.cancel();
+            Platform.runLater(() -> elapsedTime.setText(""));
+            isTimerRunning = false;
+        }
+        waitTimer.cancel();
+    }
+
+    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
+    private Background getBackgroundColor(Color c) {
+        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
+        return new Background(backgroundFill);
+    }
+
+    private void setupArtStyleBox() {
         styleSelectBox = new ChoiceBox<>();
         styleSelectBox.getItems().addAll("Realistic", "Voxel", "2.5D Cartoon", "Japanese Anime", "Cartoon Line Art", "Realistic Hand-drawn", "2.5D Hand-drawn", "Oriental Comic Ink");
         styleSelectBox.setValue("Realistic");
-    }
-
-    public String getApiKey() {
-        return "api-key";
     }
 
     public ArrayList<Button> generateModelLibraryButtons() {
@@ -510,18 +546,6 @@ public class HelloFX extends Application {
         }
 
         return modelButtons;
-    }
-
-    public void setProgress(String status, int percent) {
-        Platform.runLater(() -> {
-            System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
-
-            HelloFX.self.progressStatus.setVisible(true);
-            HelloFX.self.progressStatus.setText(status);
-
-            HelloFX.self.progress.setVisible(true);
-            HelloFX.self.progress.setProgress(percent / 100f);
-        });
     }
 
     public String getArtStyle() {
@@ -559,7 +583,17 @@ public class HelloFX extends Application {
         return HelloFX.self.texturePromptInput.getText();
     }
 
-    private void logPrompt(String objectPrompt) {
+    public void showProgressMinimized(boolean showProgress) {
+        if (showProgress) {
+            progressStage.show();
+            stage.setIconified(true);
+        } else {
+            stage.setIconified(false);
+            progressStage.hide();
+        }
+    }
+
+    public void logModelPrompt(String objectPrompt) {
         Path path = Paths.get("playtestLog.txt");
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
@@ -580,7 +614,7 @@ public class HelloFX extends Application {
         }
     }
 
-    private void logTexturePrompt(String objectPrompt, String texturePrompt) {
+    public void logTexturePrompt(String objectPrompt, String texturePrompt) {
         Path path = Paths.get("playtestLog.txt");
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
@@ -604,149 +638,11 @@ public class HelloFX extends Application {
     }
 
     private void addButtonActions() {
-
-        modelBtn.setOnAction((ActionEvent event) -> {
-            message = "Generating 3D model ...";
-
-            status.setText(message);
-
-            try {
-                pythonTask = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        System.out.println("Starting python process...");
-
-                        String objectPrompt = objectPromptInput.getText();
-                        logPrompt(objectPrompt);
-
-                        try {
-                            startTimer();
-
-                            //int exitCode = invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
-                            int exitCode = invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
-
-                            stopTimer();
-
-                            if (exitCode == 0) {
-                                message = "Model generated successfully";
-                            } else {
-                                message = "Error geenerating model: " + exitCode;
-                            }
-
-                            System.out.println("GLB model generation finished. Converting to DAE now...");
-
-                            exitCode = invokeScript("blender", "--background", "--python", "model/format.py");
-
-                            if (exitCode == 0) {
-                                message = "Model converted successfully";
-                            } else {
-                                message = "Error  model: " + exitCode;
-                            }
-
-                            System.out.println("Conversion to DAE finished. Showing model now...");
-
-                            // the object url should have been set from the Python script
-                            addModelToLibrary(new AliceModel("some name", getObjectUrl()));
-
-                            showModel("model.glb");
-
-                            // enable regenerating textures for the current model
-                            textureBtn.setDisable(false);
-
-                            resetProgress();
-                        } catch(InterruptedException | IOException e) {
-                            System.out.println("Error generating model");
-                            e.printStackTrace();
-
-                            System.exit(0);
-                        }
-
-                        return null;
-                    }
-                };
-
-                pythonTask.setOnSucceeded(ev -> {
-                    System.out.println(message);
-                    status.setText(message);
-                });
-
-                progressStage.show();
-                stage.setIconified(true);
-
-                bgThread = new Thread(pythonTask);
-                bgThread.setDaemon(true);
-                bgThread.start();
-            } catch(Exception e) {
-                System.out.println("ERROR BERRPR");
-                e.printStackTrace();
-            }
-        });
-
         cancelGeneration.setOnAction((ActionEvent event) -> {
-            stage.show();
-            stage.setIconified(false);
-            progressStage.hide();
+            showProgressMinimized(false);
+
             // TODO: Add api call to cancel
          });
-
-        textureBtn.setOnAction((ActionEvent event) -> {
-            message = "Generating a new texture for the model ...";
-
-            status.setText(message);
-
-            try {
-                pythonTask = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        System.out.println("Starting python process...");
-
-                        String objectPrompt = getObjectDescription();
-                        String texturePrompt = getTextureDescription();
-
-                        System.out.println(texturePrompt);
-
-                        logTexturePrompt(objectPrompt, texturePrompt);
-
-                        try {
-                            startTimer();
-
-                            int exitCode = invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
-
-                            stopTimer();
-
-                            if (exitCode == 0) {
-                                message = "Texture generated successfully";
-                            } else {
-                                message = "Error geenerating texture: " + exitCode;
-                            }
-
-                            System.out.println("Texture generation complete");
-
-                            showModel("model.glb");
-                        } catch(InterruptedException | IOException e) {
-                            System.out.println("Error generating model");
-                            e.printStackTrace();
-
-                            System.exit(0);
-                        }
-
-                        return null;
-                    }
-                };
-
-                pythonTask.setOnSucceeded(ev -> {
-                    System.out.println(message);
-                    status.setText(message);
-                });
-
-                bgThread = new Thread(pythonTask);
-                bgThread.setDaemon(true);
-                bgThread.start();
-            } catch(Exception e) {
-                System.out.println("ERROR GENERATING TEXTURE");
-                e.printStackTrace();
-            }
-        });
 
         uploadBtn.setOnAction((ActionEvent event) -> {
             System.out.println("Creating an awesome FTP connection");
@@ -761,7 +657,7 @@ public class HelloFX extends Application {
                 FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
 
                 try {
-                    uploader.connect("username", "password");
+                    uploader.connect(Data.getUsername(), Data.getPassword());
 
                     System.out.println("Connection established, uploading file...");
 
@@ -785,11 +681,11 @@ public class HelloFX extends Application {
         });
 
         prevBtn.setOnAction((ActionEvent event) -> {
-            SceneManager.getInstance().setScene(1);
+            SceneManager.getInstance().setActiveScene(1);
         });
 
         nextBtn.setOnAction((ActionEvent event) -> {
-            SceneManager.getInstance().setScene(2);
+            SceneManager.getInstance().setActiveScene(2);
         });
 
         randomizeBtn.setOnAction((ActionEvent actionEvent) -> {
@@ -807,60 +703,6 @@ public class HelloFX extends Application {
                 artStyleButtons[finalI].setDisable(true);
             });
         }
-    }
-
-    private int invokeScript(String... cliArgs) throws InterruptedException, IOException {
-        System.out.println("CLI command: " + String.join(" ", cliArgs));
-
-        Process process = new ProcessBuilder(cliArgs).inheritIO().start();
-
-        processHandle = process.toHandle();
-
-        int exitCode = process.waitFor();
-
-        System.out.println("Process finished running");
-
-        processHandle.destroyForcibly();
-
-        return exitCode;
-    }
-
-    private void showModel(String modelName) {
-        System.out.println("Showing 3D model: " + modelName);
-
-        try {
-            Desktop.getDesktop().open(new File("gen-model/" + modelName));
-        } catch(IOException ioe) {
-            System.out.println("Error showing model");
-            ioe.printStackTrace();
-        }
-    }
-
-    private void resetProgress() {
-        Platform.runLater(() -> {
-            progressStatus.setVisible(false);
-            progressStatus.setText("");
-
-            progress.setVisible(false);
-            progress.setProgress(0f);
-        });
-    }
-
-    private void startTimer() {
-        if (!isTimerRunning) {
-            elapsedSec = 0;
-            waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
-            isTimerRunning = true;
-        }
-    }
-
-    private void stopTimer() {
-        if (isTimerRunning) {
-            waitTask.cancel();
-            Platform.runLater(() -> elapsedTime.setText(""));
-            isTimerRunning = false;
-        }
-        waitTimer.cancel();
     }
 
 }

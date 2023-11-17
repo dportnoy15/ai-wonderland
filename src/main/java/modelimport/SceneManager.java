@@ -32,7 +32,11 @@ public class SceneManager {
         scenes.add(scene);
     }
 
-    public void setScene(int sceneIdx) {
+    public AliceScene getScene(int sceneIdx) {
+        return scenes.get(sceneIdx);
+    }
+
+    public void setActiveScene(int sceneIdx) {
         stage.setScene(scenes.get(sceneIdx).getScene());
     }
 }
