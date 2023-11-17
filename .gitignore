@@ -6,6 +6,8 @@ gen-model/*
 3d_model.*
 playtestLog.txt
 
+src/main/java/modelimport/Data.java
+
 /shelf/
 /workspace.xml
 # Editor-based HTTP Client requests
