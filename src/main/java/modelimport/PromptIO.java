@@ -52,15 +52,15 @@ public class PromptIO {
             this.negative = negative;
         }
 
-        public String getObjectDescription(){
+        public String getObjectDescription() {
             return obj;
         }
 
-        public String getTextureDescription(){
+        public String getTextureDescription() {
             return style;
         }
 
-        public String getNegativePrompt(){
+        public String getNegativePrompt() {
             return negative;
         }
     }
