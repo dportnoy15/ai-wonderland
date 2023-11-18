@@ -7,6 +7,8 @@ import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -127,7 +129,7 @@ public class SelectModelScene extends AliceScene {
 
                     System.out.println(webUrl);
 
-                    AliceModel model = new AliceModel("some name", webUrl);
+                    AliceModel model = new AliceModel("some name", webUrl, "");
 
                     app.addModelToLibrary(model);
                     refreshModelLibrary();
@@ -146,7 +148,7 @@ public class SelectModelScene extends AliceScene {
         });
     }
 
-    private void refreshModelLibrary() {
+    public void refreshModelLibrary() {
         libraryPane.getChildren().clear();
         libraryPane.getChildren().addAll(generateModelLibraryButtons());
     }
@@ -155,8 +157,20 @@ public class SelectModelScene extends AliceScene {
         ArrayList<Button> modelButtons = new ArrayList<>();
 
         for (int i = 0; i<app.getModels().size(); i++) {
+            AliceModel model = app.getModels().get(i);
+
             Button btn = new Button("Model " + (i+1));
             btn.setMinSize(100, 100);
+            btn.setMaxSize(100, 100);
+
+            String imageUrl = model.getThumbnailUrl();
+            ImageView background = new ImageView(new Image(imageUrl));
+
+            background.fitWidthProperty().bind(btn.widthProperty());
+            background.fitHeightProperty().bind(btn.heightProperty());
+            background.setPreserveRatio(true);
+
+            btn.setGraphic(background);
 
             int modelIdx = i;
 

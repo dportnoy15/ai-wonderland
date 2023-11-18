@@ -188,8 +188,8 @@ public class GenerateModelScene extends AliceScene {
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
 
-                            // the object url should have been set from the Python script
-                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl()));
+                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl()));
+                            ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
                             // enable regenerating textures for the current model
                             btnTexture.setDisable(false);
@@ -200,6 +200,8 @@ public class GenerateModelScene extends AliceScene {
                                 app.showProgressMinimized(false);
 
                                 app.showModel("model.glb");
+
+                                SceneManager.getInstance().setActiveScene(0);
                             });
                         } catch(InterruptedException e) {
                             System.out.println("Task canceled");
@@ -273,8 +275,8 @@ public class GenerateModelScene extends AliceScene {
 
                             // TODO: Show progress for texture generation as well
 
-                            // the object url should have been set from the Python script
-                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl()));
+                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl()));
+                            ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
                             resetProgress();
 
@@ -282,6 +284,8 @@ public class GenerateModelScene extends AliceScene {
                                 app.showProgressMinimized(false);
 
                                 app.showModel("model.glb");
+
+                                SceneManager.getInstance().setActiveScene(0);
                             });
                         } catch(InterruptedException e) {
                             System.out.println("Task canceled");

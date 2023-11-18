@@ -69,6 +69,7 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
     gateway.entry_point.setObjectUrl(response.json()['model_url'])
+    gateway.entry_point.setThumbnailUrl(response.json()['thumbnail_url'])
 
     print(f"Thumbnail: {response.json()['thumbnail_url']}", flush=True)
 

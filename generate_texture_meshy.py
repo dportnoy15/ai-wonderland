@@ -58,6 +58,8 @@ def generate_texture(api_key, model_url, model_description, style_prompt, art_st
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
+    gateway.entry_point.setThumbnailUrl(response.json()['thumbnail_url'])
+
     print(f"Thumbnail: {response.json()['thumbnail_url']}", flush=True)
 
     open('gen-model/model.glb', 'wb').write(r.content)

@@ -55,6 +55,7 @@ public class HelloFX extends Application {
     private ArrayList<AliceModel> models;
 
     private String objectUrl;
+    private String thumbnailUrl;
 
     private Button[] artStyleButtons;
     private int curStyleSelection;
@@ -76,6 +77,7 @@ public class HelloFX extends Application {
         models = new ArrayList<>();
 
         objectUrl = "";
+        thumbnailUrl = "";
 
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
@@ -310,6 +312,7 @@ public class HelloFX extends Application {
 
     public void stopTimer() {
         if (isTimerRunning) {
+            waitTimer.cancel();
             waitTask.cancel();
 
             isTimerRunning = false;
@@ -319,7 +322,6 @@ public class HelloFX extends Application {
                 ((GenerateModelScene) SceneManager.getInstance().getScene(1)).updateElapsedTime("");
             });
         }
-        waitTimer.cancel();
     }
 
     // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
@@ -355,6 +357,14 @@ public class HelloFX extends Application {
 
     public void setObjectUrl(String objectUrl) {
         HelloFX.self.objectUrl = objectUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return HelloFX.self.thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        HelloFX.self.thumbnailUrl = thumbnailUrl;
     }
 
     public String getObjectDescription() {
