@@ -48,8 +48,6 @@ public class GenerateModelScene extends AliceScene {
         pythonTask = null;
 
         promptReader = new PromptIO();
-
-        app.initTimer();
     }
 
     public void initLayout() {
@@ -168,7 +166,7 @@ public class GenerateModelScene extends AliceScene {
                             app.startTimer();
 
                             //int exitCode = Utils.invokeScript("python", new File("generate_model_shap-e.py").getAbsolutePath(), objectPrompt);
-                            int exitCode = Utils.invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath(), objectPrompt);
+                            int exitCode = Utils.invokeScript("python", new File("generate_model_meshy.py").getAbsolutePath());
 
                             app.stopTimer();
 
@@ -178,14 +176,14 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Error geenerating model: " + exitCode;
                             }
 
-                            System.out.println("GLB model generation finished. Converting to DAE now...");
+                            System.out.println("GLB model generation complete. Converting to DAE now...");
 
                             exitCode = Utils.invokeScript("blender", "--background", "--python", "model/format.py");
 
                             if (exitCode == 0) {
                                 message = "Model converted successfully";
                             } else {
-                                message = "Error  model: " + exitCode;
+                                message = "Error converting model: " + exitCode;
                             }
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
@@ -193,13 +191,19 @@ public class GenerateModelScene extends AliceScene {
                             // the object url should have been set from the Python script
                             app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl()));
 
-                            app.showModel("model.glb");
-
                             // enable regenerating textures for the current model
                             btnTexture.setDisable(false);
 
                             resetProgress();
-                        } catch(InterruptedException | IOException e) {
+
+                            Platform.runLater(() -> {
+                                app.showProgressMinimized(false);
+
+                                app.showModel("model.glb");
+                            });
+                        } catch(InterruptedException e) {
+                            System.out.println("Task canceled");
+                        } catch(IOException e) {
                             System.out.println("Error generating model");
                             e.printStackTrace();
 
@@ -247,7 +251,7 @@ public class GenerateModelScene extends AliceScene {
                         try {
                             app.startTimer();
 
-                            int exitCode = Utils.invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath(), texturePrompt);
+                            int exitCode = Utils.invokeScript("python", new File("generate_texture_meshy.py").getAbsolutePath());
 
                             app.stopTimer();
 
@@ -257,13 +261,32 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Error geenerating texture: " + exitCode;
                             }
 
-                            System.out.println("Texture generation complete");
+                            System.out.println("Texture generation complete. Converting to DAE now...");
 
-                            app.showModel("model.glb");
+                            exitCode = Utils.invokeScript("blender", "--background", "--python", "model/format.py");
+
+                            if (exitCode == 0) {
+                                message = "Model converted successfully";
+                            } else {
+                                message = "Error converting model: " + exitCode;
+                            }
 
                             // TODO: Show progress for texture generation as well
-                        } catch(InterruptedException | IOException e) {
-                            System.out.println("Error generating model");
+
+                            // the object url should have been set from the Python script
+                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl()));
+
+                            resetProgress();
+
+                            Platform.runLater(() -> {
+                                app.showProgressMinimized(false);
+
+                                app.showModel("model.glb");
+                            });
+                        } catch(InterruptedException e) {
+                            System.out.println("Task canceled");
+                        } catch(IOException e) {
+                            System.out.println("Error generating texture");
                             e.printStackTrace();
 
                             System.exit(0);
@@ -276,6 +299,8 @@ public class GenerateModelScene extends AliceScene {
                 pythonTask.setOnSucceeded(ev -> {
                     setStatusText(message);
                 });
+
+                app.showProgressMinimized(true);
 
                 bgThread = new Thread(pythonTask);
                 bgThread.setDaemon(true);
@@ -300,8 +325,7 @@ public class GenerateModelScene extends AliceScene {
 
     public void stopTask() {
         if (pythonTask != null) {
-            // TODO: Find a better way to force the thread to stop
-            bgThread.stop();
+            bgThread.interrupt();
 
             while (bgThread.isAlive()) {
                 try {

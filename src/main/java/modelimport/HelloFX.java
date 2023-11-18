@@ -89,20 +89,16 @@ public class HelloFX extends Application {
         SceneManager.getInstance().addScene(sceneSelectModel);
 
         GenerateModelScene sceneGenerateModel = new GenerateModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        GenerateTextureScene sceneGenerateTexture = new GenerateTextureScene(stage, new Scene(new BorderPane(), 800, 600), this);
-
         sceneGenerateModel.initLayout();
-        initLayout_GenerateTextureScene(sceneGenerateTexture);
-
         SceneManager.getInstance().addScene(sceneGenerateModel);
-        SceneManager.getInstance().addScene(sceneGenerateTexture);
 
-        isTimerRunning = false;
-        initTimer();
+        GenerateTextureScene sceneGenerateTexture = new GenerateTextureScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        initLayout_GenerateTextureScene(sceneGenerateTexture);
+        SceneManager.getInstance().addScene(sceneGenerateTexture);
 
         stage.setTitle("AI Wonderland");
 
-        SetupSecondStage();
+        setupProgressWindow();
 
         SceneManager.getInstance().setActiveScene(0);
         stage.show();
@@ -112,7 +108,7 @@ public class HelloFX extends Application {
         System.out.println("Gateway Server Started");
     }
 
-    private void SetupSecondStage() {
+    private void setupProgressWindow() {
         progressStage = new Stage();
         BorderPane layout = new BorderPane();
         Scene progressScene = new Scene(layout, 250, 100);
@@ -279,13 +275,8 @@ public class HelloFX extends Application {
         });
     }
 
-    public void initTimer() {
-        elapsedSec = 0;
-        isTimerRunning = false;
-
-        waitTimer = new Timer();
-
-        waitTask = new TimerTask() {
+    public TimerTask createWaitTask() {
+        return new TimerTask() {
             @Override
             public void run() {
                 String timeString = String.format("Waiting for %d sec ...", elapsedSec);
@@ -303,8 +294,16 @@ public class HelloFX extends Application {
 
     public void startTimer() {
         if (!isTimerRunning) {
+            waitTimer = new Timer();
+            waitTask = createWaitTask();
+
+            try {
+                waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
             elapsedSec = 0;
-            waitTimer.scheduleAtFixedRate(waitTask, 0, 1000);
             isTimerRunning = true;
         }
     }
@@ -312,6 +311,7 @@ public class HelloFX extends Application {
     public void stopTimer() {
         if (isTimerRunning) {
             waitTask.cancel();
+
             isTimerRunning = false;
 
             Platform.runLater(() -> {
@@ -375,11 +375,13 @@ public class HelloFX extends Application {
 
     public void showProgressMinimized(boolean showProgress) {
         if (showProgress) {
+            stage.setAlwaysOnTop(true);
             progressStage.show();
             stage.setIconified(true);
         } else {
             stage.setIconified(false);
             progressStage.hide();
+            stage.setAlwaysOnTop(false);
         }
     }
 

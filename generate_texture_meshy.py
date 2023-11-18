@@ -7,7 +7,7 @@ gateway = JavaGateway(
     callback_server_parameters=CallbackServerParameters())
 
 # This regenerates the whole model. Temporary workaround until we figure out how to correctly use the text-to-texture api
-def generate_texture(api_key, model_url, model_description, style_prompt, negative_prompt):
+def generate_texture(api_key, model_url, model_description, style_prompt, art_style, negative_prompt):
     print(f"Generating a Meshy.ai texture ...", flush=True)
 
     print(f"Model URL: {model_url}", flush=True)
@@ -22,9 +22,10 @@ def generate_texture(api_key, model_url, model_description, style_prompt, negati
         "model_url": model_url,
         "object_prompt": model_description,
         "style_prompt": style_prompt,
-        "enable_original_uv": True,
+        "art_style": art_style,
+        "negative_prompt": negative_prompt,
         "enable_pbr": False,
-        "negative_prompt": negative_prompt
+        "enable_original_uv": True
     }
 
     response = requests.post(
@@ -57,6 +58,8 @@ def generate_texture(api_key, model_url, model_description, style_prompt, negati
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
+    print(f"Thumbnail: {response.json()['thumbnail_url']}", flush=True)
+
     open('gen-model/model.glb', 'wb').write(r.content)
 
 deviceName = "cuda" if torch.cuda.is_available() else "cpu"
@@ -68,11 +71,11 @@ api_key = gateway.entry_point.getApiKey()
 model_url = gateway.entry_point.getObjectUrl()
 model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
+art_style = gateway.entry_point.getArtStyle()
 
-#negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"
 
-generate_texture(api_key, model_url, model_description, style_prompt, negative_prompt)
+generate_texture(api_key, model_url, model_description, style_prompt, art_style, negative_prompt)
 
 gateway.close()
 

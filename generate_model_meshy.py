@@ -70,6 +70,8 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
 
     gateway.entry_point.setObjectUrl(response.json()['model_url'])
 
+    print(f"Thumbnail: {response.json()['thumbnail_url']}", flush=True)
+
     open('gen-model/model.glb', 'wb').write(r.content)
 
 deviceName = "cuda" if torch.cuda.is_available() else "cpu"
@@ -82,7 +84,6 @@ model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
 art_style = gateway.entry_point.getArtStyle()
 
-#negative_prompt = "low quality, low resolution, ugly"
 negative_prompt = "ugly, low quality, melting"
 
 generate_model(api_key, model_description, style_prompt, art_style, negative_prompt)
