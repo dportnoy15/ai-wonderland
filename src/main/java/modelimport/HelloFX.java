@@ -243,7 +243,7 @@ public class HelloFX extends Application {
     }
 
     public void addModelToLibrary(AliceModel model) {
-        models.add(model);
+        models.add(0, model);
     }
 
     public ArrayList<AliceModel> getModels() {
