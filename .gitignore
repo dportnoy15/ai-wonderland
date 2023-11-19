@@ -8,6 +8,9 @@ playtestLog.txt
 
 src/main/java/modelimport/Data.java
 
+ImportModel/ModelImportOutput.log
+ImportModel/ModelImportError.log
+
 /shelf/
 /workspace.xml
 # Editor-based HTTP Client requests
