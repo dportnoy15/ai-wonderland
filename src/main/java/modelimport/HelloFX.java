@@ -87,9 +87,7 @@ public class HelloFX extends Application {
         try {
             Utils.deleteDirectory("model-lib");
         } catch(IOException ioe) {
-            System.out.println("Failed to reset the model library");
-            ioe.printStackTrace();
-            return;
+            System.out.println("Failed to reset the model library, should be ok");
         }
 
         SceneManager.setStage(stage);
