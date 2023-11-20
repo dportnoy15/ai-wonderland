@@ -1,3 +1,5 @@
+/* Rename this file to Data.java dn add the Meshy api key and your Andrew credentials */
+
 package modelimport;
 
 public class Data {
