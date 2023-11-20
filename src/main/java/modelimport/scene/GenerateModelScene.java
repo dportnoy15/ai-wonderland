@@ -283,7 +283,11 @@ public class GenerateModelScene extends AliceScene {
 
                             // TODO: Show progress for texture generation as well
 
-                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl()));
+                            AliceModel model = new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl());
+
+                            app.copyModelFileToLibrary(model);
+
+                            app.addModelToLibrary(model);
                             ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
                             resetProgress();
