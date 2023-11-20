@@ -120,7 +120,7 @@ public class HelloFX extends Application {
         progressStage = new Stage();
         BorderPane layout = new BorderPane();
         Scene progressScene = new Scene(layout, 250, 100);
-        progressScene.setFill(Color.color(0.6, 0.6, 0.6, 0.2));
+        progressScene.setFill(Color.color(0.2, 0.2, 0.6, 0.4));
         GridPane centerPane = new GridPane();
         centerPane.setAlignment(Pos.CENTER);
         centerPane.setHgap(5);
@@ -135,8 +135,11 @@ public class HelloFX extends Application {
         status = new Text("");
         elapsedTime = new Text("");
 
+        progress.setStyle("-fx-accent: blue;");
         centerPane.add(progress, 0, 0);
+        status.setFill(Color.WHITE);
         centerPane.add(status, 0, 1);
+        elapsedTime.setFill(Color.WHITE);
         centerPane.add(elapsedTime, 0, 2);
 
         Button btnCancelGeneration = new Button("Back");
