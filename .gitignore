@@ -18,3 +18,4 @@ ImportModel/ModelImportError.log
 /dataSources/
 /dataSources.local.xml
 .idea/*
+src/main/java/modelimport/Data.java
