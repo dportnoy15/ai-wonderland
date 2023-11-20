@@ -65,6 +65,7 @@ public class HelloFX extends Application {
     private Stage progressStage;
 
     public static void main(String[] args) {
+
         launch();
     }
 
@@ -398,6 +399,7 @@ public class HelloFX extends Application {
     }
 
     public void setObjectDescription(String text) {
+        System.out.println(text);
         HelloFX.self.objectDescription = text;
     }
 
