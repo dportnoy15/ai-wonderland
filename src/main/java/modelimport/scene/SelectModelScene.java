@@ -26,6 +26,7 @@ import modelimport.AliceModel;
 import modelimport.FileUploader;
 import modelimport.HelloFX;
 import modelimport.SceneManager;
+import modelimport.Utils;
 
 public class SelectModelScene extends AliceScene {
 
@@ -111,7 +112,7 @@ public class SelectModelScene extends AliceScene {
 
             FileChooser filePicker = new FileChooser();
 
-            File file = filePicker.showOpenDialog(self.stage);
+            File file = filePicker.showOpenDialog(stage);
 
             if (file != null) {
                 System.out.println(file.getAbsolutePath());
@@ -185,11 +186,22 @@ public class SelectModelScene extends AliceScene {
                     curModel = modelIdx;
                     modelButtons.get(curModel).setDisable(true);
                 }
+
+                showAliceImportTool(model);
             });
 
             modelButtons.add(btn);
         }
 
         return modelButtons;
+    }
+
+    public void showAliceImportTool(AliceModel model) {
+        try {
+            System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(), new File(model.getLocalPath()).getAbsolutePath()));
+        } catch(Exception e) {
+            System.out.println("Could not open Alice model importer");
+            e.printStackTrace();
+        }
     }
 }

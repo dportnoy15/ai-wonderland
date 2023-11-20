@@ -84,6 +84,14 @@ public class HelloFX extends Application {
 
         System.out.println("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
+        try {
+            Utils.deleteDirectory("model-lib");
+        } catch(IOException ioe) {
+            System.out.println("Failed to reset the model library");
+            ioe.printStackTrace();
+            return;
+        }
+
         SceneManager.setStage(stage);
 
         SelectModelScene sceneSelectModel = new SelectModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
@@ -240,6 +248,26 @@ public class HelloFX extends Application {
         }
 
         scene.registerButtonActions(artStyleButtons, btnPrev);
+    }
+
+    public void copyModelFileToLibrary(AliceModel model) {
+        String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
+        String modelDirName = "model-lib/" + modelName;
+        String modelFilePath = modelDirName + "/model.dae";
+        String textureFilePaht = modelDirName + "/Image_0.jpg";
+
+        try {
+            Files.createDirectories(Paths.get(modelDirName));
+
+            Files.copy(Paths.get("gen-model/model.dae"), Paths.get(modelFilePath));
+            Files.copy(Paths.get("gen-model/Image_0.jpg"), Paths.get(textureFilePaht));
+
+            model.setLocalPath(modelFilePath);
+        } catch(IOException ioe) {
+            System.out.println("Error copying model to libary folder");
+            ioe.printStackTrace();
+            return;
+        }
     }
 
     public void addModelToLibrary(AliceModel model) {

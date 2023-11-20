@@ -174,6 +174,7 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Model generated successfully";
                             } else {
                                 message = "Error geenerating model: " + exitCode;
+                                return null;
                             }
 
                             System.out.println("GLB model generation complete. Converting to DAE now...");
@@ -184,11 +185,16 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Model converted successfully";
                             } else {
                                 message = "Error converting model: " + exitCode;
+                                return null;
                             }
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
 
-                            app.addModelToLibrary(new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl()));
+                            AliceModel model = new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl());
+
+                            app.copyModelFileToLibrary(model);
+
+                            app.addModelToLibrary(model);
                             ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
                             // enable regenerating textures for the current model
@@ -261,6 +267,7 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Texture generated successfully";
                             } else {
                                 message = "Error geenerating texture: " + exitCode;
+                                return null;
                             }
 
                             System.out.println("Texture generation complete. Converting to DAE now...");
@@ -271,6 +278,7 @@ public class GenerateModelScene extends AliceScene {
                                 message = "Model converted successfully";
                             } else {
                                 message = "Error converting model: " + exitCode;
+                                return null;
                             }
 
                             // TODO: Show progress for texture generation as well
