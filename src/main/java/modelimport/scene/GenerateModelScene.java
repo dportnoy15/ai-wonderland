@@ -79,10 +79,10 @@ public class GenerateModelScene extends AliceScene {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Prev");
+        Button btnPrev = new Button("Next");
         btnPrev.setVisible(false);
         Region region = new Region();
-        Button btnNext = new Button("Next");
+        Button btnNext = new Button("Back");
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
