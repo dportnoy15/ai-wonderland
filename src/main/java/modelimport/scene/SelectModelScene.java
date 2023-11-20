@@ -104,7 +104,7 @@ public class SelectModelScene extends AliceScene {
         btnGenerateModel.setOnAction((ActionEvent event) -> {
             System.out.println("Generating a model...");
 
-            SceneManager.getInstance().setActiveScene(2);
+            SceneManager.getInstance().setActiveScene(1);
         });
 
         btnUploadModel.setOnAction((ActionEvent event) -> {

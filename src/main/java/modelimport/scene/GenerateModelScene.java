@@ -79,10 +79,11 @@ public class GenerateModelScene extends AliceScene {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Prev");
-        btnPrev.setVisible(false);
+        Button btnPrev = new Button("Back");
         Region region = new Region();
-        Button btnNext = new Button("Back");
+        Button btnNext = new Button("Next");
+
+        btnNext.setVisible(false);
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
@@ -139,10 +140,10 @@ public class GenerateModelScene extends AliceScene {
         hbBtn.getChildren().add(btnTexture);
         grid.add(hbBtn, 1, 12, 5, 1);
 
-        registerButtonActions(btnModel, btnTexture, btnRandomize, btnNext);
+        registerButtonActions(btnModel, btnTexture, btnRandomize, btnPrev);
     }
 
-    public void registerButtonActions(Button btnModel, Button btnTexture, Button btnRandomize, Button btnNext) {
+    public void registerButtonActions(Button btnModel, Button btnTexture, Button btnRandomize, Button btnPrev) {
         btnModel.setOnAction((ActionEvent event) -> {
             message = "Generating 3D model ...";
 
@@ -336,8 +337,8 @@ public class GenerateModelScene extends AliceScene {
             //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
         });
 
-        btnNext.setOnAction((ActionEvent event) -> {
-            SceneManager.getInstance().setActiveScene(2);
+        btnPrev.setOnAction((ActionEvent event) -> {
+            SceneManager.getInstance().setActiveScene(1);
         });
     }
 

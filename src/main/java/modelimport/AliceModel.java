@@ -1,7 +1,5 @@
 package modelimport;
 
-import java.io.File;
-
 public class AliceModel {
     private String name; // possibly temporary
     private String webUrl;

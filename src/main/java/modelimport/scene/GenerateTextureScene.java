@@ -19,7 +19,7 @@ public class GenerateTextureScene extends AliceScene {
     public void initLayout() {
     }
 
-    public void registerButtonActions(Button[] artStyleButtons, Button btnPrev) {
+    public void registerButtonActions(Button[] artStyleButtons, Button btnNext) {
         for (int i = 0; i < ART_STYLE_COUNT; i++) {
             int finalI = i;
             artStyleButtons[i].setOnAction((ActionEvent actionEvent) -> {
@@ -27,8 +27,8 @@ public class GenerateTextureScene extends AliceScene {
             });
         }
 
-        btnPrev.setOnAction((ActionEvent event) -> {
-            SceneManager.getInstance().setActiveScene(1);
+        btnNext.setOnAction((ActionEvent event) -> {
+            SceneManager.getInstance().setActiveScene(2);
         });
     }
 }

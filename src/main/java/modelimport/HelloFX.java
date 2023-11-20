@@ -65,7 +65,6 @@ public class HelloFX extends Application {
     private Stage progressStage;
 
     public static void main(String[] args) {
-
         launch();
     }
 
@@ -97,13 +96,13 @@ public class HelloFX extends Application {
         sceneSelectModel.initLayout();
         SceneManager.getInstance().addScene(sceneSelectModel);
 
-        GenerateModelScene sceneGenerateModel = new GenerateModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        sceneGenerateModel.initLayout();
-        SceneManager.getInstance().addScene(sceneGenerateModel);
-
         GenerateTextureScene sceneGenerateTexture = new GenerateTextureScene(stage, new Scene(new BorderPane(), 800, 600), this);
         initLayout_GenerateTextureScene(sceneGenerateTexture);
         SceneManager.getInstance().addScene(sceneGenerateTexture);
+
+        GenerateModelScene sceneGenerateModel = new GenerateModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        sceneGenerateModel.initLayout();
+        SceneManager.getInstance().addScene(sceneGenerateModel);
 
         stage.setTitle("AI Wonderland");
 
@@ -212,10 +211,11 @@ public class HelloFX extends Application {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Next");
+        Button btnPrev = new Button("Back");
         Region region = new Region();
         Button btnNext = new Button("Next");
-        btnNext.setVisible(false);
+
+        btnPrev.setVisible(false);
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
@@ -246,7 +246,7 @@ public class HelloFX extends Application {
             grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
         }
 
-        scene.registerButtonActions(artStyleButtons, btnPrev);
+        scene.registerButtonActions(artStyleButtons, btnNext);
     }
 
     public void copyModelFileToLibrary(AliceModel model) {
@@ -399,7 +399,6 @@ public class HelloFX extends Application {
     }
 
     public void setObjectDescription(String text) {
-        System.out.println(text);
         HelloFX.self.objectDescription = text;
     }
 
