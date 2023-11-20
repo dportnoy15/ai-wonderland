@@ -61,6 +61,7 @@ public class HelloFX extends Application {
     private int curStyleSelection;
 
     private static final int ART_STYLE_COUNT = 8;
+    private static final String MODEL_LIB_DIR = "model-lib";
 
     private Stage progressStage;
 
@@ -85,9 +86,16 @@ public class HelloFX extends Application {
         System.out.println("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 
         try {
-            Utils.deleteDirectory("model-lib");
+            Utils.deleteDirectory(MODEL_LIB_DIR);
         } catch(IOException ioe) {
-            System.out.println("Failed to reset the model library, should be ok");
+            System.out.println(MODEL_LIB_DIR + " not found");
+        }
+
+        try {
+            Files.createDirectories(Paths.get(MODEL_LIB_DIR));
+        } catch(IOException ioe) {
+            System.out.println("Error: Unable to create " + MODEL_LIB_DIR);
+            ioe.printStackTrace();
         }
 
         SceneManager.setStage(stage);
@@ -254,7 +262,7 @@ public class HelloFX extends Application {
 
     public void copyModelFileToLibrary(AliceModel model) {
         String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
-        String modelDirName = "model-lib/" + modelName;
+        String modelDirName = MODEL_LIB_DIR + "/" + modelName;
         String modelFilePath = modelDirName + "/model.dae";
         String textureFilePaht = modelDirName + "/Image_0.jpg";
 
@@ -296,7 +304,7 @@ public class HelloFX extends Application {
     }
 
     public void setProgress(String statusText, int percent) {
-        ((GenerateModelScene) SceneManager.getInstance().getScene(1)).setProgress(statusText, percent);
+        ((GenerateModelScene) SceneManager.getInstance().getScene(2)).setProgress(statusText, percent);
 
         Platform.runLater(() -> {
             HelloFX.self.status.setVisible(true);
@@ -316,7 +324,7 @@ public class HelloFX extends Application {
 
                 Platform.runLater(() -> {
                     elapsedTime.setText(timeString);
-                    ((GenerateModelScene) SceneManager.getInstance().getScene(1)).updateElapsedTime(timeString);
+                    ((GenerateModelScene) SceneManager.getInstance().getScene(2)).updateElapsedTime(timeString);
                 });
 
                 elapsedSec++;
@@ -349,7 +357,7 @@ public class HelloFX extends Application {
 
             Platform.runLater(() -> {
                 elapsedTime.setText("");
-                ((GenerateModelScene) SceneManager.getInstance().getScene(1)).updateElapsedTime("");
+                ((GenerateModelScene) SceneManager.getInstance().getScene(2)).updateElapsedTime("");
             });
         }
     }
