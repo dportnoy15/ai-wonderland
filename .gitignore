@@ -7,8 +7,6 @@ model-lib/*
 3d_model.*
 playtestLog.txt
 
-src/main/java/modelimport/Data.java
-
 ImportModel/ModelImportOutput.log
 ImportModel/ModelImportError.log
 
