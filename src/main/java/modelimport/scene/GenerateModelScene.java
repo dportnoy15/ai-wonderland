@@ -79,7 +79,7 @@ public class GenerateModelScene extends AliceScene {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Next");
+        Button btnPrev = new Button("Prev");
         btnPrev.setVisible(false);
         Region region = new Region();
         Button btnNext = new Button("Back");

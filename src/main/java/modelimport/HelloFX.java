@@ -212,7 +212,7 @@ public class HelloFX extends Application {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Prev");
+        Button btnPrev = new Button("Next");
         Region region = new Region();
         Button btnNext = new Button("Next");
         btnNext.setVisible(false);
