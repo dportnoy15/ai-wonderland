@@ -62,6 +62,7 @@ public class HelloFX extends Application {
 
     private static final int ART_STYLE_COUNT = 8;
     private static final String MODEL_LIB_DIR = "model-lib";
+    private static final String GEN_MODEL_DIR = "gen-model";
 
     private Stage progressStage;
 
@@ -93,6 +94,13 @@ public class HelloFX extends Application {
 
         try {
             Files.createDirectories(Paths.get(MODEL_LIB_DIR));
+        } catch(IOException ioe) {
+            System.out.println("Error: Unable to create " + MODEL_LIB_DIR);
+            ioe.printStackTrace();
+        }
+
+        try {
+            Files.createDirectories(Paths.get(GEN_MODEL_DIR));
         } catch(IOException ioe) {
             System.out.println("Error: Unable to create " + MODEL_LIB_DIR);
             ioe.printStackTrace();
