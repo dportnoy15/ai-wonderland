@@ -330,11 +330,14 @@ public class GenerateModelScene extends AliceScene {
 
         btnRandomize.setOnAction((ActionEvent actionEvent) -> {
             int i = (int) (Math.random() * promptReader.objectDataList.size());
-            objectPromptInput.setText(promptReader.objectDataList.get(i).getObjectDescription());
-            texturePromptInput.setText(promptReader.objectDataList.get(i).getTextureDescription());
-            app.setObjectDescription(promptReader.objectDataList.get(i).getObjectDescription());
-            app.setTextureDescription(promptReader.objectDataList.get(i).getTextureDescription());
-            //negativePromptInput.setText(promptReader.objectDataList.get(i).getNegativePrompt());
+
+            String objectDescription = promptReader.objectDataList.get(i).getObjectDescription();
+            objectPromptInput.setText(objectDescription);
+            app.setObjectDescription(objectDescription);
+
+            String textureDescription = promptReader.objectDataList.get(i).getTextureDescription();
+            texturePromptInput.setText(textureDescription);
+            app.setTextureDescription(textureDescription);
         });
 
         btnPrev.setOnAction((ActionEvent event) -> {

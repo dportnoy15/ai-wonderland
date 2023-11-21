@@ -87,6 +87,14 @@ art_style = gateway.entry_point.getArtStyle()
 
 negative_prompt = "ugly, low quality, melting"
 
+# Provide a default values if the user doesn't enter anything for some of the fields
+
+if model_description is None or len(model_description.strip()) == 0:
+    model_description = "object"
+
+if style_prompt is None or len(style_prompt.strip()) == 0:
+    style_prompt = "realistic"
+
 generate_model(api_key, model_description, style_prompt, art_style, negative_prompt)
 
 gateway.close()
