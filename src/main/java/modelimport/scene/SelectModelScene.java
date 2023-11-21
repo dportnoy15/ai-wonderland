@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import com.jcraft.jsch.*;
 
 import modelimport.AliceModel;
+import modelimport.Data;
 import modelimport.FileUploader;
 import modelimport.HelloFX;
 import modelimport.SceneManager;
@@ -120,7 +121,7 @@ public class SelectModelScene extends AliceScene {
                 FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
 
                 try {
-                    uploader.connect("username", "password");
+                    uploader.connect(Data.getUsername(), Data.getPassword());
 
                     System.out.println("Connection established, uploading file...");
 
@@ -130,7 +131,9 @@ public class SelectModelScene extends AliceScene {
 
                     System.out.println(webUrl);
 
-                    AliceModel model = new AliceModel("some name", webUrl, "");
+                    AliceModel model = AliceModel.createFromLocalFile("some name", webUrl);
+
+                    app.copyModelFileToLibrary(model);
 
                     app.addModelToLibrary(model);
                     refreshModelLibrary();
@@ -164,14 +167,16 @@ public class SelectModelScene extends AliceScene {
             btn.setMinSize(100, 100);
             btn.setMaxSize(100, 100);
 
-            String imageUrl = model.getThumbnailUrl();
-            ImageView background = new ImageView(new Image(imageUrl));
+            if (model.isMeshyModel()) {
+                String imageUrl = model.getThumbnailUrl();
+                ImageView background = new ImageView(new Image(imageUrl));
 
-            background.fitWidthProperty().bind(btn.widthProperty());
-            background.fitHeightProperty().bind(btn.heightProperty());
-            background.setPreserveRatio(true);
+                background.fitWidthProperty().bind(btn.widthProperty());
+                background.fitHeightProperty().bind(btn.heightProperty());
+                background.setPreserveRatio(true);
 
-            btn.setGraphic(background);
+                btn.setGraphic(background);
+            }
 
             int modelIdx = i;
 

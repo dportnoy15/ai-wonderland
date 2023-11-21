@@ -191,7 +191,7 @@ public class GenerateModelScene extends AliceScene {
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
 
-                            AliceModel model = new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl());
+                            AliceModel model = AliceModel.createFromMeshy("some name", app.getObjectUrl(), app.getThumbnailUrl());
 
                             app.copyModelFileToLibrary(model);
 
@@ -284,7 +284,7 @@ public class GenerateModelScene extends AliceScene {
 
                             // TODO: Show progress for texture generation as well
 
-                            AliceModel model = new AliceModel("some name", app.getObjectUrl(), app.getThumbnailUrl());
+                            AliceModel model = AliceModel.createFromMeshy("some name", app.getObjectUrl(), app.getThumbnailUrl());
 
                             app.copyModelFileToLibrary(model);
 
