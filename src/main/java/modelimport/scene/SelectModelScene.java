@@ -27,19 +27,15 @@ import modelimport.Data;
 import modelimport.FileUploader;
 import modelimport.HelloFX;
 import modelimport.SceneManager;
-import modelimport.Utils;
 
 public class SelectModelScene extends AliceScene {
 
     private HBox libraryPane;
 
-    private int curModel;
-
     public SelectModelScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
 
         libraryPane = null;
-        curModel = -1;
     }
 
     public void initLayout() {
@@ -178,35 +174,13 @@ public class SelectModelScene extends AliceScene {
                 btn.setGraphic(background);
             }
 
-            int modelIdx = i;
-
             btn.setOnAction((ActionEvent event) -> {
-                if (curModel != -1) {
-                    modelButtons.get(curModel).setDisable(false);
-                }
-
-                if (curModel == modelIdx) {
-                    curModel = -1;
-                } else {
-                    curModel = modelIdx;
-                    modelButtons.get(curModel).setDisable(true);
-                }
-
-                showAliceImportTool(model);
+                app.setActiveModel(model);
             });
 
             modelButtons.add(btn);
         }
 
         return modelButtons;
-    }
-
-    public void showAliceImportTool(AliceModel model) {
-        try {
-            System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(), new File(model.getLocalPath()).getAbsolutePath()));
-        } catch(Exception e) {
-            System.out.println("Could not open Alice model importer");
-            e.printStackTrace();
-        }
     }
 }

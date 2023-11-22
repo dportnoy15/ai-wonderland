@@ -52,8 +52,6 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
     model_created = False
 
     while model_created == False:
-        # pause to give the texture time to generate
-        time.sleep(10)
 
         response = requests.get(
             f"https://api.meshy.ai/v1/text-to-3d/{task_id}",
@@ -65,6 +63,9 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
         model_created = bool(response.json()['status'] == "SUCCEEDED")
 
         gateway.entry_point.setProgress(response.json()['status'], response.json()['progress'])
+
+        # pause to give the texture time to generate
+        time.sleep(10)
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 

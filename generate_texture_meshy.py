@@ -42,8 +42,6 @@ def generate_texture(api_key, model_url, model_description, style_prompt, art_st
     texture_created = False
 
     while texture_created == False:
-        # pause to give the texture time to generate
-        time.sleep(10)
 
         response = requests.get(
             f"https://api.meshy.ai/v1/text-to-texture/{task_id}",
@@ -55,6 +53,9 @@ def generate_texture(api_key, model_url, model_description, style_prompt, art_st
         texture_created = bool(response.json()['status'] == "SUCCEEDED")
 
         gateway.entry_point.setProgress(response.json()['status'], response.json()['progress'])
+
+        # pause to give the texture time to generate
+        time.sleep(10)
 
     r = requests.get(response.json()['model_url'], allow_redirects=True)
 
@@ -70,7 +71,7 @@ print(torch.version.cuda, flush=True)
 print(deviceName, flush=True)
 
 api_key = gateway.entry_point.getApiKey()
-model_url = gateway.entry_point.getObjectUrl()
+model_url = gateway.entry_point.getActiveModel().getWebUrl()
 model_description = gateway.entry_point.getObjectDescription()
 style_prompt = gateway.entry_point.getTextureDescription()
 art_style = gateway.entry_point.getArtStyle()

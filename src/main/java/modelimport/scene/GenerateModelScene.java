@@ -282,8 +282,6 @@ public class GenerateModelScene extends AliceScene {
                                 return null;
                             }
 
-                            // TODO: Show progress for texture generation as well
-
                             AliceModel model = AliceModel.createFromMeshy("some name", app.getObjectUrl(), app.getThumbnailUrl());
 
                             app.copyModelFileToLibrary(model);

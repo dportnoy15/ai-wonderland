@@ -37,9 +37,27 @@ public class HelloFX extends Application {
     private String objectDescription;
     private String textureDescription;
 
-    // UI Elements
+    /*
+     * When should this be read?
+     *
+     * When the Python model generation script is run to determine the properties
+     * When the Python texture generation script is run to determine the properties
+     *
+     *
+     * When should this be set?
+     *
+     * Whenever the user clicks on an item in the gallery
+     * When the user starts generating a new model, so the Python script has a place to get the values
+     *  - Not sure about this, since if the view is reset to the model library after generation, we could still force the user to click
+     *  - the model before regenerating the texture
+     *
+     * This will be useful to hold prompt info for when the user wants to regen the texture on a model
+     *
+     */
 
-    private TextField negativePromptInput;
+    private AliceModel activeModel;
+
+    // UI Elements
 
     private Text status;
     private ProgressBar progress;
@@ -77,6 +95,8 @@ public class HelloFX extends Application {
         this.stage = stage;
 
         models = new ArrayList<>();
+
+        activeModel = null;
 
         objectUrl = "";
         thumbnailUrl = "";
@@ -179,7 +199,7 @@ public class HelloFX extends Application {
         btnCancelGeneration.setOnAction((ActionEvent event) -> {
             showProgressMinimized(false);
 
-            // TODO: Add api call to cancel
+            //  Would ideally cancel the model generation, but there's no way to do that in the Meshy API
         });
     }
 
@@ -296,6 +316,18 @@ public class HelloFX extends Application {
         return models;
     }
 
+    public AliceModel getActiveModel() {
+        return HelloFX.self.activeModel;
+    }
+
+    public void setActiveModel(AliceModel model) {
+        if (model != HelloFX.self.activeModel) {
+            showAliceImportTool(model);
+        }
+
+        HelloFX.self.activeModel = model;
+    }
+
     public void setStatusText(String text) {
         //HelloFX.self.status.setText(text);
     }
@@ -308,6 +340,15 @@ public class HelloFX extends Application {
         } catch(IOException ioe) {
             System.out.println("Error showing model");
             ioe.printStackTrace();
+        }
+    }
+
+    public void showAliceImportTool(AliceModel model) {
+        try {
+            System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(), new File(model.getLocalPath()).getAbsolutePath()));
+        } catch(Exception e) {
+            System.out.println("Could not open Alice model importer");
+            e.printStackTrace();
         }
     }
 
