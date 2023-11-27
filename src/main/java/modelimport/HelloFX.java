@@ -187,7 +187,7 @@ public class HelloFX extends Application {
         progressStage.setScene(progressScene);
         progressStage.setTitle("Generating");
         progressStage.setAlwaysOnTop(true);
-        progressStage.initStyle(StageStyle.TRANSPARENT);;
+        progressStage.initStyle(StageStyle.TRANSPARENT);
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
@@ -225,19 +225,18 @@ public class HelloFX extends Application {
         String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
         String modelDirName = MODEL_LIB_DIR + "/" + modelName;
         String modelFilePath = modelDirName + "/model.dae";
-        String textureFilePaht = modelDirName + "/Image_0.jpg";
+        String textureFilePath = modelDirName + "/Image_0.jpg";
 
         try {
             Files.createDirectories(Paths.get(modelDirName));
 
             Files.copy(Paths.get("gen-model/model.dae"), Paths.get(modelFilePath));
-            Files.copy(Paths.get("gen-model/Image_0.jpg"), Paths.get(textureFilePaht));
+            Files.copy(Paths.get("gen-model/Image_0.jpg"), Paths.get(textureFilePath));
 
             model.setLocalPath(modelFilePath);
         } catch(IOException ioe) {
             System.out.println("Error copying model to libary folder");
             ioe.printStackTrace();
-            return;
         }
     }
 
