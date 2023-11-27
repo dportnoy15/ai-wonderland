@@ -12,7 +12,8 @@ def generate_texture(api_key, model_url, model_description, style_prompt, art_st
 
     print(f"Model URL: {model_url}", flush=True)
     print(f"Model Description: {model_description}", flush=True)
-    print(f"Texture Style: {style_prompt}", flush=True)
+    print(f"Art Style: {art_style}", flush=True)
+    print(f"Texture Description: {style_prompt}", flush=True)
 
     headers = {
         'Authorization': f"Bearer {api_key}"

@@ -9,11 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.Scene;
@@ -32,6 +28,8 @@ public class SelectModelScene extends AliceScene {
 
     private HBox libraryPane;
 
+    private Button btnImport, btnTexture;
+
     public SelectModelScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
 
@@ -42,7 +40,7 @@ public class SelectModelScene extends AliceScene {
         BorderPane layout = (BorderPane) getScene().getRoot();
 
         HBox topPane = new HBox();
-        HBox bottomPane = new HBox(20);
+        VBox bottomPane = new VBox();
         Pane leftPane = new FlowPane();
         Pane rightPane = new FlowPane();
         GridPane centerPane = new GridPane();
@@ -54,13 +52,13 @@ public class SelectModelScene extends AliceScene {
         layout.setCenter(centerPane); // Main Content
 
         topPane.setPrefHeight(100);
-        bottomPane.setPrefHeight(100);
+        bottomPane.setPrefHeight(200);
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
-        Label scenetitle = new Label("Select a Model");
+        Label scenetitle = new Label("AI Model Assistant");
         scenetitle.setFont(uiFont);
         topPane.setAlignment(Pos.CENTER);
         topPane.getChildren().add(scenetitle);
@@ -87,20 +85,39 @@ public class SelectModelScene extends AliceScene {
 
         /* Start footer definition */
         bottomPane.setAlignment(Pos.CENTER);
-        bottomPane.setPadding(new Insets(0, 50, 0, 50));
-        bottomPane.setMinSize(600, 100);
 
-        libraryPane = bottomPane;
+        libraryPane = new HBox(20);
+        HBox buttons = new HBox(20);
+
+        libraryPane.setAlignment(Pos.CENTER);
+        libraryPane.setPadding(new Insets(0, 50, 0, 50));
+        libraryPane.setMinSize(600, 100);
+
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setPadding(new Insets(20, 50, 0, 50));
+
+        btnImport = new Button("Import into ALice");
+        btnTexture = new Button("Regenerate Texture");
+
+        btnImport.setVisible(false);
+        btnTexture.setVisible(false);
+
+        buttons.getChildren().addAll(btnImport, btnTexture);
+
+        bottomPane.getChildren().addAll(libraryPane, buttons);
 
         refreshModelLibrary();
 
-        registerButtonActions(btnGenerateModel, btnUploadModel);
+        registerButtonActions(btnGenerateModel, btnUploadModel, btnImport, btnTexture);
     }
 
-    public void registerButtonActions(Button btnGenerateModel, Button btnUploadModel) {
+    public void registerButtonActions(Button btnGenerateModel, Button btnUploadModel, Button btnImport, Button btnTexture) {
         btnGenerateModel.setOnAction((ActionEvent event) -> {
             System.out.println("Generating a model...");
 
+            SceneManager.getInstance().getScene(1).clearFields();
+            SceneManager.getInstance().getScene(3).clearFields();
+            ((TextureDescriptionScene) SceneManager.getInstance().getScene(3)).generateNewModel(true);
             SceneManager.getInstance().setActiveScene(1);
         });
 
@@ -133,9 +150,6 @@ public class SelectModelScene extends AliceScene {
 
                     app.addModelToLibrary(model);
                     refreshModelLibrary();
-
-                    //setObjectUrl(webUrl);
-                    //textureBtn.setDisable(false); // outdated
                 } catch (JSchException | SftpException ex) {
                     System.out.println("ERROR UPLOADING FILE");
                     ex.printStackTrace();
@@ -145,6 +159,19 @@ public class SelectModelScene extends AliceScene {
             }
 
             System.out.println("DONE");
+        });
+
+        btnImport.setOnAction((ActionEvent event) -> {
+            app.showAliceImportTool();
+        });
+
+        btnTexture.setOnAction((ActionEvent event) -> {
+            System.out.println("Regenerating the texture");
+
+            SceneManager.getInstance().getScene(1).clearFields();
+            SceneManager.getInstance().getScene(3).clearFields();
+            ((TextureDescriptionScene) SceneManager.getInstance().getScene(3)).generateNewModel(false);
+            SceneManager.getInstance().setActiveScene(1);
         });
     }
 
@@ -175,6 +202,11 @@ public class SelectModelScene extends AliceScene {
             }
 
             btn.setOnAction((ActionEvent event) -> {
+                // show the buttons to import the model and regenerate its texture
+
+                btnImport.setVisible(true);
+                btnTexture.setVisible(true);
+
                 app.setActiveModel(model);
             });
 

@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import modelimport.AliceModel;
@@ -22,7 +21,7 @@ import modelimport.PromptIO;
 import modelimport.SceneManager;
 import modelimport.Utils;
 
-public class GenerateModelScene extends AliceScene {
+public class TextureDescriptionScene extends AliceScene {
 
     protected String message;
 
@@ -31,21 +30,20 @@ public class GenerateModelScene extends AliceScene {
 
     private PromptIO promptReader;
 
-    private TextField objectPromptInput;
     private TextField texturePromptInput;
 
-    private Text txtStatus;
-    private Text txtProgressStatus;
-    private ProgressBar progressBar;
+    private Button btnModel, btnTexture;
 
-    private Text elapsedTime;
+    private boolean genNewModel; // will regenerate the texture if set to false
     
-    public GenerateModelScene(Stage stage, Scene scene, HelloFX app) {
+    public TextureDescriptionScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
 
         message = "";
         bgThread = null;
         pythonTask = null;
+
+        genNewModel = true;
 
         promptReader = new PromptIO();
     }
@@ -72,7 +70,7 @@ public class GenerateModelScene extends AliceScene {
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
-        Label scenetitle = new Label("Welcome");
+        Label scenetitle = new Label("Texture Description");
         scenetitle.setFont(uiFont);
         topPane.setAlignment(Pos.CENTER);
         topPane.getChildren().add(scenetitle);
@@ -98,41 +96,17 @@ public class GenerateModelScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Label objectPromptDescription = new Label("Model Description:");
-        grid.add(objectPromptDescription, 0, 1);
+        Label texturePromptDescription = new Label("Texture Description:");
+        grid.add(texturePromptDescription, 0, 1);
 
-        objectPromptInput = new TextField();
-        grid.add(objectPromptInput, 1, 1);
+        texturePromptInput = new TextField();
+        grid.add(texturePromptInput, 1, 1);
 
         Button btnRandomize = new Button("Create a random prompt");
         grid.add(btnRandomize, 2, 1);
 
-        Label texturePromptDescription = new Label("Texture Description:");
-        grid.add(texturePromptDescription, 0, 2);
-
-        texturePromptInput = new TextField();
-        grid.add(texturePromptInput, 1, 2);
-
-        txtStatus = new Text("");
-        grid.add(txtStatus, 1, 5);
-
-        txtProgressStatus = new Text("");
-        grid.add(txtProgressStatus, 0, 7);
-
-        Label progressDescription = new Label("Generation Progress:");
-        grid.add(progressDescription, 0, 8);
-
-        progressBar = new ProgressBar();
-        progressBar.setProgress(0.0F);
-        progressBar.setVisible(false);
-        grid.add(progressBar, 1, 8);
-
-        elapsedTime = new Text("");
-        grid.add(elapsedTime, 0, 10);
-
-        Button btnModel = new Button("Generate Model");
-        Button btnTexture = new Button("Regenerate Texture");
-        btnTexture.setDisable(true);
+        btnModel = new Button("Generate Model");
+        btnTexture = new Button("Regenerate Texture");
 
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_LEFT);
@@ -147,21 +121,16 @@ public class GenerateModelScene extends AliceScene {
         btnModel.setOnAction((ActionEvent event) -> {
             message = "Generating 3D model ...";
 
-            setStatusText(message);
-
             try {
                 pythonTask = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
                         System.out.println("Starting python process...");
 
-                        String objectPrompt = objectPromptInput.getText();
-                        app.setObjectDescription(objectPrompt);
-
                         String texturePrompt = texturePromptInput.getText();
                         app.setTextureDescription(texturePrompt);
 
-                        app.logModelPrompt(objectPrompt);
+                        //app.logModelPrompt(objectPrompt);
 
                         try {
                             app.startTimer();
@@ -201,8 +170,6 @@ public class GenerateModelScene extends AliceScene {
                             // enable regenerating textures for the current model
                             btnTexture.setDisable(false);
 
-                            resetProgress();
-
                             Platform.runLater(() -> {
                                 app.showProgressMinimized(false);
 
@@ -224,7 +191,9 @@ public class GenerateModelScene extends AliceScene {
                 };
 
                 pythonTask.setOnSucceeded(ev -> {
-                    setStatusText(message);
+                    System.out.println("COMPLETED PYTHON TASK");
+
+                    // setStatusText(message);
                 });
 
                 app.showProgressMinimized(true);
@@ -241,21 +210,16 @@ public class GenerateModelScene extends AliceScene {
         btnTexture.setOnAction((ActionEvent event) -> {
             message = "Generating a new texture for the model ...";
 
-            setStatusText(message);
-
             try {
                 pythonTask = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
                         System.out.println("Starting python process...");
 
-                        String objectPrompt = objectPromptInput.getText();
-                        app.setObjectDescription(objectPrompt);
-
                         String texturePrompt = texturePromptInput.getText();
                         app.setTextureDescription(texturePrompt);
 
-                        app.logTexturePrompt(objectPrompt, texturePrompt);
+                        //app.logTexturePrompt(objectPrompt, texturePrompt);
 
                         try {
                             app.startTimer();
@@ -289,8 +253,6 @@ public class GenerateModelScene extends AliceScene {
                             app.addModelToLibrary(model);
                             ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
-                            resetProgress();
-
                             Platform.runLater(() -> {
                                 app.showProgressMinimized(false);
 
@@ -312,7 +274,9 @@ public class GenerateModelScene extends AliceScene {
                 };
 
                 pythonTask.setOnSucceeded(ev -> {
-                    setStatusText(message);
+                    System.out.println("COMPLETED PYTHON TASK");
+
+                    // setStatusText(message);
                 });
 
                 app.showProgressMinimized(true);
@@ -329,18 +293,20 @@ public class GenerateModelScene extends AliceScene {
         btnRandomize.setOnAction((ActionEvent actionEvent) -> {
             int i = (int) (Math.random() * promptReader.objectDataList.size());
 
-            String objectDescription = promptReader.objectDataList.get(i).getObjectDescription();
-            objectPromptInput.setText(objectDescription);
-            app.setObjectDescription(objectDescription);
-
             String textureDescription = promptReader.objectDataList.get(i).getTextureDescription();
             texturePromptInput.setText(textureDescription);
             app.setTextureDescription(textureDescription);
         });
 
         btnPrev.setOnAction((ActionEvent event) -> {
-            SceneManager.getInstance().setActiveScene(1);
+            SceneManager.getInstance().setActiveScene(2);
+
+            ((ArtStyleScene) SceneManager.getInstance().getScene(2)).selectCurrentStyleButton();
         });
+    }
+
+    public void clearFields() {
+        texturePromptInput.clear();
     }
 
     public void stopTask() {
@@ -357,36 +323,10 @@ public class GenerateModelScene extends AliceScene {
         }
     }
 
-    public void setStatusText(String text) {
-        txtStatus.setText(text);
+    public void generateNewModel(boolean genNew) {
+        genNewModel = genNew;
 
-        // this updates the status in the minimized view
-        app.setStatusText(text);
-    }
-
-    public void setProgress(String status, int percent) {
-        Platform.runLater(() -> {
-            System.out.println("Status set to " + status + ", percent set to " + percent + " from Python!!!");
-
-            txtProgressStatus.setVisible(true);
-            txtProgressStatus.setText(status);
-
-            progressBar.setVisible(true);
-            progressBar.setProgress(percent / 100f);
-        });
-    }
-
-    public void resetProgress() {
-        Platform.runLater(() -> {
-            txtProgressStatus.setVisible(false);
-            txtProgressStatus.setText("");
-
-            progressBar.setVisible(false);
-            progressBar.setProgress(0f);
-        });
-    }
-
-    public void updateElapsedTime(String time) {
-        elapsedTime.setText(time);
+        btnModel.setVisible(genNew);
+        btnTexture.setVisible(!genNew);
     }
 }

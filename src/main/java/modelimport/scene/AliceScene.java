@@ -20,6 +20,9 @@ public class AliceScene {
         return scene;
     }
 
+    public void clearFields() {
+    }
+
     public void stopTask() {
     }
 }

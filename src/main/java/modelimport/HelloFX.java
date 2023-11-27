@@ -23,8 +23,9 @@ import javafx.stage.StageStyle;
 import py4j.GatewayServer;
 
 import modelimport.scene.SelectModelScene;
-import modelimport.scene.GenerateModelScene;
-import modelimport.scene.GenerateTextureScene;
+import modelimport.scene.ModelDescriptionScene;
+import modelimport.scene.ArtStyleScene;
+import modelimport.scene.TextureDescriptionScene;
 
 public class HelloFX extends Application {
 
@@ -75,10 +76,6 @@ public class HelloFX extends Application {
     private String objectUrl;
     private String thumbnailUrl;
 
-    private Button[] artStyleButtons;
-    private int curStyleSelection;
-
-    private static final int ART_STYLE_COUNT = 8;
     private static final String MODEL_LIB_DIR = "model-lib";
     private static final String GEN_MODEL_DIR = "gen-model";
 
@@ -132,13 +129,17 @@ public class HelloFX extends Application {
         sceneSelectModel.initLayout();
         SceneManager.getInstance().addScene(sceneSelectModel);
 
-        GenerateTextureScene sceneGenerateTexture = new GenerateTextureScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        initLayout_GenerateTextureScene(sceneGenerateTexture);
-        SceneManager.getInstance().addScene(sceneGenerateTexture);
+        ModelDescriptionScene sceneModelDescription = new ModelDescriptionScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        sceneModelDescription.initLayout();
+        SceneManager.getInstance().addScene(sceneModelDescription);
 
-        GenerateModelScene sceneGenerateModel = new GenerateModelScene(stage, new Scene(new BorderPane(), 800, 600), this);
-        sceneGenerateModel.initLayout();
-        SceneManager.getInstance().addScene(sceneGenerateModel);
+        ArtStyleScene sceneArtStyle = new ArtStyleScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        sceneArtStyle.initLayout();
+        SceneManager.getInstance().addScene(sceneArtStyle);
+
+        TextureDescriptionScene sceneTextureDescription = new TextureDescriptionScene(stage, new Scene(new BorderPane(), 800, 600), this);
+        sceneTextureDescription.initLayout();
+        SceneManager.getInstance().addScene(sceneTextureDescription);
 
         stage.setTitle("AI Wonderland");
 
@@ -220,74 +221,6 @@ public class HelloFX extends Application {
         return Data.getApiKey();
     }
 
-    private void initLayout_GenerateTextureScene(GenerateTextureScene scene) {
-        BorderPane layout = (BorderPane) scene.getScene().getRoot();
-
-        HBox topPane = new HBox();
-        HBox bottomPane = new HBox();
-        Pane leftPane = new FlowPane();
-        Pane rightPane = new FlowPane();
-        GridPane centerPane = new GridPane();
-
-        layout.setTop(topPane);    // Title
-        layout.setBottom(bottomPane); // Nav Buttons
-        layout.setLeft(leftPane);
-        layout.setRight(rightPane);
-        layout.setCenter(centerPane); // Main Content
-
-        topPane.setPrefHeight(100);
-        bottomPane.setPrefHeight(100);
-        leftPane.setPrefWidth(0);
-        rightPane.setPrefWidth(0);
-
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
-
-        Label scenetitle = new Label("Select your art style");
-        scenetitle.setFont(uiFont);
-
-        topPane.setAlignment(Pos.CENTER);
-        topPane.getChildren().add(scenetitle);
-
-        /* Start footer definition */
-
-        Button btnPrev = new Button("Back");
-        Region region = new Region();
-        Button btnNext = new Button("Next");
-
-        btnPrev.setVisible(false);
-
-        HBox.setHgrow(region, Priority.ALWAYS);
-        bottomPane.getChildren().addAll(btnPrev, region, btnNext);
-        bottomPane.setAlignment(Pos.CENTER);
-        bottomPane.setPadding(new Insets(0, 50, 0, 50));
-
-        /* Start screen customization */
-
-        GridPane grid = centerPane;
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-
-        artStyleButtons = new Button[ART_STYLE_COUNT];
-        artStyleButtons[0] = new Button("Realistic");
-        artStyleButtons[0].setDisable(true);
-        artStyleButtons[1] = new Button("Voxel");
-        artStyleButtons[2] = new Button("2.5D Cartoon");
-        artStyleButtons[3] = new Button("Japanese Anime");
-        artStyleButtons[4] = new Button("Cartoon Line Art");
-        artStyleButtons[5] = new Button("Realistic Hand-drawn");
-        artStyleButtons[6] = new Button("2.5D Hand-drawn");
-        artStyleButtons[7] = new Button("Oriental Comic Ink");
-
-        for (int i = 0; i < ART_STYLE_COUNT; i++) {
-            artStyleButtons[i].setMinSize(200, 50);
-            grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
-        }
-
-        scene.registerButtonActions(artStyleButtons, btnNext);
-    }
-
     public void copyModelFileToLibrary(AliceModel model) {
         String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
         String modelDirName = MODEL_LIB_DIR + "/" + modelName;
@@ -321,15 +254,7 @@ public class HelloFX extends Application {
     }
 
     public void setActiveModel(AliceModel model) {
-        if (model != HelloFX.self.activeModel) {
-            showAliceImportTool(model);
-        }
-
         HelloFX.self.activeModel = model;
-    }
-
-    public void setStatusText(String text) {
-        //HelloFX.self.status.setText(text);
     }
 
     public void showModel(String modelName) {
@@ -343,7 +268,13 @@ public class HelloFX extends Application {
         }
     }
 
-    public void showAliceImportTool(AliceModel model) {
+    public void showAliceImportTool() {
+        if (HelloFX.self.activeModel == null) {
+            return;
+        }
+
+        AliceModel model = HelloFX.self.activeModel;
+
         try {
             System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(), new File(model.getLocalPath()).getAbsolutePath()));
         } catch(Exception e) {
@@ -353,8 +284,6 @@ public class HelloFX extends Application {
     }
 
     public void setProgress(String statusText, int percent) {
-        ((GenerateModelScene) SceneManager.getInstance().getScene(2)).setProgress(statusText, percent);
-
         Platform.runLater(() -> {
             HelloFX.self.status.setVisible(true);
             HelloFX.self.status.setText(statusText);
@@ -373,7 +302,6 @@ public class HelloFX extends Application {
 
                 Platform.runLater(() -> {
                     elapsedTime.setText(timeString);
-                    ((GenerateModelScene) SceneManager.getInstance().getScene(2)).updateElapsedTime(timeString);
                 });
 
                 elapsedSec++;
@@ -406,7 +334,6 @@ public class HelloFX extends Application {
 
             Platform.runLater(() -> {
                 elapsedTime.setText("");
-                ((GenerateModelScene) SceneManager.getInstance().getScene(2)).updateElapsedTime("");
             });
         }
     }
@@ -418,24 +345,7 @@ public class HelloFX extends Application {
     }
 
     public String getArtStyle() {
-        ArrayList<String> artStyleValues = new ArrayList<>(List.of(
-            "realistic",
-            "voxel",
-            "fake-3d-cartoon",
-            "japanese-anime",
-            "cartoon-line-art",
-            "realistic-hand-drawn",
-            "fake-3d-hand-drawn",
-            "oriental-comic-ink"
-        ));
-
-        return artStyleValues.get(curStyleSelection);
-    }
-
-    public void setArtStyle(int newStyleIndex) {
-        artStyleButtons[curStyleSelection].setDisable(false);
-        curStyleSelection = newStyleIndex;
-        artStyleButtons[curStyleSelection].setDisable(true);
+        return ((ArtStyleScene) SceneManager.getInstance().getScene(2)).getArtStyle();
     }
 
     public String getObjectUrl() {
