@@ -81,6 +81,8 @@ public class HelloFX extends Application {
 
     private Stage progressStage;
 
+    private boolean isShowingProgress;
+
     public static void main(String[] args) {
         launch();
     }
@@ -97,6 +99,8 @@ public class HelloFX extends Application {
 
         objectUrl = "";
         thumbnailUrl = "";
+
+        isShowingProgress = false;
 
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
@@ -196,6 +200,17 @@ public class HelloFX extends Application {
 
         progressStage.setX(desiredX);
         progressStage.setY(desiredY);
+
+        // This code prevents the user from opening the main window while a model is being generated.
+        // If they try to unminimize the window, it just minimizes again!
+        // This prevents them from trying tog enerate a new model while one is already being generated
+        stage.iconifiedProperty().addListener((observable, oldValue, newValue) -> {
+            if (isShowingProgress && !newValue) {
+                Platform.runLater(() -> {
+                    stage.setIconified(true);
+                });
+            }
+        });
 
         btnCancelGeneration.setOnAction((ActionEvent event) -> {
             showProgressMinimized(false);
@@ -389,6 +404,8 @@ public class HelloFX extends Application {
             progressStage.hide();
             stage.setAlwaysOnTop(false);
         }
+
+        isShowingProgress = showProgress;
     }
 
     public void logModelPrompt(String objectPrompt) {

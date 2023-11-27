@@ -65,11 +65,9 @@ public class ModelDescriptionScene extends AliceScene {
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Back");
+        Button btnPrev = new Button("Cancel");
         Region region = new Region();
         Button btnNext = new Button("Next");
-
-        btnPrev.setVisible(false);
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
@@ -93,16 +91,20 @@ public class ModelDescriptionScene extends AliceScene {
         Button btnRandomize = new Button("Create a random prompt");
         grid.add(btnRandomize, 2, 1);
 
-        registerButtonActions(btnRandomize, btnNext);
+        registerButtonActions(btnRandomize, btnPrev, btnNext);
     }
 
-    public void registerButtonActions(Button btnRandomize, Button btnNext) {
+    public void registerButtonActions(Button btnRandomize, Button btnPrev, Button btnNext) {
         btnRandomize.setOnAction((ActionEvent actionEvent) -> {
             int i = (int) (Math.random() * promptReader.objectDataList.size());
 
             String objectDescription = promptReader.objectDataList.get(i).getObjectDescription();
             objectPromptInput.setText(objectDescription);
             app.setObjectDescription(objectDescription);
+        });
+
+        btnPrev.setOnAction((ActionEvent event) -> {
+            SceneManager.getInstance().setActiveScene(0);
         });
 
         btnNext.setOnAction((ActionEvent event) -> {
