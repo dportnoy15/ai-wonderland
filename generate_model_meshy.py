@@ -20,6 +20,7 @@ gateway = JavaGateway(
     callback_server_parameters=CallbackServerParameters())
 
 def generate_model(api_key, model_description, style_prompt, art_style, negative_prompt):
+
     print(f"Generating a Meshy.ai model ...", flush=True)
 
     print(f"API Key: {api_key}", flush=True)
@@ -52,6 +53,10 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
     model_created = False
 
     while model_created == False:
+        if gateway.entry_point.getCancelStatus():
+            print("Generation process terminated by user.")
+            gateway.entry_point.setCancelStatus(False)
+            return
 
         response = requests.get(
             f"https://api.meshy.ai/v1/text-to-3d/{task_id}",

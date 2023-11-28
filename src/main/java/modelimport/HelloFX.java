@@ -37,6 +37,8 @@ public class HelloFX extends Application {
 
     private String objectDescription;
     private String textureDescription;
+    private boolean cancelGeneration;
+
 
     /*
      * When should this be read?
@@ -183,8 +185,12 @@ public class HelloFX extends Application {
         elapsedTime.setFill(Color.WHITE);
         centerPane.add(elapsedTime, 0, 2);
 
-        Button btnCancelGeneration = new Button("Back");
-        centerPane.add(btnCancelGeneration, 1, 2);
+        Button btnCancel = new Button("Back");
+        // Temporarily disable back button as main UI doesn't show progress right now
+        //centerPane.add(btnCancel, 1, 2);
+        Button btnStopGen = new Button("Stop");
+        centerPane.add(btnStopGen, 2, 2);
+
         layout.setStyle("-fx-background-color: transparent;");
         centerPane.setStyle("-fx-background-color: transparent;");
 
@@ -212,10 +218,12 @@ public class HelloFX extends Application {
             }
         });
 
-        btnCancelGeneration.setOnAction((ActionEvent event) -> {
+        btnCancel.setOnAction((ActionEvent event) -> {
             showProgressMinimized(false);
-
-            //  Would ideally cancel the model generation, but there's no way to do that in the Meshy API
+        });
+        btnStopGen.setOnAction((ActionEvent event) -> {
+            showProgressMinimized(false);
+            setCancelStatus(true);
         });
     }
 
@@ -360,6 +368,13 @@ public class HelloFX extends Application {
 
     public String getArtStyle() {
         return ((ArtStyleScene) SceneManager.getInstance().getScene(2)).getArtStyle();
+    }
+    public boolean getCancelStatus(){
+        return HelloFX.self.cancelGeneration;
+    }
+
+    public void setCancelStatus(boolean b){
+        HelloFX.self.cancelGeneration = b;
     }
 
     public String getObjectUrl() {
