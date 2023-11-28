@@ -398,6 +398,7 @@ public class HelloFX extends Application {
         if (showProgress) {
             stage.setAlwaysOnTop(true);
             progressStage.show();
+            progress.setProgress(0.0F);
             stage.setIconified(true);
         } else {
             stage.setIconified(false);
