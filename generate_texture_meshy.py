@@ -43,6 +43,10 @@ def generate_texture(api_key, model_url, model_description, style_prompt, art_st
     texture_created = False
 
     while texture_created == False:
+        if gateway.entry_point.getCancelStatus():
+            print("Generation process terminated by user.")
+            gateway.entry_point.setCancelStatus(False)
+            return
 
         response = requests.get(
             f"https://api.meshy.ai/v1/text-to-texture/{task_id}",
