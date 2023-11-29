@@ -89,7 +89,7 @@ public class ModelDescriptionScene extends AliceScene {
         grid.add(objectPromptInput, 1, 1);
 
         Button btnRandomize = new Button("Create a random prompt");
-        grid.add(btnRandomize, 2, 1);
+        //grid.add(btnRandomize, 2, 1);
 
         registerButtonActions(btnRandomize, btnPrev, btnNext);
     }
