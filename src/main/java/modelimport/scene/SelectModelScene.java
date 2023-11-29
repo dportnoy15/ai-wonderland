@@ -96,7 +96,7 @@ public class SelectModelScene extends AliceScene {
         buttons.setAlignment(Pos.CENTER);
         buttons.setPadding(new Insets(20, 50, 0, 50));
 
-        btnImport = new Button("Import into ALice");
+        btnImport = new Button("Import into Alice");
         btnTexture = new Button("Regenerate Texture");
 
         btnImport.setVisible(false);
@@ -125,6 +125,10 @@ public class SelectModelScene extends AliceScene {
             System.out.println("Uploading a model...");
 
             FileChooser filePicker = new FileChooser();
+
+            // limiting to these formats guarantees that the models can be used with Meshy
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("3D Model Files", "*.fbx", "*.obj", "*.stl", "*.gltf", "*.glb");
+            filePicker.getExtensionFilters().add(extFilter);
 
             File file = filePicker.showOpenDialog(stage);
 
