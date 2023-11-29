@@ -185,9 +185,6 @@ public class HelloFX extends Application {
         elapsedTime.setFill(Color.WHITE);
         centerPane.add(elapsedTime, 0, 2);
 
-        Button btnCancel = new Button("Back");
-        // Temporarily disable back button as main UI doesn't show progress right now
-        //centerPane.add(btnCancel, 1, 2);
         Button btnStopGen = new Button("Stop");
         centerPane.add(btnStopGen, 2, 2);
 
@@ -209,7 +206,7 @@ public class HelloFX extends Application {
 
         // This code prevents the user from opening the main window while a model is being generated.
         // If they try to unminimize the window, it just minimizes again!
-        // This prevents them from trying tog enerate a new model while one is already being generated
+        // This prevents them from trying to generate a new model while one is already being generated
         stage.iconifiedProperty().addListener((observable, oldValue, newValue) -> {
             if (isShowingProgress && !newValue) {
                 Platform.runLater(() -> {
@@ -218,9 +215,6 @@ public class HelloFX extends Application {
             }
         });
 
-        btnCancel.setOnAction((ActionEvent event) -> {
-            showProgressMinimized(false);
-        });
         btnStopGen.setOnAction((ActionEvent event) -> {
             showProgressMinimized(false);
             setCancelStatus(true);
@@ -369,11 +363,11 @@ public class HelloFX extends Application {
     public String getArtStyle() {
         return ((ArtStyleScene) SceneManager.getInstance().getScene(2)).getArtStyle();
     }
-    public boolean getCancelStatus(){
+    public boolean getCancelStatus() {
         return HelloFX.self.cancelGeneration;
     }
 
-    public void setCancelStatus(boolean b){
+    public void setCancelStatus(boolean b) {
         HelloFX.self.cancelGeneration = b;
     }
 
