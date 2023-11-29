@@ -23,6 +23,7 @@ import modelimport.Data;
 import modelimport.FileUploader;
 import modelimport.HelloFX;
 import modelimport.SceneManager;
+import modelimport.Utils;
 
 public class SelectModelScene extends AliceScene {
 
@@ -147,6 +148,15 @@ public class SelectModelScene extends AliceScene {
                     String webUrl = "http://app.etc.cmu.edu/ai-wonderland/" + file.getName();
 
                     System.out.println(webUrl);
+
+                    int exitCode = Utils.invokeScript("blender", "--background", "--python", "model/format.py", "--", file.getAbsolutePath());
+
+                    if (exitCode == 0) {
+                        //message = "Model converted successfully";
+                    } else {
+                        //message = "Error converting model: " + exitCode;
+                        return;
+                    }
 
                     AliceModel model = AliceModel.createFromLocalFile("some name", webUrl);
 

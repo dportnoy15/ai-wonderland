@@ -125,7 +125,7 @@ public class HelloFX extends Application {
         try {
             Files.createDirectories(Paths.get(GEN_MODEL_DIR));
         } catch(IOException ioe) {
-            System.out.println("Error: Unable to create " + MODEL_LIB_DIR);
+            System.out.println("Error: Unable to create " + GEN_MODEL_DIR);
             ioe.printStackTrace();
         }
 
@@ -241,14 +241,20 @@ public class HelloFX extends Application {
     public void copyModelFileToLibrary(AliceModel model) {
         String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
         String modelDirName = MODEL_LIB_DIR + "/" + modelName;
-        String modelFilePath = modelDirName + "/model.dae";
-        String textureFilePath = modelDirName + "/Image_0.jpg";
 
         try {
             Files.createDirectories(Paths.get(modelDirName));
 
-            Files.copy(Paths.get("gen-model/model.dae"), Paths.get(modelFilePath));
-            Files.copy(Paths.get("gen-model/Image_0.jpg"), Paths.get(textureFilePath));
+            File folder = new File(GEN_MODEL_DIR);
+            File[] modelFiles = folder.listFiles();
+
+            for (int i = 0; i < modelFiles.length; i++) {
+                String modelFileName = modelFiles[i].getName();
+
+                Files.copy(Paths.get(GEN_MODEL_DIR + "/" + modelFileName), Paths.get(modelDirName + "/" + modelFileName));
+            }
+
+            String modelFilePath = modelDirName + "/model.dae";
 
             model.setLocalPath(modelFilePath);
         } catch(IOException ioe) {
@@ -277,7 +283,7 @@ public class HelloFX extends Application {
         System.out.println("Showing 3D model: " + modelName);
 
         try {
-            Desktop.getDesktop().open(new File("gen-model/" + modelName));
+            Desktop.getDesktop().open(new File(GEN_MODEL_DIR + "/" + modelName));
         } catch(IOException ioe) {
             System.out.println("Error showing model");
             ioe.printStackTrace();
