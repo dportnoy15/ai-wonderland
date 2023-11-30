@@ -116,14 +116,14 @@ public class TextureDescriptionScene extends AliceScene {
                 new BorderWidths(2)))); // Border width);
         grid.add(texturePromptInput, 0, 2);
 
-        Button btnRandomize = new Button("Create a random prompt");
-        btnRandomize.setPrefWidth(120);
-        grid.add(btnRandomize, 1, 2);
-
         ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/random_GIF.gif"));
         randomizeGif.setFitWidth(50);
         randomizeGif.setFitHeight(50);
-        grid.add(randomizeGif, 2, 2);
+
+        Button btnRandomize = new Button("", randomizeGif);
+        btnRandomize.setPrefHeight(50);
+        btnRandomize.setPrefWidth(50);
+        grid.add(btnRandomize, 1, 2);
 
         btnModel = new Button("Generate Model");
         btnTexture = new Button("Regenerate Texture");
