@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -95,6 +96,11 @@ public class ArtStyleScene extends AliceScene {
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
             HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
+            buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+                                                Color.MEDIUMPURPLE, // Border color
+                                                BorderStrokeStyle.SOLID, // Border style
+                                                null, // CornerRadii
+                                                new BorderWidths(2)))); // Border width);
             grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
 
             Popup popup = new Popup();
@@ -102,7 +108,7 @@ public class ArtStyleScene extends AliceScene {
             previewImageView.setFitWidth(400);
             previewImageView.setFitHeight(400);
             Rectangle background = new Rectangle(400, 400);
-            background.setStyle("-fx-fill: lightgray;");
+            background.setStyle("-fx-fill: white;");
             popup.getContent().addAll(background, previewImageView);
             int finalI = i;
             artStyleButtons[i].setOnMouseEntered(event -> {

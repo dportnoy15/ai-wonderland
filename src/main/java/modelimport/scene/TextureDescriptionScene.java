@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -20,6 +21,9 @@ import modelimport.HelloFX;
 import modelimport.PromptIO;
 import modelimport.SceneManager;
 import modelimport.Utils;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class TextureDescriptionScene extends AliceScene {
 
@@ -91,19 +95,35 @@ public class TextureDescriptionScene extends AliceScene {
         /* Start screen customization */
 
         GridPane grid = centerPane;
-        grid.setAlignment(Pos.CENTER);
+        grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.setPadding(new Insets(10, 100, 0, 100));
 
-        Label texturePromptDescription = new Label("Texture Description:");
+        Label texturePromptDescription = new Label("Detail Description:");
+        texturePromptDescription.setFont(Font.font(15));
         grid.add(texturePromptDescription, 0, 1);
 
         texturePromptInput = new TextField();
-        grid.add(texturePromptInput, 1, 1);
+
+        texturePromptInput.setPrefWidth(500);
+        texturePromptInput.setPrefHeight(300);
+        texturePromptInput.setAlignment(Pos.TOP_LEFT);
+        texturePromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+                Color.MEDIUMPURPLE, // Border color
+                BorderStrokeStyle.SOLID, // Border style
+                new CornerRadii(3), // CornerRadii
+                new BorderWidths(2)))); // Border width);
+        grid.add(texturePromptInput, 0, 2);
 
         Button btnRandomize = new Button("Create a random prompt");
-        grid.add(btnRandomize, 2, 1);
+        btnRandomize.setPrefWidth(120);
+        grid.add(btnRandomize, 1, 2);
+
+        ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/random_GIF.gif"));
+        randomizeGif.setFitWidth(50);
+        randomizeGif.setFitHeight(50);
+        grid.add(randomizeGif, 2, 2);
 
         btnModel = new Button("Generate Model");
         btnTexture = new Button("Regenerate Texture");

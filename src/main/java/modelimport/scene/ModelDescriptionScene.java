@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -16,6 +17,7 @@ import modelimport.PromptIO;
 import modelimport.SceneManager;
 
 public class ModelDescriptionScene extends AliceScene {
+    private static final int WORD_LIMIT = 3;
 
     protected String message;
 
@@ -77,16 +79,48 @@ public class ModelDescriptionScene extends AliceScene {
         /* Start screen customization */
 
         GridPane grid = centerPane;
-        grid.setAlignment(Pos.CENTER);
+        grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.setPadding(new Insets(10, 100, 100, 100));
 
-        Label objectPromptDescription = new Label("Model Description:");
+        Label objectPromptDescription = new Label("Item Description:");
+        objectPromptDescription.setFont(Font.font(15));
         grid.add(objectPromptDescription, 0, 1);
 
+        Label wordCountLabel = new Label();
+        wordCountLabel.setFont(Font.font(15));
+        wordCountLabel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                            Color.BLUEVIOLET, // Border color
+                                            new CornerRadii(3),
+                                    null))); // CornerRadii);
+        grid.add(wordCountLabel, 1, 3);
+        wordCountLabel.setPrefWidth(120);
+        wordCountLabel.setText("Word limit:3/3");
+        wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
+
         objectPromptInput = new TextField();
-        grid.add(objectPromptInput, 1, 1);
+        objectPromptInput.setPrefWidth(500);
+        objectPromptInput.setPrefHeight(300);
+        objectPromptInput.setAlignment(Pos.TOP_LEFT);
+        objectPromptInput.setPromptText("eg. A treasure box");
+
+        objectPromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+                Color.MEDIUMPURPLE, // Border color
+                BorderStrokeStyle.SOLID, // Border style
+                new CornerRadii(3), // CornerRadii
+                new BorderWidths(2)))); // Border width);
+
+        objectPromptInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            String[] words = newValue.trim().split("\\s+");
+            // Limit the input to WORD_LIMIT words
+            if (words.length > WORD_LIMIT) {
+                objectPromptInput.setText(oldValue);
+            } else
+            // Update the word count label
+                wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
+        });
+        grid.add(objectPromptInput, 0, 2);
 
         Button btnRandomize = new Button("Create a random prompt");
         //grid.add(btnRandomize, 2, 1);
