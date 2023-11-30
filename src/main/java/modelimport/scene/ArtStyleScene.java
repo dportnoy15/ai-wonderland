@@ -9,9 +9,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import modelimport.HelloFX;
 import modelimport.SceneManager;
@@ -73,6 +77,8 @@ public class ArtStyleScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
+        String imagePath = "src/main/pic/";
+
         artStyleButtons = new Button[ART_STYLE_COUNT];
         artStyleButtons[0] = new Button("Realistic");
         artStyleButtons[1] = new Button("Voxel");
@@ -85,7 +91,29 @@ public class ArtStyleScene extends AliceScene {
 
         for (int i = 0; i < ART_STYLE_COUNT; i++) {
             artStyleButtons[i].setMinSize(200, 50);
-            grid.add(artStyleButtons[i], i % 2 * 5, 5 + i/2 * 3, 2, 2);
+            ImageView imageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
+            imageView.setFitWidth(50);
+            imageView.setFitHeight(50);
+            HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
+            grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
+
+            Popup popup = new Popup();
+            ImageView previewImageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
+            previewImageView.setFitWidth(400);
+            previewImageView.setFitHeight(400);
+            Rectangle background = new Rectangle(400, 400);
+            background.setStyle("-fx-fill: lightgray;");
+            popup.getContent().addAll(background, previewImageView);
+            int finalI = i;
+            artStyleButtons[i].setOnMouseEntered(event -> {
+                // Show the Popup when the button is hovered
+                popup.show(artStyleButtons[finalI], stage.getX() +stage.getWidth(), stage.getY() + 200);
+            });
+
+            artStyleButtons[i].setOnMouseExited(event -> {
+                // Hide the Popup when the mouse is moved away from the button
+                popup.hide();
+            });
         }
 
         registerButtonActions(artStyleButtons, btnPrev, btnNext);
@@ -103,7 +131,6 @@ public class ArtStyleScene extends AliceScene {
                 curStyleSelection = newStyleIndex;
             });
         }
-
         btnPrev.setOnAction((ActionEvent event) -> {
             SceneManager.getInstance().setActiveScene(1);
         });
