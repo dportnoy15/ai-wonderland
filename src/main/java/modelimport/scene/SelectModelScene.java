@@ -164,7 +164,7 @@ public class SelectModelScene extends AliceScene {
 
                     app.addModelToLibrary(model);
                     refreshModelLibrary();
-                } catch (JSchException | SftpException ex) {
+                } catch (Exception ex) {
                     System.out.println("ERROR UPLOADING FILE");
                     ex.printStackTrace();
                 }
