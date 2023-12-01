@@ -35,19 +35,16 @@ public class ArtStyleScene extends AliceScene {
     public void initLayout() {
         BorderPane layout = (BorderPane) getScene().getRoot();
 
-        HBox topPane = new HBox();
         HBox bottomPane = new HBox();
         Pane leftPane = new FlowPane();
         Pane rightPane = new FlowPane();
         GridPane centerPane = new GridPane();
 
-        layout.setTop(topPane);    // Title
         layout.setBottom(bottomPane); // Nav Buttons
         layout.setLeft(leftPane);
         layout.setRight(rightPane);
         layout.setCenter(centerPane); // Main Content
 
-        topPane.setPrefHeight(100);
         bottomPane.setPrefHeight(100);
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
@@ -56,14 +53,29 @@ public class ArtStyleScene extends AliceScene {
 
         Label scenetitle = new Label("Select your art style");
         scenetitle.setFont(uiFont);
-        topPane.setAlignment(Pos.CENTER);
-        topPane.getChildren().add(scenetitle);
+        centerPane.add(scenetitle, 0, 0);
 
         /* Start footer definition */
 
-        Button btnPrev = new Button("Back");
+        ImageView backImg = new ImageView(new Image("file:src/main/pic/PreviousLocation.png"));
+        backImg.setFitWidth(30);
+        backImg.setFitHeight(30);
+        Button btnPrev = new Button("", backImg);
+        btnPrev.setMaxHeight(40);
+        btnPrev.setMaxWidth(40);
+        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.TRANSPARENT, // Border color
+                new CornerRadii(3),
+                null)));
         Region region = new Region();
-        Button btnNext = new Button("Next");
+
+        Button btnNext = new Button("Describe Model");
+        btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.BLUEVIOLET, // Border color
+                new CornerRadii(5),
+                null)));
+        btnNext.setStyle("-fx-text-fill: #FFFFFF;");
+
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
@@ -92,6 +104,11 @@ public class ArtStyleScene extends AliceScene {
 
         for (int i = 0; i < ART_STYLE_COUNT; i++) {
             artStyleButtons[i].setMinSize(200, 50);
+
+            artStyleButtons[i].setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                                            Color.WHITE, // Border color
+                                                            new CornerRadii(3),
+                                                            null)));
             ImageView imageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
@@ -99,7 +116,7 @@ public class ArtStyleScene extends AliceScene {
             buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
                                                 Color.MEDIUMPURPLE, // Border color
                                                 BorderStrokeStyle.SOLID, // Border style
-                                                null, // CornerRadii
+                                                new CornerRadii(5), // CornerRadii
                                                 new BorderWidths(2)))); // Border width);
             grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
 

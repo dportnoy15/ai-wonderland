@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -66,10 +68,24 @@ public class ModelDescriptionScene extends AliceScene {
         topPane.getChildren().add(scenetitle);
 
         /* Start footer definition */
-
-        Button btnPrev = new Button("Cancel");
+        ImageView backImg = new ImageView(new Image("file:src/main/pic/PreviousLocation.png"));
+        backImg.setFitWidth(30);
+        backImg.setFitHeight(30);
+        Button btnPrev = new Button("", backImg);
+        btnPrev.setMaxHeight(40);
+        btnPrev.setMaxWidth(40);
+        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                            Color.TRANSPARENT, // Border color
+                                            new CornerRadii(3),
+                                            null)));
         Region region = new Region();
-        Button btnNext = new Button("Next");
+        Button btnNext = new Button("Add Details");
+        btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                            Color.BLUEVIOLET, // Border color
+                                            new CornerRadii(5),
+                                      null)));
+        btnNext.setStyle("-fx-text-fill: #FFFFFF;");
+
 
         HBox.setHgrow(region, Priority.ALWAYS);
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
@@ -82,7 +98,7 @@ public class ModelDescriptionScene extends AliceScene {
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(10, 100, 100, 100));
+        grid.setPadding(new Insets(10, 100, 0, 100));
 
         Label objectPromptDescription = new Label("Item Description:");
         objectPromptDescription.setFont(Font.font(15));
@@ -94,7 +110,7 @@ public class ModelDescriptionScene extends AliceScene {
                                             Color.BLUEVIOLET, // Border color
                                             new CornerRadii(3),
                                     null))); // CornerRadii);
-        grid.add(wordCountLabel, 1, 3);
+        //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(120);
         wordCountLabel.setText("Word limit:3/3");
         wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
@@ -120,7 +136,13 @@ public class ModelDescriptionScene extends AliceScene {
             // Update the word count label
                 wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
         });
-        grid.add(objectPromptInput, 0, 2);
+        //grid.add(objectPromptInput, 0, 2);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(objectPromptInput, wordCountLabel);
+        stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
+
+        grid.add(stackPane, 0, 2);
 
         Button btnRandomize = new Button("Create a random prompt");
         //grid.add(btnRandomize, 2, 1);
