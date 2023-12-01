@@ -74,6 +74,12 @@ public class TextureDescriptionScene extends AliceScene {
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
 
+
+        Background btnBg = new Background(new javafx.scene.layout.BackgroundFill(
+                Color.BLUEVIOLET, // Border color
+                new CornerRadii(5),
+                null));
+
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
         Label scenetitle = new Label("Texture Description");
@@ -82,15 +88,23 @@ public class TextureDescriptionScene extends AliceScene {
         topPane.getChildren().add(scenetitle);
 
         /* Start footer definition */
+        ImageView backImg = new ImageView(new Image("file:src/main/pic/PreviousLocation.png"));
+        backImg.setFitWidth(30);
+        backImg.setFitHeight(30);
+        Button btnPrev = new Button("", backImg);
+        btnPrev.setMaxHeight(40);
+        btnPrev.setMaxWidth(40);
+        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.TRANSPARENT, // Border color
+                new CornerRadii(3),
+                null)));
 
-        Button btnPrev = new Button("Back");
         Region region = new Region();
         Button btnNext = new Button("Next");
 
         btnNext.setVisible(false);
 
         HBox.setHgrow(region, Priority.ALWAYS);
-        bottomPane.getChildren().addAll(btnPrev, region, btnNext);
         bottomPane.setAlignment(Pos.CENTER);
         bottomPane.setPadding(new Insets(0, 50, 0, 50));
 
@@ -120,13 +134,10 @@ public class TextureDescriptionScene extends AliceScene {
 
         Label wordCountLabel = new Label();
         wordCountLabel.setFont(Font.font(15));
-        wordCountLabel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.BLUEVIOLET, // Border color
-                new CornerRadii(3),
-                null))); // CornerRadii);
+        wordCountLabel.setBackground(btnBg); // CornerRadii);
         //grid.add(wordCountLabel, 1, 3);
-        wordCountLabel.setPrefWidth(120);
-        wordCountLabel.setText("Word limit:3/3");
+        wordCountLabel.setPrefWidth(140);
+        wordCountLabel.setText("Word limit:10/10");
         wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
         texturePromptInput.textProperty().addListener((observable, oldValue, newValue) -> {
             String[] words = newValue.trim().split("\\s+");
@@ -158,14 +169,21 @@ public class TextureDescriptionScene extends AliceScene {
         stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
         grid.add(stackPane, 0, 2);
 
+
         btnModel = new Button("Generate Model");
+        btnModel.setBackground(btnBg);
+        btnModel.setStyle("-fx-text-fill: #FFFFFF;");
+
         btnTexture = new Button("Regenerate Texture");
+        btnTexture.setBackground(btnBg);
+        btnTexture.setStyle("-fx-text-fill: #FFFFFF;");
 
         HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbBtn.setAlignment(Pos.CENTER_RIGHT);
         hbBtn.getChildren().add(btnModel);
         hbBtn.getChildren().add(btnTexture);
-        grid.add(hbBtn, 1, 12, 5, 1);
+
+        bottomPane.getChildren().addAll(btnPrev, region, hbBtn);
 
         registerButtonActions(btnModel, btnTexture, btnRandomize, btnPrev);
     }
