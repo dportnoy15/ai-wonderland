@@ -418,7 +418,7 @@ public class HelloFX extends Application {
         isShowingProgress = showProgress;
     }
 
-    public void logModelPrompt(String objectPrompt) {
+    public void logModelGeneration(String objectPrompt, String texturePrompt) {
         Path path = Paths.get("playtestLog.txt");
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
@@ -427,19 +427,19 @@ public class HelloFX extends Application {
             String day = new SimpleDateFormat("MM/dd/yyyy").format(curTime);
             String time = new SimpleDateFormat("HH:mm").format(curTime);
 
-            String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
-            String label = "Generating new object..." + System.getProperty("line.separator");
-            String objectPromptStr = "Prompt: " + objectPrompt + System.getProperty("line.separator");
+            String header = System.getProperty("line.separator") +  "Generating model on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
+            String objectPromptStr = "Object prompt: " + objectPrompt + System.getProperty("line.separator");
+            String texturePromptStr = "Texture prompt: " + texturePrompt + System.getProperty("line.separator");
 
             writer.write(header);
-            writer.write(label);
             writer.write(objectPromptStr);
+            writer.write(texturePromptStr);
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void logTexturePrompt(String objectPrompt, String texturePrompt) {
+    public void logTextureGeneration(String objectPrompt, String texturePrompt) {
         Path path = Paths.get("playtestLog.txt");
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
@@ -448,13 +448,11 @@ public class HelloFX extends Application {
             String day = new SimpleDateFormat("MM/dd/yyyy").format(curTime);
             String time = new SimpleDateFormat("HH:mm").format(curTime);
 
-            String header = System.getProperty("line.separator") +  "Playtest started on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
-            String label = "Generating texture for existing object..." + System.getProperty("line.separator");
+            String header = System.getProperty("line.separator") +  "Generating texture on " + day + " at " + time + System.getProperty("line.separator") + System.getProperty("line.separator");
             String objectPromptStr = "Object prompt: " + objectPrompt + System.getProperty("line.separator");
             String texturePromptStr = "Texture prompt: " + texturePrompt + System.getProperty("line.separator");
 
             writer.write(header);
-            writer.write(label);
             writer.write(objectPromptStr);
             writer.write(texturePromptStr);
         } catch(Exception e) {

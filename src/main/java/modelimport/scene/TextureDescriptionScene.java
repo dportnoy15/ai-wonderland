@@ -201,7 +201,7 @@ public class TextureDescriptionScene extends AliceScene {
                         String texturePrompt = texturePromptInput.getText();
                         app.setTextureDescription(texturePrompt);
 
-                        //app.logModelPrompt(objectPrompt);
+                        app.logModelGeneration(app.getObjectDescription(), app.getTextureDescription());
 
                         try {
                             app.startTimer();
@@ -290,7 +290,7 @@ public class TextureDescriptionScene extends AliceScene {
                         String texturePrompt = texturePromptInput.getText();
                         app.setTextureDescription(texturePrompt);
 
-                        //app.logTexturePrompt(objectPrompt, texturePrompt);
+                        app.logTextureGeneration(app.getObjectDescription(), app.getTextureDescription());
 
                         try {
                             app.startTimer();
