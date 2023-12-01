@@ -124,7 +124,7 @@ public class TextureDescriptionScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(10, 100, 0, 100));
 
-        Label texturePromptDescription = new Label("Detail Description:");
+        Label texturePromptDescription = new Label("Detailed Description:");
         texturePromptDescription.setFont(Font.font(15));
         grid.add(texturePromptDescription, 0, 1);
 
