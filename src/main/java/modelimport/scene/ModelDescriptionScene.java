@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -143,6 +144,12 @@ public class ModelDescriptionScene extends AliceScene {
             } else
             // Update the word count label
                 wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
+        });
+
+        objectPromptInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnNext.fire();
+            }
         });
         //grid.add(objectPromptInput, 0, 2);
 

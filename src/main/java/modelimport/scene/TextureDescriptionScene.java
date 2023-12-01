@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -149,6 +150,11 @@ public class TextureDescriptionScene extends AliceScene {
                 wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
         });
 
+        texturePromptInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnTexture.fire();
+            }
+        });
 
         ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/random_GIF.gif"));
         randomizeGif.setFitWidth(50);
