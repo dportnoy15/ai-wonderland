@@ -32,6 +32,8 @@ public class ArtStyleScene extends AliceScene {
 
     private GridPane grid;
 
+    private Label scenetitle;
+
     public ArtStyleScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
     }
@@ -44,6 +46,7 @@ public class ArtStyleScene extends AliceScene {
         Pane rightPane = new FlowPane();
         GridPane centerPane = new GridPane();
 
+
         layout.setBottom(bottomPane); // Nav Buttons
         layout.setLeft(leftPane);
         layout.setRight(rightPane);
@@ -55,7 +58,7 @@ public class ArtStyleScene extends AliceScene {
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
-        Label scenetitle = new Label("Select your art style");
+        scenetitle = new Label("Select your art style: Realistic");
         scenetitle.setFont(uiFont);
         centerPane.add(scenetitle, 0, 0);
 
@@ -117,6 +120,8 @@ public class ArtStyleScene extends AliceScene {
                 System.out.println("Selecting art style " + newStyleIndex + " (" + getArtStyle() + "), was " + curStyleSelection);
                 artStyleButtons[curStyleSelection].setDisable(false);
                 artStyleButtons[newStyleIndex].setDisable(true);
+
+                scenetitle.setText("Select your art style: " + artStyleButtons[newStyleIndex].getText());
                 curStyleSelection = newStyleIndex;
             });
         }
