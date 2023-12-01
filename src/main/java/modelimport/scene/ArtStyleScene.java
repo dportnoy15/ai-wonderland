@@ -110,7 +110,9 @@ public class ArtStyleScene extends AliceScene {
             Rectangle background = new Rectangle(400, 400);
             background.setStyle("-fx-fill: white;");
             popup.getContent().addAll(background, previewImageView);
+
             int finalI = i;
+
             artStyleButtons[i].setOnMouseEntered(event -> {
                 // Show the Popup when the button is hovered
                 popup.show(artStyleButtons[finalI], stage.getX() +stage.getWidth(), stage.getY() + 200);
@@ -137,6 +139,7 @@ public class ArtStyleScene extends AliceScene {
                 curStyleSelection = newStyleIndex;
             });
         }
+
         btnPrev.setOnAction((ActionEvent event) -> {
             SceneManager.getInstance().setActiveScene(1);
         });

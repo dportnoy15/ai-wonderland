@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Comparator;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+
 public class Utils {
  
     public static int invokeScript(String... cliArgs) throws InterruptedException, IOException {
@@ -35,6 +41,12 @@ public class Utils {
                     e.printStackTrace();
                 }
             });
+    }
+
+    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
+    public static Background getBackgroundColor(Color c) {
+        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
+        return new Background(backgroundFill);
     }
 
 }

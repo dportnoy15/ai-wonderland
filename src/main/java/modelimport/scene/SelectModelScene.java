@@ -1,22 +1,21 @@
 package modelimport.scene;
 
 import java.io.*;
-import java.util.ArrayList;
 
 import javafx.event.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import com.jcraft.jsch.*;
 
 import modelimport.AliceModel;
 import modelimport.Data;
@@ -28,13 +27,25 @@ import modelimport.Utils;
 public class SelectModelScene extends AliceScene {
 
     private HBox libraryPane;
+    private ListView<AliceModel> libraryView;
+    private ImageView leftArrow, rightArrow;
 
     private Button btnImport, btnTexture;
+
+    private int curModel;
+
+    private int numLocalModels = 0;
 
     public SelectModelScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
 
         libraryPane = null;
+        libraryView = null;
+        leftArrow = null;
+        rightArrow = null;
+
+        curModel = 0;
+        numLocalModels = 0;
     }
 
     public void initLayout() {
@@ -91,8 +102,82 @@ public class SelectModelScene extends AliceScene {
         HBox buttons = new HBox(20);
 
         libraryPane.setAlignment(Pos.CENTER);
-        libraryPane.setPadding(new Insets(0, 50, 0, 50));
+        libraryPane.setPadding(new Insets(0, 0, 0, 0));
         libraryPane.setMinSize(600, 100);
+
+        libraryView = new ListView<>();
+        libraryView.setOrientation(Orientation.HORIZONTAL);
+        HBox.setHgrow(libraryView, Priority.ALWAYS);
+
+        libraryView.setCellFactory(param -> new ListCell<AliceModel>() {
+
+            private ImageView imageView = new ImageView();
+            private Label label = new Label();
+
+            @Override
+            public void updateItem(AliceModel model, boolean empty) {
+                super.updateItem(model, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    if (model.isLocalModel()) {
+                        label.setWrapText(true);
+                        label.setMinWidth(100);
+                        label.setAlignment(Pos.BASELINE_CENTER);
+                        label.setText(model.getName());
+                        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
+                        setGraphic(label);
+                    } else {
+                        imageView.setImage(new Image(model.getThumbnailUrl()));
+                        imageView.setFitHeight(100);
+                        imageView.setFitWidth(100);
+
+                        setGraphic(imageView);
+                    }
+                }
+            }
+        });
+
+        libraryView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                AliceModel selectedModel = libraryView.getSelectionModel().getSelectedItem();
+
+                if (selectedModel == null) {
+                    btnImport.setVisible(false);
+                    btnTexture.setVisible(false);
+
+                    return;
+                }
+
+                btnImport.setVisible(true);
+                btnTexture.setVisible(true);
+
+                app.setActiveModel(selectedModel);
+            }
+        });
+
+        leftArrow = new ImageView(new Image("file:left-arrow.png", 50, 50, true, true));
+        leftArrow.setOnMouseClicked((MouseEvent e) -> {
+            if (curModel > 0) {
+                curModel--;
+            }
+
+            libraryView.scrollTo(curModel);
+        });
+
+        rightArrow = new ImageView(new Image("file:right-arrow.png", 50, 50, true, true));
+        rightArrow.setOnMouseClicked((MouseEvent e) -> {
+            if (curModel < (app.getModels().size() - 1)) {
+                curModel++;
+            }
+
+            libraryView.scrollTo(curModel);
+        });
+
+        libraryPane.getChildren().addAll(leftArrow, libraryView, rightArrow);
 
         buttons.setAlignment(Pos.CENTER);
         buttons.setPadding(new Insets(20, 50, 0, 50));
@@ -158,7 +243,8 @@ public class SelectModelScene extends AliceScene {
                         return;
                     }
 
-                    AliceModel model = AliceModel.createFromLocalFile("some name", webUrl);
+                    numLocalModels++;
+                    AliceModel model = AliceModel.createFromLocalFile("Model " + numLocalModels, webUrl);
 
                     app.copyModelFileToLibrary(model);
 
@@ -190,43 +276,7 @@ public class SelectModelScene extends AliceScene {
     }
 
     public void refreshModelLibrary() {
-        libraryPane.getChildren().clear();
-        libraryPane.getChildren().addAll(generateModelLibraryButtons());
-    }
-
-    public ArrayList<Button> generateModelLibraryButtons() {
-        ArrayList<Button> modelButtons = new ArrayList<>();
-
-        for (int i = 0; i<app.getModels().size(); i++) {
-            AliceModel model = app.getModels().get(i);
-
-            Button btn = new Button("Model " + (i+1));
-            btn.setMinSize(100, 100);
-            btn.setMaxSize(100, 100);
-
-            if (model.isMeshyModel()) {
-                String imageUrl = model.getThumbnailUrl();
-                ImageView background = new ImageView(new Image(imageUrl));
-
-                background.fitWidthProperty().bind(btn.widthProperty());
-                background.fitHeightProperty().bind(btn.heightProperty());
-                background.setPreserveRatio(true);
-
-                btn.setGraphic(background);
-            }
-
-            btn.setOnAction((ActionEvent event) -> {
-                // show the buttons to import the model and regenerate its texture
-
-                btnImport.setVisible(true);
-                btnTexture.setVisible(true);
-
-                app.setActiveModel(model);
-            });
-
-            modelButtons.add(btn);
-        }
-
-        return modelButtons;
+        libraryView.getItems().clear();
+        libraryView.getItems().addAll(app.getModels());
     }
 }
