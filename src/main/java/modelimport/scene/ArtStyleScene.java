@@ -56,11 +56,14 @@ public class ArtStyleScene extends AliceScene {
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
 
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 16);
 
         scenetitle = new Label("Select your art style: Realistic");
         scenetitle.setFont(uiFont);
         centerPane.add(scenetitle, 0, 0);
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(40);
+        centerPane.getColumnConstraints().addAll(col, col);
 
         /* Start footer definition */
 
@@ -182,13 +185,13 @@ public class ArtStyleScene extends AliceScene {
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
             HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
-            buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+            /*buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
                                                 Color.MEDIUMPURPLE, // Border color
                                                 BorderStrokeStyle.SOLID, // Border style
                                                 new CornerRadii(5), // CornerRadii
-                                                new BorderWidths(2)))); // Border width);
+                                                new BorderWidths(2)))); // Border width);*/
             if (i != 1)
-                grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
+                grid.add(buttonWithImage, i % 2, 5 + i / 2 * 3, 2, 2);
 
             Popup popup = new Popup();
             ImageView previewImageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
