@@ -56,7 +56,7 @@ public class ArtStyleScene extends AliceScene {
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
 
-        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 16);
+        Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 14);
 
         scenetitle = new Label("Select your art style: Realistic");
         scenetitle.setFont(uiFont);
