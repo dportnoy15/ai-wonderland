@@ -146,7 +146,7 @@ public class SelectModelScene extends AliceScene {
         HBox buttons = new HBox(20);
 
         libraryPane.setAlignment(Pos.CENTER);
-        libraryPane.setPadding(new Insets(0, 0, 0, 0));
+        libraryPane.setPadding(new Insets(0, 15, 0, 15));
         libraryPane.setMinSize(600, 100);
 
         libraryView = new ListView<>();
