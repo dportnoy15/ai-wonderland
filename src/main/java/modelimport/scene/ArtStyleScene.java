@@ -109,6 +109,10 @@ public class ArtStyleScene extends AliceScene {
                                                             Color.WHITE, // Border color
                                                             new CornerRadii(3),
                                                             null)));
+            int finalI1 = i;
+            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
+            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
+
             ImageView imageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
