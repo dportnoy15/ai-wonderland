@@ -24,6 +24,7 @@ import modelimport.SceneManager;
 public class ArtStyleScene extends AliceScene {
     
     private static final int ART_STYLE_COUNT = 8;
+    private static final String IMAGE_PATH = "src/main/pic";
 
     Button[] artStyleButtons;
     private int curStyleSelection;
@@ -90,8 +91,6 @@ public class ArtStyleScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        String imagePath = "src/main/pic/";
-
         artStyleButtons = new Button[ART_STYLE_COUNT];
         artStyleButtons[0] = new Button("Realistic");
         artStyleButtons[1] = new Button("Voxel");
@@ -113,7 +112,7 @@ public class ArtStyleScene extends AliceScene {
             artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
             artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
 
-            ImageView imageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
+            ImageView imageView = new ImageView(new Image("file:" + IMAGE_PATH + "/model_style_" + i + ".png"));
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
             HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
@@ -126,7 +125,7 @@ public class ArtStyleScene extends AliceScene {
                 grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
 
             Popup popup = new Popup();
-            ImageView previewImageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
+            ImageView previewImageView = new ImageView(new Image("file:" + IMAGE_PATH + "/model_style_" + i + ".png"));
             previewImageView.setFitWidth(400);
             previewImageView.setFitHeight(400);
             Rectangle background = new Rectangle(400, 400);
