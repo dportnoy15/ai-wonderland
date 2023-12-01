@@ -82,7 +82,7 @@ public class ModelDescriptionScene extends AliceScene {
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(10, 100, 100, 100));
+        grid.setPadding(new Insets(10, 100, 0, 100));
 
         Label objectPromptDescription = new Label("Item Description:");
         objectPromptDescription.setFont(Font.font(15));
@@ -94,7 +94,7 @@ public class ModelDescriptionScene extends AliceScene {
                                             Color.BLUEVIOLET, // Border color
                                             new CornerRadii(3),
                                     null))); // CornerRadii);
-        grid.add(wordCountLabel, 1, 3);
+        //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(120);
         wordCountLabel.setText("Word limit:3/3");
         wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
@@ -120,7 +120,13 @@ public class ModelDescriptionScene extends AliceScene {
             // Update the word count label
                 wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
         });
-        grid.add(objectPromptInput, 0, 2);
+        //grid.add(objectPromptInput, 0, 2);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(objectPromptInput, wordCountLabel);
+        stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
+
+        grid.add(stackPane, 0, 2);
 
         Button btnRandomize = new Button("Create a random prompt");
         //grid.add(btnRandomize, 2, 1);

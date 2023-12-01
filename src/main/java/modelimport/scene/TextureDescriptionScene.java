@@ -27,6 +27,8 @@ import javafx.scene.image.ImageView;
 
 public class TextureDescriptionScene extends AliceScene {
 
+    private static final int WORD_LIMIT = 10;
+
     protected String message;
 
     protected Thread bgThread;
@@ -114,16 +116,47 @@ public class TextureDescriptionScene extends AliceScene {
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(3), // CornerRadii
                 new BorderWidths(2)))); // Border width);
-        grid.add(texturePromptInput, 0, 2);
+        //grid.add(texturePromptInput, 0, 2);
+
+        Label wordCountLabel = new Label();
+        wordCountLabel.setFont(Font.font(15));
+        wordCountLabel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.BLUEVIOLET, // Border color
+                new CornerRadii(3),
+                null))); // CornerRadii);
+        //grid.add(wordCountLabel, 1, 3);
+        wordCountLabel.setPrefWidth(120);
+        wordCountLabel.setText("Word limit:3/3");
+        wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
+        texturePromptInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            String[] words = newValue.trim().split("\\s+");
+            // Limit the input to WORD_LIMIT words
+            if (words.length > WORD_LIMIT) {
+                texturePromptInput.setText(oldValue);
+            } else
+                // Update the word count label
+                wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
+        });
+
 
         ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/random_GIF.gif"));
         randomizeGif.setFitWidth(50);
         randomizeGif.setFitHeight(50);
 
         Button btnRandomize = new Button("", randomizeGif);
-        btnRandomize.setPrefHeight(50);
-        btnRandomize.setPrefWidth(50);
-        grid.add(btnRandomize, 1, 2);
+        btnRandomize.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                                Color.BLUEVIOLET, // Border color
+                                                new CornerRadii(3),
+                                                null)));
+        btnRandomize.setMaxHeight(50);
+        btnRandomize.setMaxWidth(50);
+        //grid.add(btnRandomize, 1, 2);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(texturePromptInput, btnRandomize, wordCountLabel);
+        stackPane.setAlignment(btnRandomize, Pos.TOP_RIGHT);
+        stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
+        grid.add(stackPane, 0, 2);
 
         btnModel = new Button("Generate Model");
         btnTexture = new Button("Regenerate Texture");
