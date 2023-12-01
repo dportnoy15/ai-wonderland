@@ -1,5 +1,7 @@
 package modelimport.scene;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -15,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import modelimport.FilterIO;
 import modelimport.HelloFX;
 import modelimport.PromptIO;
@@ -129,6 +132,7 @@ public class ModelDescriptionScene extends AliceScene {
         objectPromptInput.setPrefHeight(300);
         objectPromptInput.setAlignment(Pos.TOP_LEFT);
         objectPromptInput.setPromptText("eg. A treasure box");
+        objectPromptInput.setStyle("-fx-font-size: 20;");
 
         objectPromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
                 Color.MEDIUMPURPLE, // Border color

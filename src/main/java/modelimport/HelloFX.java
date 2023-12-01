@@ -7,12 +7,15 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -20,6 +23,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javafx.util.Duration;
 import py4j.GatewayServer;
 
 import modelimport.scene.SelectModelScene;
@@ -168,7 +172,7 @@ public class HelloFX extends Application {
         centerPane.setAlignment(Pos.CENTER);
         centerPane.setHgap(5);
         centerPane.setVgap(5);
-        centerPane.setPadding(new Insets(10,10,10,10));
+        centerPane.setPadding(new Insets(10, 10, 10, 10));
         layout.setCenter(centerPane);
 
         progress = new ProgressBar();

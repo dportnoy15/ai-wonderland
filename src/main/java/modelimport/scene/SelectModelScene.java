@@ -2,6 +2,8 @@ package modelimport.scene;
 
 import java.io.*;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import modelimport.AliceModel;
 import modelimport.Data;
 import modelimport.FileUploader;
@@ -36,6 +39,9 @@ public class SelectModelScene extends AliceScene {
     private int curModel;
 
     private int numLocalModels = 0;
+
+    private ImageView randomizeGif;
+    private ImageView uploadGif;
 
     public SelectModelScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
@@ -84,7 +90,8 @@ public class SelectModelScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
+        randomizeGif = new ImageView(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
+        //randomizeGif = new ImageView(new Image("file:src/main/pic/Generate.png"));
         randomizeGif.setFitWidth(130);
         randomizeGif.setFitHeight(130);
         Button btnGenerateModel = new Button();
@@ -111,7 +118,8 @@ public class SelectModelScene extends AliceScene {
         genModelStack.setAlignment(buttonText, Pos.BOTTOM_CENTER);
         genModelStack.setMinSize(200, 150);
 
-        ImageView uploadGif = new ImageView(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
+        //uploadGif = new ImageView(new Image("file:src/main/pic/Upload.png"));
+        uploadGif = new ImageView(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
         uploadGif.setFitWidth(130);
         uploadGif.setFitHeight(130);
         Button btnUploadModel = new Button();
@@ -239,6 +247,25 @@ public class SelectModelScene extends AliceScene {
         refreshModelLibrary();
 
         registerButtonActions(btnGenerateModel, btnUploadModel, btnImport, btnTexture);
+    }
+
+    private void playAndStopAnimation(int button, Duration stopTime) {
+        Timeline timeline;
+        if (button == 1){
+            randomizeGif.setImage(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
+            timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                // Load the new image
+                randomizeGif.setImage(new Image("file:src/main/pic/Generate.png"));
+            }));
+        }
+        else {
+            uploadGif.setImage(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
+            timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                // Load the new image
+                uploadGif.setImage(new Image("file:src/main/pic/Upload.png"));
+            }));
+        }
+        timeline.play();
     }
 
     public void registerButtonActions(Button btnGenerateModel, Button btnUploadModel, Button btnImport, Button btnTexture) {

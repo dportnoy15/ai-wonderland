@@ -3,6 +3,8 @@ package modelimport.scene;
 import java.io.File;
 import java.io.IOException;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -17,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import modelimport.AliceModel;
 import modelimport.HelloFX;
 import modelimport.PromptIO;
@@ -25,6 +28,7 @@ import modelimport.Utils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.animation.Timeline;
 
 public class TextureDescriptionScene extends AliceScene {
 
@@ -37,9 +41,13 @@ public class TextureDescriptionScene extends AliceScene {
 
     private PromptIO promptReader;
 
+    private Timeline gifAnimation;
+
     private TextField texturePromptInput;
 
     private Button btnModel, btnTexture;
+
+    private ImageView randomizeGif;
 
     public TextureDescriptionScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
@@ -70,7 +78,6 @@ public class TextureDescriptionScene extends AliceScene {
         bottomPane.setPrefHeight(100);
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
-
 
         Background btnBg = new Background(new javafx.scene.layout.BackgroundFill(
                 Color.BLUEVIOLET, // Border color
@@ -113,7 +120,7 @@ public class TextureDescriptionScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(10, 100, 0, 100));
 
-        Label texturePromptDescription = new Label("Detail Description:");
+        Label texturePromptDescription = new Label("Detailed Description:");
         texturePromptDescription.setFont(Font.font(15));
         grid.add(texturePromptDescription, 0, 1);
 
@@ -127,6 +134,7 @@ public class TextureDescriptionScene extends AliceScene {
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(3), // CornerRadii
                 new BorderWidths(2)))); // Border width);
+        texturePromptInput.setStyle("-fx-font-size: 16;");
         //grid.add(texturePromptInput, 0, 2);
 
         Label wordCountLabel = new Label();
@@ -152,9 +160,12 @@ public class TextureDescriptionScene extends AliceScene {
             }
         });
 
-        ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/random_GIF.gif"));
+        randomizeGif = new ImageView(new Image("file:src/main/pic/dice.png"));
         randomizeGif.setFitWidth(50);
         randomizeGif.setFitHeight(50);
+
+        gifAnimation = new Timeline(new KeyFrame(Duration.ZERO, event -> randomizeGif.setVisible(true)),
+                                    new KeyFrame(Duration.seconds(3))); // Adjust the duration to match the GIF duration
 
         Button btnRandomize = new Button("", randomizeGif);
         btnRandomize.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
@@ -183,6 +194,15 @@ public class TextureDescriptionScene extends AliceScene {
         bottomPane.getChildren().addAll(btnPrev, region, btnModel, btnTexture);
 
         registerButtonActions(btnModel, btnTexture, btnRandomize, btnPrev);
+    }
+
+    private void playAndStopAnimation(Duration stopTime) {
+        randomizeGif.setImage(new Image("file:src/main/pic/random_GIF.gif"));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            // Load the new image
+            randomizeGif.setImage(new Image("file:src/main/pic/dice.png"));
+        }));
+        timeline.play();
     }
 
     public void registerButtonActions(Button btnModel, Button btnTexture, Button btnRandomize, Button btnPrev) {
@@ -356,6 +376,8 @@ public class TextureDescriptionScene extends AliceScene {
         });
 
         btnRandomize.setOnAction((ActionEvent actionEvent) -> {
+            playAndStopAnimation(Duration.seconds(1));
+
             int i = (int) (Math.random() * promptReader.objectDataList.size());
 
             String textureDescription = promptReader.objectDataList.get(i).getTextureDescription();
