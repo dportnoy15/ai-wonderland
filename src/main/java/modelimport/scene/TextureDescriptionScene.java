@@ -178,12 +178,7 @@ public class TextureDescriptionScene extends AliceScene {
         btnTexture.setBackground(btnBg);
         btnTexture.setStyle("-fx-text-fill: #FFFFFF;");
 
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.CENTER_RIGHT);
-        hbBtn.getChildren().add(btnModel);
-        hbBtn.getChildren().add(btnTexture);
-
-        bottomPane.getChildren().addAll(btnPrev, region, hbBtn);
+        bottomPane.getChildren().addAll(btnPrev, region, btnModel, btnTexture);
 
         registerButtonActions(btnModel, btnTexture, btnRandomize, btnPrev);
     }
@@ -398,6 +393,9 @@ public class TextureDescriptionScene extends AliceScene {
         genNewModel = genNew;
 
         btnModel.setVisible(genNew);
+        btnModel.setManaged(genNew);
+
         btnTexture.setVisible(!genNew);
+        btnTexture.setManaged(!genNew);
     }
 }
