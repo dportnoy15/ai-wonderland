@@ -233,9 +233,6 @@ public class TextureDescriptionScene extends AliceScene {
                             app.addModelToLibrary(model);
                             ((SelectModelScene) SceneManager.getInstance().getScene(0)).refreshModelLibrary();
 
-                            // enable regenerating textures for the current model
-                            btnTexture.setDisable(false);
-
                             Platform.runLater(() -> {
                                 app.showProgressMinimized(false);
 
