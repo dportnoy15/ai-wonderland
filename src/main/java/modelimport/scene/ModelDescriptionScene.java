@@ -129,6 +129,7 @@ public class ModelDescriptionScene extends AliceScene {
         objectPromptInput.setPrefHeight(300);
         objectPromptInput.setAlignment(Pos.TOP_LEFT);
         objectPromptInput.setPromptText("eg. A treasure box");
+        objectPromptInput.setStyle("-fx-font-size: 20;");
 
         objectPromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
                 Color.MEDIUMPURPLE, // Border color
