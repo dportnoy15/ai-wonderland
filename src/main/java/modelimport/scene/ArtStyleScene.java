@@ -118,7 +118,8 @@ public class ArtStyleScene extends AliceScene {
                                                 BorderStrokeStyle.SOLID, // Border style
                                                 new CornerRadii(5), // CornerRadii
                                                 new BorderWidths(2)))); // Border width);
-            grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
+            if (i != 1)
+                grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
 
             Popup popup = new Popup();
             ImageView previewImageView = new ImageView(new Image("file:" + imagePath + i + ".png"));
