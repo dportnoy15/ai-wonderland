@@ -360,12 +360,6 @@ public class HelloFX extends Application {
         }
     }
 
-    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
-    private Background getBackgroundColor(Color c) {
-        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
-        return new Background(backgroundFill);
-    }
-
     public String getArtStyle() {
         return ((ArtStyleScene) SceneManager.getInstance().getScene(2)).getArtStyle();
     }
