@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.Scene;
@@ -72,16 +73,59 @@ public class SelectModelScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Button btnGenerateModel = new Button("Generate New Model");
-        btnGenerateModel.setMinSize(150, 100);
+        ImageView randomizeGif = new ImageView(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
+        randomizeGif.setFitWidth(130);
+        randomizeGif.setFitHeight(130);
+        Button btnGenerateModel = new Button();
+        btnGenerateModel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.TRANSPARENT, // Border color
+                new CornerRadii(3),
+                null)));
+        btnGenerateModel.setMinSize(200, 150);
 
-        Button btnUploadModel = new Button("Upload Local Model");
-        btnUploadModel.setMinSize(150, 100);
+        Label buttonText = new Label("Generate New Model");
+        buttonText.setFont(Font.font(15));
+        buttonText.setMinSize(150, 20);
+        buttonText.setStyle("-fx-text-fill: #FFFFFF;");
+
+        Background blkBg = new Background(new javafx.scene.layout.BackgroundFill(
+                Color.BLACK, // Border color
+                new CornerRadii(10),
+                null));
+
+        StackPane genModelStack = new StackPane();
+        genModelStack.setBackground(blkBg);
+        genModelStack.getChildren().addAll(randomizeGif, buttonText, btnGenerateModel);
+        genModelStack.setAlignment(randomizeGif, Pos.TOP_CENTER);
+        genModelStack.setAlignment(buttonText, Pos.BOTTOM_CENTER);
+        genModelStack.setMinSize(200, 150);
+
+        ImageView uploadGif = new ImageView(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
+        uploadGif.setFitWidth(130);
+        uploadGif.setFitHeight(130);
+        Button btnUploadModel = new Button();
+        btnUploadModel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                Color.TRANSPARENT, // Border color
+                new CornerRadii(3),
+                null)));
+        btnUploadModel.setMinSize(200, 150);
+
+        Label uploadText = new Label("Upload Local Model");
+        uploadText.setFont(Font.font(15));
+        uploadText.setMinSize(150, 20);
+        uploadText.setStyle("-fx-text-fill: #FFFFFF;");
+
+        StackPane uploadStack = new StackPane();
+        uploadStack.setBackground(blkBg);
+        uploadStack.getChildren().addAll(uploadGif, uploadText, btnUploadModel);
+        uploadStack.setAlignment(uploadGif, Pos.TOP_CENTER);
+        uploadStack.setAlignment(uploadText, Pos.BOTTOM_CENTER);
+        uploadStack.setMinSize(200, 150);
 
         HBox hbBtn = new HBox(200);
         hbBtn.setAlignment(Pos.TOP_CENTER);
-        hbBtn.getChildren().add(btnGenerateModel);
-        hbBtn.getChildren().add(btnUploadModel);
+        hbBtn.getChildren().add(genModelStack);
+        hbBtn.getChildren().add(uploadStack);
         grid.add(hbBtn, 1, 0, 5, 1);
 
         /* Start footer definition */
