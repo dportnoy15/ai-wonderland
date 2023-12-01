@@ -274,6 +274,7 @@ public class SelectModelScene extends AliceScene {
 
             SceneManager.getInstance().getScene(1).clearFields();
             SceneManager.getInstance().getScene(3).clearFields();
+            ((ArtStyleScene) SceneManager.getInstance().getScene(2)).generateNewModel(true);
             ((TextureDescriptionScene) SceneManager.getInstance().getScene(3)).generateNewModel(true);
             SceneManager.getInstance().setActiveScene(1);
         });
@@ -341,6 +342,7 @@ public class SelectModelScene extends AliceScene {
 
             SceneManager.getInstance().getScene(1).clearFields();
             SceneManager.getInstance().getScene(3).clearFields();
+            ((ArtStyleScene) SceneManager.getInstance().getScene(2)).generateNewModel(false);
             ((TextureDescriptionScene) SceneManager.getInstance().getScene(3)).generateNewModel(false);
             SceneManager.getInstance().setActiveScene(1);
         });

@@ -49,16 +49,12 @@ public class TextureDescriptionScene extends AliceScene {
 
     private ImageView randomizeGif;
 
-    private boolean genNewModel; // will regenerate the texture if set to false
-    
     public TextureDescriptionScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
 
         message = "";
         bgThread = null;
         pythonTask = null;
-
-        genNewModel = true;
 
         promptReader = new PromptIO();
     }
@@ -415,8 +411,6 @@ public class TextureDescriptionScene extends AliceScene {
     }
 
     public void generateNewModel(boolean genNew) {
-        genNewModel = genNew;
-
         btnModel.setVisible(genNew);
         btnModel.setManaged(genNew);
 

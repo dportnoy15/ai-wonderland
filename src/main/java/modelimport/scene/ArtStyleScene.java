@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -28,6 +29,8 @@ public class ArtStyleScene extends AliceScene {
 
     Button[] artStyleButtons;
     private int curStyleSelection;
+
+    private GridPane grid;
 
     public ArtStyleScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
@@ -85,7 +88,7 @@ public class ArtStyleScene extends AliceScene {
 
         /* Start screen customization */
 
-        GridPane grid = centerPane;
+        grid = centerPane;
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -100,50 +103,6 @@ public class ArtStyleScene extends AliceScene {
         artStyleButtons[5] = new Button("Realistic Hand-drawn");
         artStyleButtons[6] = new Button("2.5D Hand-drawn");
         artStyleButtons[7] = new Button("Oriental Comic Ink");
-
-        for (int i = 0; i < ART_STYLE_COUNT; i++) {
-            artStyleButtons[i].setMinSize(200, 50);
-
-            artStyleButtons[i].setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                                            Color.WHITE, // Border color
-                                                            new CornerRadii(3),
-                                                            null)));
-            int finalI1 = i;
-            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
-            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
-
-            ImageView imageView = new ImageView(new Image("file:" + IMAGE_PATH + "/model_style_" + i + ".png"));
-            imageView.setFitWidth(50);
-            imageView.setFitHeight(50);
-            HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
-            buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
-                                                Color.MEDIUMPURPLE, // Border color
-                                                BorderStrokeStyle.SOLID, // Border style
-                                                new CornerRadii(5), // CornerRadii
-                                                new BorderWidths(2)))); // Border width);
-            if (i != 1)
-                grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
-
-            Popup popup = new Popup();
-            ImageView previewImageView = new ImageView(new Image("file:" + IMAGE_PATH + "/model_style_" + i + ".png"));
-            previewImageView.setFitWidth(400);
-            previewImageView.setFitHeight(400);
-            Rectangle background = new Rectangle(400, 400);
-            background.setStyle("-fx-fill: white;");
-            popup.getContent().addAll(background, previewImageView);
-
-            int finalI = i;
-
-            artStyleButtons[i].setOnMouseEntered(event -> {
-                // Show the Popup when the button is hovered
-                popup.show(artStyleButtons[finalI], stage.getX() +stage.getWidth(), stage.getY() + 200);
-            });
-
-            artStyleButtons[i].setOnMouseExited(event -> {
-                // Hide the Popup when the mouse is moved away from the button
-                popup.hide();
-            });
-        }
 
         registerButtonActions(artStyleButtons, btnPrev, btnNext);
 
@@ -188,5 +147,63 @@ public class ArtStyleScene extends AliceScene {
         ));
 
         return artStyleValues.get(curStyleSelection);
+    }
+
+    public void generateNewModel(boolean genNew) {
+        generateArtStyleButtons(genNew);
+    }
+
+    private void generateArtStyleButtons(boolean genNewModel) {
+        Node title = grid.getChildren().get(0);
+
+        grid.getChildren().clear();
+
+        grid.add(title, 0, 0);
+
+        String filenamePrefix = genNewModel ? "model_style_" : "texture_style_";
+
+        for (int i = 0; i < ART_STYLE_COUNT; i++) {
+            artStyleButtons[i].setMinSize(200, 50);
+
+            artStyleButtons[i].setBackground(new Background(new javafx.scene.layout.BackgroundFill(
+                                                            Color.WHITE, // Border color
+                                                            new CornerRadii(3),
+                                                            null)));
+            int finalI1 = i;
+            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
+            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
+
+            ImageView imageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
+            imageView.setFitWidth(50);
+            imageView.setFitHeight(50);
+            HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
+            buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+                                                Color.MEDIUMPURPLE, // Border color
+                                                BorderStrokeStyle.SOLID, // Border style
+                                                new CornerRadii(5), // CornerRadii
+                                                new BorderWidths(2)))); // Border width);
+            if (i != 1)
+                grid.add(buttonWithImage, i % 2 * 5, 5 + i / 2 * 3, 2, 2);
+
+            Popup popup = new Popup();
+            ImageView previewImageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
+            previewImageView.setFitWidth(400);
+            previewImageView.setFitHeight(400);
+            Rectangle background = new Rectangle(400, 400);
+            background.setStyle("-fx-fill: white;");
+            popup.getContent().addAll(background, previewImageView);
+
+            int finalI = i;
+
+            artStyleButtons[i].setOnMouseEntered(event -> {
+                // Show the Popup when the button is hovered
+                popup.show(artStyleButtons[finalI], stage.getX() +stage.getWidth(), stage.getY() + 200);
+            });
+
+            artStyleButtons[i].setOnMouseExited(event -> {
+                // Hide the Popup when the mouse is moved away from the button
+                popup.hide();
+            });
+        }
     }
 }
