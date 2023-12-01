@@ -156,7 +156,8 @@ public class ArtStyleScene extends AliceScene {
             int newStyleIndex = i;
             artStyleButtons[i].setOnAction((ActionEvent actionEvent) -> {
                 System.out.println("Selecting art style " + newStyleIndex + " (" + getArtStyle() + "), was " + curStyleSelection);
-
+                artStyleButtons[curStyleSelection].setDisable(false);
+                artStyleButtons[newStyleIndex].setDisable(true);
                 curStyleSelection = newStyleIndex;
             });
         }
