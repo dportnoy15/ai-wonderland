@@ -5,7 +5,7 @@ package modelimport;
 public class Data {
 
     public static String getApiKey() {
-        return "";
+        return "msy_GoGu6a5H00BUfa3So3alc6l9BqwvNqNq309n";
     }
 
     public static String getUsername() {

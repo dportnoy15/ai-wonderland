@@ -14,12 +14,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import modelimport.FilterIO;
 import modelimport.HelloFX;
 import modelimport.PromptIO;
 import modelimport.SceneManager;
 
+import java.util.regex.Pattern;
+
 public class ModelDescriptionScene extends AliceScene {
     private static final int WORD_LIMIT = 3;
+
+    private FilterIO languageFilter;
 
     protected String message;
 
@@ -29,6 +34,8 @@ public class ModelDescriptionScene extends AliceScene {
     private PromptIO promptReader;
 
     private TextField objectPromptInput;
+
+    private Label improperWarning;
     
     public ModelDescriptionScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
@@ -38,6 +45,7 @@ public class ModelDescriptionScene extends AliceScene {
         pythonTask = null;
 
         promptReader = new PromptIO();
+        languageFilter = new FilterIO();
     }
 
     public void initLayout() {
@@ -144,6 +152,12 @@ public class ModelDescriptionScene extends AliceScene {
 
         grid.add(stackPane, 0, 2);
 
+        improperWarning = new Label("Improper word is detected and deleted!");
+        improperWarning.setFont(Font.font(25));
+        improperWarning.setStyle("-fx-text-fill: #FF0000;");
+        grid.add(improperWarning, 0, 3);
+        improperWarning.setVisible(false);
+
         Button btnRandomize = new Button("Create a random prompt");
         //grid.add(btnRandomize, 2, 1);
 
@@ -160,11 +174,26 @@ public class ModelDescriptionScene extends AliceScene {
         });
 
         btnPrev.setOnAction((ActionEvent event) -> {
+            improperWarning.setVisible(false);
             SceneManager.getInstance().setActiveScene(0);
         });
 
         btnNext.setOnAction((ActionEvent event) -> {
             String objectPrompt = objectPromptInput.getText();
+            boolean isFiltered = false;
+            for (String word : languageFilter.wordList) {
+                String replacedPrompt = objectPrompt.replaceAll(Pattern.compile(word, Pattern.CASE_INSENSITIVE).pattern(), "");
+                if (!replacedPrompt.equals(objectPrompt)){
+                    isFiltered = true;
+                    objectPromptInput.setText(replacedPrompt);
+                }
+            }
+            // Before going to the next page, detect if there exists improper words, if so, delete them and display a warning instead.
+            if (isFiltered){
+                improperWarning.setVisible(true);
+                return;
+            }
+            improperWarning.setVisible(false);
             app.setObjectDescription(objectPrompt);
 
             SceneManager.getInstance().setActiveScene(2);
