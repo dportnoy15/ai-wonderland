@@ -82,8 +82,11 @@ public class ArtStyleScene extends AliceScene {
         Button btnNext = new Button("Describe Model");
         btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
                 Color.BLUEVIOLET, // Border color
-                new CornerRadii(5),
+                new CornerRadii(10),
                 null)));
+
+        btnNext.setMinWidth(120);
+        btnNext.setMinHeight(30);
         btnNext.setStyle("-fx-text-fill: #FFFFFF;");
 
 

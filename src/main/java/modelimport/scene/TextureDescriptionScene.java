@@ -81,7 +81,7 @@ public class TextureDescriptionScene extends AliceScene {
 
         Background btnBg = new Background(new javafx.scene.layout.BackgroundFill(
                 Color.BLUEVIOLET, // Border color
-                new CornerRadii(5),
+                new CornerRadii(10),
                 null));
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
@@ -185,6 +185,9 @@ public class TextureDescriptionScene extends AliceScene {
 
         btnModel = new Button("Generate Model");
         btnModel.setBackground(btnBg);
+
+        btnModel.setMinWidth(120);
+        btnModel.setMinHeight(30);
         btnModel.setStyle("-fx-text-fill: #FFFFFF;");
 
         btnTexture = new Button("Regenerate Texture");
