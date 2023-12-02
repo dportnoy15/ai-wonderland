@@ -124,7 +124,7 @@ public class ModelDescriptionScene extends AliceScene {
                                     null))); // CornerRadii);
         //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(120);
-        wordCountLabel.setText("Word limit:3/3");
+        wordCountLabel.setText("Word limit:0/3");
         wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
 
         objectPromptInput = new TextField();
@@ -147,7 +147,7 @@ public class ModelDescriptionScene extends AliceScene {
                 objectPromptInput.setText(oldValue);
             } else
             // Update the word count label
-                wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
+                wordCountLabel.setText("Word limit:" + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
         });
 
         objectPromptInput.setOnKeyPressed(event -> {

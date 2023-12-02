@@ -142,7 +142,7 @@ public class TextureDescriptionScene extends AliceScene {
         wordCountLabel.setBackground(btnBg); // CornerRadii);
         //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(140);
-        wordCountLabel.setText("Word limit:10/10");
+        wordCountLabel.setText("Word limit:0/10");
         wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
         texturePromptInput.textProperty().addListener((observable, oldValue, newValue) -> {
             String[] words = newValue.trim().split("\\s+");
@@ -151,7 +151,7 @@ public class TextureDescriptionScene extends AliceScene {
                 texturePromptInput.setText(oldValue);
             } else
                 // Update the word count label
-                wordCountLabel.setText("Word limit:" + (WORD_LIMIT - words.length) + "/" + WORD_LIMIT);
+                wordCountLabel.setText("Word limit:" + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
         });
 
         texturePromptInput.setOnKeyPressed(event -> {
