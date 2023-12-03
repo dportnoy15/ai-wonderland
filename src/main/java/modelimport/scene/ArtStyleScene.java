@@ -23,8 +23,7 @@ import modelimport.HelloFX;
 import modelimport.SceneManager;
 
 public class ArtStyleScene extends AliceScene {
-    
-    private static final int ART_STYLE_COUNT = 8;
+
     private static final String IMAGE_PATH = "src/main/pic";
 
     Button[] artStyleButtons;
@@ -103,15 +102,15 @@ public class ArtStyleScene extends AliceScene {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        artStyleButtons = new Button[ART_STYLE_COUNT];
-        artStyleButtons[0] = new Button("Realistic");
-        artStyleButtons[1] = new Button("Voxel");
-        artStyleButtons[2] = new Button("2.5D Cartoon");
-        artStyleButtons[3] = new Button("Japanese Anime");
-        artStyleButtons[4] = new Button("Cartoon Line Art");
-        artStyleButtons[5] = new Button("Realistic Hand-drawn");
-        artStyleButtons[6] = new Button("2.5D Hand-drawn");
-        artStyleButtons[7] = new Button("Oriental Comic Ink");
+        artStyleButtons = new Button[] {
+            new Button("Realistic"),
+            new Button("2.5D Cartoon"),
+            new Button("Japanese Anime"),
+            new Button("Cartoon Line Art"),
+            new Button("Realistic Hand-drawn"),
+            new Button("2.5D Hand-drawn"),
+            new Button("Oriental Comic Ink")
+        };
 
         registerButtonActions(artStyleButtons, btnPrev, btnNext);
 
@@ -120,7 +119,7 @@ public class ArtStyleScene extends AliceScene {
     }
 
     public void registerButtonActions(Button[] artStyleButtons, Button btnPrev, Button btnNext) {
-        for (int i = 0; i < ART_STYLE_COUNT; i++) {
+        for (int i = 0; i < artStyleButtons.length; i++) {
             int newStyleIndex = i;
             artStyleButtons[i].setOnAction((ActionEvent actionEvent) -> {
                 System.out.println("Selecting art style " + newStyleIndex + " (" + getArtStyle() + "), was " + curStyleSelection);
@@ -148,7 +147,6 @@ public class ArtStyleScene extends AliceScene {
     public String getArtStyle() {
         ArrayList<String> artStyleValues = new ArrayList<>(List.of(
             "realistic",
-            "voxel",
             "fake-3d-cartoon",
             "japanese-anime",
             "cartoon-line-art",
@@ -173,16 +171,16 @@ public class ArtStyleScene extends AliceScene {
 
         String filenamePrefix = genNewModel ? "model_style_" : "texture_style_";
 
-        for (int i = 0; i < ART_STYLE_COUNT; i++) {
+        for (int i = 0; i < artStyleButtons.length; i++) {
             artStyleButtons[i].setMinSize(200, 50);
 
             artStyleButtons[i].setBackground(new Background(new javafx.scene.layout.BackgroundFill(
                                                             Color.WHITE, // Border color
                                                             new CornerRadii(3),
                                                             null)));
-            int finalI1 = i;
-            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
-            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI1].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
+            int finalI = i;
+            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
+            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
 
             ImageView imageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
             imageView.setFitWidth(50);
@@ -193,8 +191,7 @@ public class ArtStyleScene extends AliceScene {
                                                 BorderStrokeStyle.SOLID, // Border style
                                                 new CornerRadii(5), // CornerRadii
                                                 new BorderWidths(2)))); // Border width);*/
-            if (i != 1)
-                grid.add(buttonWithImage, i % 2, 5 + i / 2 * 3, 2, 2);
+            grid.add(buttonWithImage, i % 2, 5 + i / 2 * 3, 2, 2);
 
             Popup popup = new Popup();
             ImageView previewImageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
@@ -203,8 +200,6 @@ public class ArtStyleScene extends AliceScene {
             Rectangle background = new Rectangle(400, 400);
             background.setStyle("-fx-fill: white;");
             popup.getContent().addAll(background, previewImageView);
-
-            int finalI = i;
 
             artStyleButtons[i].setOnMouseEntered(event -> {
                 // Show the Popup when the button is hovered
