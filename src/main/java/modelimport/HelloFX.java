@@ -242,6 +242,10 @@ public class HelloFX extends Application {
         return Data.getApiKey();
     }
 
+    public String getNewModelName() {
+        return "Model " + (models.size() + 1);
+    }
+
     public void copyModelFileToLibrary(AliceModel model) {
         String modelName = "gen-model_" + String.format("%03d", getModels().size() + 1);
         String modelDirName = MODEL_LIB_DIR + "/" + modelName;
@@ -302,7 +306,11 @@ public class HelloFX extends Application {
         AliceModel model = HelloFX.self.activeModel;
 
         try {
-            System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(), new File(model.getLocalPath()).getAbsolutePath()));
+            // ImportModel.exe -a "Some guy" -s 0.5 -n MyRoadBarrier -t Fish .\RoadBarrier.dae
+            // Author (-a) Scale (-s) Name (-n) and Type (-t)
+            System.out.println(Utils.invokeScript(new File("ImportModel/ImportModel.exe").getAbsolutePath(),
+                                                  "-n", model.getName().replaceAll(" ", "_"),
+                                                  new File(model.getLocalPath()).getAbsolutePath()));
         } catch(Exception e) {
             System.out.println("Could not open Alice model importer");
             e.printStackTrace();

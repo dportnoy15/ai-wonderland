@@ -83,6 +83,7 @@ public class ModelDescriptionScene extends AliceScene {
         ImageView backImg = new ImageView(new Image("file:src/main/pic/PreviousLocation.png"));
         backImg.setFitWidth(30);
         backImg.setFitHeight(30);
+
         Button btnPrev = new Button("", backImg);
         btnPrev.setMaxHeight(40);
         btnPrev.setMaxWidth(40);
@@ -95,7 +96,7 @@ public class ModelDescriptionScene extends AliceScene {
         btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
                                             Color.BLUEVIOLET, // Border color
                                             new CornerRadii(10),
-                                      null)));
+                                            null)));
         btnNext.setMinWidth(120);
         btnNext.setMinHeight(30);
         btnNext.setStyle("-fx-text-fill: #FFFFFF;");

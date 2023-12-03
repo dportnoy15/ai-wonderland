@@ -251,7 +251,7 @@ public class TextureDescriptionScene extends AliceScene {
 
                             System.out.println("Conversion to DAE finished. Showing model now...");
 
-                            AliceModel model = AliceModel.createFromMeshy("some name", app.getObjectUrl(), app.getThumbnailUrl());
+                            AliceModel model = AliceModel.createFromMeshy(app.getNewModelName(), app.getObjectUrl(), app.getThumbnailUrl());
 
                             app.copyModelFileToLibrary(model);
 
@@ -334,7 +334,7 @@ public class TextureDescriptionScene extends AliceScene {
                                 return null;
                             }
 
-                            AliceModel model = AliceModel.createFromMeshy("some name", app.getObjectUrl(), app.getThumbnailUrl());
+                            AliceModel model = AliceModel.createFromMeshy(app.getNewModelName(), app.getObjectUrl(), app.getThumbnailUrl());
 
                             app.copyModelFileToLibrary(model);
 

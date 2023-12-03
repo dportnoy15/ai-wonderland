@@ -38,8 +38,6 @@ public class SelectModelScene extends AliceScene {
 
     private int curModel;
 
-    private int numLocalModels = 0;
-
     private ImageView randomizeGif;
     private ImageView uploadGif;
 
@@ -52,7 +50,6 @@ public class SelectModelScene extends AliceScene {
         rightArrow = null;
 
         curModel = 0;
-        numLocalModels = 0;
     }
 
     public void initLayout() {
@@ -163,30 +160,46 @@ public class SelectModelScene extends AliceScene {
 
         libraryView.setCellFactory(param -> new ListCell<AliceModel>() {
 
+            private VBox itemView = new VBox();
             private ImageView imageView = new ImageView();
-            private Label label = new Label();
+            private TextField nameInput = new TextField();
 
             @Override
             public void updateItem(AliceModel model, boolean empty) {
                 super.updateItem(model, empty);
+
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    if (model.isLocalModel()) {
-                        label.setWrapText(true);
-                        label.setMinWidth(100);
-                        label.setAlignment(Pos.BASELINE_CENTER);
-                        label.setText(model.getName());
-                        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
-                        setGraphic(label);
+                    if (model.isLocalModel()) {
+                        // this is intended to point at a non-existent file
+                        imageView.setImage(new Image("file:placeholder.txt"));
                     } else {
                         imageView.setImage(new Image(model.getThumbnailUrl()));
-                        imageView.setFitHeight(100);
-                        imageView.setFitWidth(100);
-
-                        setGraphic(imageView);
                     }
+
+                    imageView.setFitHeight(100);
+                    imageView.setFitWidth(100);
+
+                    nameInput = new TextField();
+                    nameInput.setPrefWidth(80);
+                    nameInput.setPrefHeight(20);
+                    nameInput.setAlignment(Pos.BASELINE_CENTER);
+                    nameInput.setText(model.getName());
+
+                    itemView = new VBox();
+                    itemView.setPrefHeight(120);
+                    itemView.setPrefWidth(100);
+                    itemView.getChildren().addAll(imageView, nameInput);
+
+                    nameInput.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override public void handle(ActionEvent e) {
+                            model.setName(nameInput.getText());
+                        }
+                    });
+
+                    setGraphic(itemView);
                 }
             }
         });
@@ -251,14 +264,14 @@ public class SelectModelScene extends AliceScene {
 
     private void playAndStopAnimation(int button, Duration stopTime) {
         Timeline timeline;
-        if (button == 1){
+
+        if (button == 1) {
             randomizeGif.setImage(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
             timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 // Load the new image
                 randomizeGif.setImage(new Image("file:src/main/pic/Generate.png"));
             }));
-        }
-        else {
+        } else {
             uploadGif.setImage(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
             timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 // Load the new image
@@ -315,8 +328,7 @@ public class SelectModelScene extends AliceScene {
                         return;
                     }
 
-                    numLocalModels++;
-                    AliceModel model = AliceModel.createFromLocalFile("Model " + numLocalModels, webUrl);
+                    AliceModel model = AliceModel.createFromLocalFile(app.getNewModelName(), webUrl);
 
                     app.copyModelFileToLibrary(model);
 
