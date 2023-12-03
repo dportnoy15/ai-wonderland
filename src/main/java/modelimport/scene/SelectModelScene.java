@@ -319,7 +319,7 @@ public class SelectModelScene extends AliceScene {
 
                     System.out.println(webUrl);
 
-                    int exitCode = Utils.invokeScript("blender", "--background", "--python", "model/format.py", "--", file.getAbsolutePath());
+                    int exitCode = Utils.invokeScript("blender", "--background", "--python", "model/format.py", "--", Utils.getFileExtension(file), file.getAbsolutePath());
 
                     if (exitCode == 0) {
                         //message = "Model converted successfully";
