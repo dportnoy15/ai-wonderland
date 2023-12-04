@@ -117,7 +117,7 @@ public class TextureDescriptionScene extends AliceScene {
 
         texturePromptInput.setPrefWidth(500);
         texturePromptInput.setPrefHeight(300);
-        texturePromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+        texturePromptInput.setBorder(new Border(new BorderStroke(
                 Color.TRANSPARENT, // Border color
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(3), // CornerRadii
@@ -163,7 +163,7 @@ public class TextureDescriptionScene extends AliceScene {
 
         HBox box = new HBox();
         box.getChildren().addAll(stackPane, btnRandomize);
-        box.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+        box.setBorder(new Border(new BorderStroke(
                 Color.BLUEVIOLET, // Border color
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(5), // CornerRadii

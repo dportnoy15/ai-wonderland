@@ -176,7 +176,7 @@ public class ArtStyleScene extends AliceScene {
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
             HBox buttonWithImage = new HBox(imageView, artStyleButtons[i]);
-            /*buttonWithImage.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+            /*buttonWithImage.setBorder(new Border(new BorderStroke(
                                                 Color.MEDIUMPURPLE, // Border color
                                                 BorderStrokeStyle.SOLID, // Border style
                                                 new CornerRadii(5), // CornerRadii
