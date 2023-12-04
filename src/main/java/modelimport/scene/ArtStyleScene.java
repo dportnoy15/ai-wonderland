@@ -21,6 +21,7 @@ import javafx.scene.image.ImageView;
 
 import modelimport.HelloFX;
 import modelimport.SceneManager;
+import modelimport.Utils;
 
 public class ArtStyleScene extends AliceScene {
 
@@ -70,23 +71,15 @@ public class ArtStyleScene extends AliceScene {
         backImg.setFitWidth(30);
         backImg.setFitHeight(30);
         Button btnPrev = new Button("", backImg);
-        btnPrev.setMaxHeight(40);
-        btnPrev.setMaxWidth(40);
-        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.TRANSPARENT, // Border color
-                new CornerRadii(3),
-                null)));
+        btnPrev.setMaxSize(40, 40);
+        btnPrev.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         Region region = new Region();
 
         Button btnNext = new Button("Describe Model");
-        btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.BLUEVIOLET, // Border color
-                new CornerRadii(10),
-                null)));
+        btnNext.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
 
-        btnNext.setMinWidth(120);
-        btnNext.setMinHeight(30);
-        btnNext.setStyle("-fx-text-fill: #FFFFFF;");
+        btnNext.setMinSize(120, 30);
+        btnNext.setTextFill(Color.WHITE);
 
 
         HBox.setHgrow(region, Priority.ALWAYS);
@@ -174,13 +167,10 @@ public class ArtStyleScene extends AliceScene {
         for (int i = 0; i < artStyleButtons.length; i++) {
             artStyleButtons[i].setMinSize(200, 50);
 
-            artStyleButtons[i].setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                                            Color.WHITE, // Border color
-                                                            new CornerRadii(3),
-                                                            null)));
+            artStyleButtons[i].setBackground(Utils.getBackgroundColor(Color.WHITE, 3));
             int finalI = i;
-            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI].setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(3), Insets.EMPTY))));
-            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI].setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(3), Insets.EMPTY))));
+            artStyleButtons[i].setOnMousePressed(event -> artStyleButtons[finalI].setBackground(Utils.getBackgroundColor(Color.GRAY, 3)));
+            artStyleButtons[i].setOnMouseReleased(event -> artStyleButtons[finalI].setBackground(Utils.getBackgroundColor(Color.WHITE, 3)));
 
             ImageView imageView = new ImageView(new Image("file:" + IMAGE_PATH + "/" + filenamePrefix + i + ".png"));
             imageView.setFitWidth(50);
@@ -198,7 +188,7 @@ public class ArtStyleScene extends AliceScene {
             previewImageView.setFitWidth(400);
             previewImageView.setFitHeight(400);
             Rectangle background = new Rectangle(400, 400);
-            background.setStyle("-fx-fill: white;");
+            background.setFill(Color.WHITE);
             popup.getContent().addAll(background, previewImageView);
 
             artStyleButtons[i].setOnMouseEntered(event -> {

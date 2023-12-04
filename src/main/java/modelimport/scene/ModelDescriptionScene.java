@@ -1,7 +1,7 @@
 package modelimport.scene;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import java.util.regex.Pattern;
+
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -17,13 +17,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import javafx.util.Duration;
 import modelimport.FilterIO;
 import modelimport.HelloFX;
 import modelimport.PromptIO;
 import modelimport.SceneManager;
-
-import java.util.regex.Pattern;
+import modelimport.Utils;
 
 public class ModelDescriptionScene extends AliceScene {
     private static final int WORD_LIMIT = 3;
@@ -85,24 +83,17 @@ public class ModelDescriptionScene extends AliceScene {
         backImg.setFitHeight(30);
 
         Button btnPrev = new Button("", backImg);
-        btnPrev.setMaxHeight(40);
-        btnPrev.setMaxWidth(40);
-        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                            Color.TRANSPARENT, // Border color
-                                            new CornerRadii(3),
-                                            null)));
+        btnPrev.setMaxSize(40, 40);
+        btnPrev.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         Region region = new Region();
         Button btnNext = new Button("Add Details");
-        btnNext.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                            Color.BLUEVIOLET, // Border color
-                                            new CornerRadii(10),
-                                            null)));
-        btnNext.setMinWidth(120);
-        btnNext.setMinHeight(30);
-        btnNext.setStyle("-fx-text-fill: #FFFFFF;");
+        btnNext.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
+        btnNext.setMinSize(120, 30);
+        btnNext.setTextFill(Color.WHITE);
 
 
         HBox.setHgrow(region, Priority.ALWAYS);
+
         bottomPane.getChildren().addAll(btnPrev, region, btnNext);
         bottomPane.setAlignment(Pos.CENTER);
         bottomPane.setPadding(new Insets(0, 50, 0, 50));
@@ -121,20 +112,17 @@ public class ModelDescriptionScene extends AliceScene {
 
         Label wordCountLabel = new Label();
         wordCountLabel.setFont(Font.font(15));
-        wordCountLabel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                            Color.BLUEVIOLET, // Border color
-                                            new CornerRadii(3),
-                                    null))); // CornerRadii);
+        wordCountLabel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET, 3));
         //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(120);
-        wordCountLabel.setText("Word limit:0/3");
-        wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
+        wordCountLabel.setText("Word limit: 0/3");
+        wordCountLabel.setTextFill(Color.WHITE);
 
         objectPromptInput = new TextField();
         objectPromptInput.setPrefWidth(500);
         objectPromptInput.setPrefHeight(300);
         objectPromptInput.setAlignment(Pos.TOP_LEFT);
-        objectPromptInput.setPromptText("eg. A treasure box");
+        objectPromptInput.setPromptText("e.g., a treasure box");
         objectPromptInput.setStyle("-fx-font-size: 20;");
 
         objectPromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
@@ -150,7 +138,7 @@ public class ModelDescriptionScene extends AliceScene {
                 objectPromptInput.setText(oldValue);
             } else
             // Update the word count label
-                wordCountLabel.setText("Word limit:" + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
+                wordCountLabel.setText("Word limit: " + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
         });
 
         objectPromptInput.setOnKeyPressed(event -> {
@@ -162,13 +150,13 @@ public class ModelDescriptionScene extends AliceScene {
 
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(objectPromptInput, wordCountLabel);
-        stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
+        StackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
 
         grid.add(stackPane, 0, 2);
 
         improperWarning = new Label("Improper word is detected and deleted!");
         improperWarning.setFont(Font.font(25));
-        improperWarning.setStyle("-fx-text-fill: #FF0000;");
+        improperWarning.setTextFill(Color.RED);
         grid.add(improperWarning, 0, 3);
         improperWarning.setVisible(false);
 

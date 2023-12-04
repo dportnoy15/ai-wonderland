@@ -30,11 +30,13 @@ import modelimport.Utils;
 
 public class SelectModelScene extends AliceScene {
 
+    private static String DEFAULT_FONT_FAMILY = Font.getDefault().getFamily();
+
     private HBox libraryPane;
     private ListView<AliceModel> libraryView;
     private ImageView leftArrow, rightArrow;
 
-    private Button btnImport, btnTexture;
+    private VBox buttons;
 
     private int curModel;
 
@@ -57,20 +59,14 @@ public class SelectModelScene extends AliceScene {
 
         HBox topPane = new HBox();
         VBox bottomPane = new VBox();
-        Pane leftPane = new FlowPane();
-        Pane rightPane = new FlowPane();
         GridPane centerPane = new GridPane();
 
         layout.setTop(topPane);    // Title
         layout.setBottom(bottomPane); // Nav Buttons
-        layout.setLeft(leftPane);
-        layout.setRight(rightPane);
         layout.setCenter(centerPane); // Main Content
 
-        topPane.setPrefHeight(100);
-        bottomPane.setPrefHeight(200);
-        leftPane.setPrefWidth(0);
-        rightPane.setPrefWidth(0);
+        topPane.setPrefHeight(50);
+        bottomPane.setPrefHeight(320);
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
@@ -92,27 +88,19 @@ public class SelectModelScene extends AliceScene {
         randomizeGif.setFitWidth(130);
         randomizeGif.setFitHeight(130);
         Button btnGenerateModel = new Button();
-        btnGenerateModel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.TRANSPARENT, // Border color
-                new CornerRadii(3),
-                null)));
+        btnGenerateModel.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         btnGenerateModel.setMinSize(200, 150);
 
         Label buttonText = new Label("Generate New Model");
         buttonText.setFont(Font.font(15));
         buttonText.setMinSize(150, 20);
-        buttonText.setStyle("-fx-text-fill: #FFFFFF;");
-
-        Background blkBg = new Background(new javafx.scene.layout.BackgroundFill(
-                Color.BLACK, // Border color
-                new CornerRadii(10),
-                null));
+        buttonText.setTextFill(Color.WHITE);
 
         StackPane genModelStack = new StackPane();
-        genModelStack.setBackground(blkBg);
+        genModelStack.setBackground(Utils.getBackgroundColor(Color.BLACK));
         genModelStack.getChildren().addAll(randomizeGif, buttonText, btnGenerateModel);
-        genModelStack.setAlignment(randomizeGif, Pos.TOP_CENTER);
-        genModelStack.setAlignment(buttonText, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(randomizeGif, Pos.TOP_CENTER);
+        StackPane.setAlignment(buttonText, Pos.BOTTOM_CENTER);
         genModelStack.setMinSize(200, 150);
 
         //uploadGif = new ImageView(new Image("file:src/main/pic/Upload.png"));
@@ -120,22 +108,19 @@ public class SelectModelScene extends AliceScene {
         uploadGif.setFitWidth(130);
         uploadGif.setFitHeight(130);
         Button btnUploadModel = new Button();
-        btnUploadModel.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.TRANSPARENT, // Border color
-                new CornerRadii(3),
-                null)));
+        btnUploadModel.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         btnUploadModel.setMinSize(200, 150);
 
         Label uploadText = new Label("Upload Local Model");
         uploadText.setFont(Font.font(15));
         uploadText.setMinSize(150, 20);
-        uploadText.setStyle("-fx-text-fill: #FFFFFF;");
+        uploadText.setTextFill(Color.WHITE);
 
         StackPane uploadStack = new StackPane();
-        uploadStack.setBackground(blkBg);
+        uploadStack.setBackground(Utils.getBackgroundColor(Color.BLACK));
         uploadStack.getChildren().addAll(uploadGif, uploadText, btnUploadModel);
-        uploadStack.setAlignment(uploadGif, Pos.TOP_CENTER);
-        uploadStack.setAlignment(uploadText, Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(uploadGif, Pos.TOP_CENTER);
+        StackPane.setAlignment(uploadText, Pos.BOTTOM_CENTER);
         uploadStack.setMinSize(200, 150);
 
         HBox hbBtn = new HBox(200);
@@ -147,8 +132,14 @@ public class SelectModelScene extends AliceScene {
         /* Start footer definition */
         bottomPane.setAlignment(Pos.CENTER);
 
+        Label libraryTitle = new Label("Model Library");
+
+        libraryTitle.setAlignment(Pos.CENTER_LEFT);
+        libraryTitle.setMinSize(600, 50);
+        libraryTitle.setTextFill(Color.BLUEVIOLET);
+        libraryTitle.setFont(Font.font(DEFAULT_FONT_FAMILY, FontWeight.BOLD, 18));
+
         libraryPane = new HBox(20);
-        HBox buttons = new HBox(20);
 
         libraryPane.setAlignment(Pos.CENTER);
         libraryPane.setPadding(new Insets(0, 15, 0, 15));
@@ -158,70 +149,75 @@ public class SelectModelScene extends AliceScene {
         libraryView.setOrientation(Orientation.HORIZONTAL);
         HBox.setHgrow(libraryView, Priority.ALWAYS);
 
-        libraryView.setCellFactory(param -> new ListCell<AliceModel>() {
+        libraryView.setCellFactory(param -> {
+            ListCell<AliceModel> cell = new ListCell<AliceModel>() {
 
-            private VBox itemView = new VBox();
-            private ImageView imageView = new ImageView();
-            private TextField nameInput = new TextField();
+                private VBox itemView = new VBox();
+                private ImageView imageView = new ImageView();
+                private TextField nameInput = new TextField();
 
-            @Override
-            public void updateItem(AliceModel model, boolean empty) {
-                super.updateItem(model, empty);
+                @Override
+                public void updateItem(AliceModel model, boolean empty) {
+                    super.updateItem(model, empty);
 
-                if (empty) {
-                    setGraphic(null);
-                } else {
-
-                    if (model.isLocalModel()) {
-                        // this is intended to point at a non-existent file
-                        imageView.setImage(new Image("file:placeholder.txt"));
+                    if (empty) {
+                        setGraphic(null);
                     } else {
-                        imageView.setImage(new Image(model.getThumbnailUrl()));
-                    }
 
-                    imageView.setFitHeight(100);
-                    imageView.setFitWidth(100);
-
-                    nameInput = new TextField();
-                    nameInput.setPrefWidth(80);
-                    nameInput.setPrefHeight(20);
-                    nameInput.setAlignment(Pos.BASELINE_CENTER);
-                    nameInput.setText(model.getName());
-
-                    itemView = new VBox();
-                    itemView.setPrefHeight(120);
-                    itemView.setPrefWidth(100);
-                    itemView.getChildren().addAll(imageView, nameInput);
-
-                    nameInput.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override public void handle(ActionEvent e) {
-                            model.setName(nameInput.getText());
+                        if (model.isLocalModel()) {
+                            // this is intended to point at a non-existent file
+                            imageView.setImage(new Image("file:placeholder.txt"));
+                        } else {
+                            imageView.setImage(new Image(model.getThumbnailUrl()));
                         }
-                    });
 
-                    setGraphic(itemView);
+                        imageView.setFitHeight(100);
+                        imageView.setFitWidth(100);
+
+                        nameInput = new TextField();
+                        nameInput.setPrefWidth(80);
+                        nameInput.setPrefHeight(20);
+                        nameInput.setAlignment(Pos.BASELINE_CENTER);
+                        nameInput.setText(model.getName());
+
+                        itemView = new VBox();
+                        itemView.setPrefHeight(120);
+                        itemView.setPrefWidth(100);
+                        itemView.getChildren().addAll(imageView, nameInput);
+
+                        nameInput.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override public void handle(ActionEvent e) {
+                                model.setName(nameInput.getText());
+                            }
+                        });
+
+                        setGraphic(itemView);
+                    }
                 }
-            }
-        });
+            };
 
-        libraryView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                libraryView.requestFocus();
 
-            @Override
-            public void handle(MouseEvent event) {
-                AliceModel selectedModel = libraryView.getSelectionModel().getSelectedItem();
+                int index = cell.getIndex();
 
-                if (selectedModel == null) {
-                    btnImport.setVisible(false);
-                    btnTexture.setVisible(false);
+                MultipleSelectionModel<AliceModel> libraryModel = libraryView.getSelectionModel();
 
-                    return;
+                if (cell.isEmpty()) {
+                    libraryModel.clearSelection(libraryModel.getSelectedIndex());
+                } else {
+                    if (libraryModel.getSelectedIndex() != index) {
+                        libraryModel.select(index);
+                    }
                 }
 
-                btnImport.setVisible(true);
-                btnTexture.setVisible(true);
+                AliceModel selectedModel = libraryModel.getSelectedItem();
 
+                buttons.setVisible(selectedModel != null);
                 app.setActiveModel(selectedModel);
-            }
+            });
+
+            return cell;
         });
 
         leftArrow = new ImageView(new Image("file:left-arrow.png", 50, 50, true, true));
@@ -244,18 +240,47 @@ public class SelectModelScene extends AliceScene {
 
         libraryPane.getChildren().addAll(leftArrow, libraryView, rightArrow);
 
+        buttons = new VBox(20);
+
         buttons.setAlignment(Pos.CENTER);
-        buttons.setPadding(new Insets(20, 50, 0, 50));
+        buttons.setMinHeight(120);
+        buttons.setPadding(new Insets(0, 75, 0, 75));
 
-        btnImport = new Button("Import into Alice");
-        btnTexture = new Button("Regenerate Texture");
+        HBox importButtonBox = new HBox();
 
-        btnImport.setVisible(false);
-        btnTexture.setVisible(false);
+        Button btnImport = new Button("Import");
+        btnImport.setMinWidth(100);
+        btnImport.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
+        btnImport.setTextFill(Color.WHITE);
 
-        buttons.getChildren().addAll(btnImport, btnTexture);
+        Label importButtonLabel = new Label("Import model into Alice Gallery");
+        importButtonLabel.setTextFill(Color.BLUEVIOLET);
+        importButtonLabel.setFont(Font.font(DEFAULT_FONT_FAMILY, FontWeight.NORMAL, 14));
+        importButtonLabel.setPadding(new Insets(0, 20, 0, 20));
+        HBox.setHgrow(importButtonLabel, Priority.ALWAYS);
 
-        bottomPane.getChildren().addAll(libraryPane, buttons);
+        importButtonBox.getChildren().addAll(btnImport, importButtonLabel);
+
+        HBox editButtonBox = new HBox();
+
+        Button btnTexture = new Button("Edit");
+        btnTexture.setMinWidth(100);
+        btnTexture.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
+        btnTexture.setTextFill(Color.WHITE);
+
+        Label editButtonLabel = new Label("Adjust the appearance of the model");
+        editButtonLabel.setTextFill(Color.BLUEVIOLET);
+        editButtonLabel.setFont(Font.font(DEFAULT_FONT_FAMILY, FontWeight.NORMAL, 14));
+        editButtonLabel.setPadding(new Insets(0, 20, 0, 20));
+        HBox.setHgrow(editButtonLabel, Priority.ALWAYS);
+
+        editButtonBox.getChildren().addAll(btnTexture, editButtonLabel);
+
+        buttons.setVisible(false);
+
+        buttons.getChildren().addAll(importButtonBox, editButtonBox);
+
+        bottomPane.getChildren().addAll(libraryTitle, libraryPane, buttons);
 
         refreshModelLibrary();
 

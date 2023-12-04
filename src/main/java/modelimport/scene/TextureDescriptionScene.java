@@ -3,7 +3,6 @@ package modelimport.scene;
 import java.io.File;
 import java.io.IOException;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -41,8 +40,6 @@ public class TextureDescriptionScene extends AliceScene {
 
     private PromptIO promptReader;
 
-    private Timeline gifAnimation;
-
     private TextField texturePromptInput;
 
     private Button btnModel, btnTexture;
@@ -79,11 +76,6 @@ public class TextureDescriptionScene extends AliceScene {
         leftPane.setPrefWidth(0);
         rightPane.setPrefWidth(0);
 
-        Background btnBg = new Background(new javafx.scene.layout.BackgroundFill(
-                Color.BLUEVIOLET, // Border color
-                new CornerRadii(10),
-                null));
-
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
 
         Label scenetitle = new Label("Texture Description");
@@ -98,10 +90,7 @@ public class TextureDescriptionScene extends AliceScene {
         Button btnPrev = new Button("", backImg);
         btnPrev.setMaxHeight(40);
         btnPrev.setMaxWidth(40);
-        btnPrev.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                Color.TRANSPARENT, // Border color
-                new CornerRadii(3),
-                null)));
+        btnPrev.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
 
         Region region = new Region();
         Button btnNext = new Button("Next");
@@ -139,11 +128,11 @@ public class TextureDescriptionScene extends AliceScene {
 
         Label wordCountLabel = new Label();
         wordCountLabel.setFont(Font.font(15));
-        wordCountLabel.setBackground(btnBg); // CornerRadii);
+        wordCountLabel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
         //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(140);
-        wordCountLabel.setText("Word limit:0/10");
-        wordCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
+        wordCountLabel.setText("Word limit: 0/10");
+        wordCountLabel.setTextFill(Color.WHITE);
         texturePromptInput.textProperty().addListener((observable, oldValue, newValue) -> {
             String[] words = newValue.trim().split("\\s+");
             // Limit the input to WORD_LIMIT words
@@ -151,7 +140,7 @@ public class TextureDescriptionScene extends AliceScene {
                 texturePromptInput.setText(oldValue);
             } else
                 // Update the word count label
-                wordCountLabel.setText("Word limit:" + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
+                wordCountLabel.setText("Word limit: " + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
         });
 
         texturePromptInput.setOnKeyPressed(event -> {
@@ -164,35 +153,27 @@ public class TextureDescriptionScene extends AliceScene {
         randomizeGif.setFitWidth(50);
         randomizeGif.setFitHeight(50);
 
-        gifAnimation = new Timeline(new KeyFrame(Duration.ZERO, event -> randomizeGif.setVisible(true)),
-                                    new KeyFrame(Duration.seconds(3))); // Adjust the duration to match the GIF duration
-
         Button btnRandomize = new Button("", randomizeGif);
-        btnRandomize.setBackground(new Background(new javafx.scene.layout.BackgroundFill(
-                                                Color.BLUEVIOLET, // Border color
-                                                new CornerRadii(3),
-                                                null)));
+        btnRandomize.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET, 3));
         btnRandomize.setMaxHeight(50);
         btnRandomize.setMaxWidth(50);
-        //grid.add(btnRandomize, 1, 2);
 
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(texturePromptInput, btnRandomize, wordCountLabel);
-        stackPane.setAlignment(btnRandomize, Pos.TOP_RIGHT);
-        stackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
+        StackPane.setAlignment(btnRandomize, Pos.TOP_RIGHT);
+        StackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
         grid.add(stackPane, 0, 2);
 
 
         btnModel = new Button("Generate Model");
-        btnModel.setBackground(btnBg);
+        btnModel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
 
-        btnModel.setMinWidth(120);
-        btnModel.setMinHeight(30);
-        btnModel.setStyle("-fx-text-fill: #FFFFFF;");
+        btnModel.setMinSize(120, 30);
+        btnModel.setTextFill(Color.WHITE);
 
         btnTexture = new Button("Regenerate Texture");
-        btnTexture.setBackground(btnBg);
-        btnTexture.setStyle("-fx-text-fill: #FFFFFF;");
+        btnTexture.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
+        btnTexture.setTextFill(Color.WHITE);
 
         bottomPane.getChildren().addAll(btnPrev, region, btnModel, btnTexture);
 

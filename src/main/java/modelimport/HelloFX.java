@@ -7,15 +7,12 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -23,7 +20,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javafx.util.Duration;
 import py4j.GatewayServer;
 
 import modelimport.scene.SelectModelScene;
@@ -32,6 +28,9 @@ import modelimport.scene.ArtStyleScene;
 import modelimport.scene.TextureDescriptionScene;
 
 public class HelloFX extends Application {
+
+    private static final String MODEL_LIB_DIR = "model-lib";
+    private static final String GEN_MODEL_DIR = "gen-model";
 
     public static HelloFX self;
 
@@ -42,25 +41,6 @@ public class HelloFX extends Application {
     private String objectDescription;
     private String textureDescription;
     private boolean cancelGeneration;
-
-
-    /*
-     * When should this be read?
-     *
-     * When the Python model generation script is run to determine the properties
-     * When the Python texture generation script is run to determine the properties
-     *
-     *
-     * When should this be set?
-     *
-     * Whenever the user clicks on an item in the gallery
-     * When the user starts generating a new model, so the Python script has a place to get the values
-     *  - Not sure about this, since if the view is reset to the model library after generation, we could still force the user to click
-     *  - the model before regenerating the texture
-     *
-     * This will be useful to hold prompt info for when the user wants to regen the texture on a model
-     *
-     */
 
     private AliceModel activeModel;
 
@@ -81,9 +61,6 @@ public class HelloFX extends Application {
 
     private String objectUrl;
     private String thumbnailUrl;
-
-    private static final String MODEL_LIB_DIR = "model-lib";
-    private static final String GEN_MODEL_DIR = "gen-model";
 
     private Stage progressStage;
 

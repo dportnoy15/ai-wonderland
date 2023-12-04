@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Comparator;
 
-import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -44,10 +43,13 @@ public class Utils {
             });
     }
 
-    // this is useful for creating layouts and making different panes different colors, e.g. somePane.setBackground(getBackgroundColor(Color.RED))
-    public static Background getBackgroundColor(Color c) {
-        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(10), new Insets(10) );
+    public static Background getBackgroundColor(Color c, double radius) {
+        BackgroundFill backgroundFill = new BackgroundFill(c, new CornerRadii(radius), null );
         return new Background(backgroundFill);
+    }
+
+    public static Background getBackgroundColor(Color c) {
+        return getBackgroundColor(c, 10);
     }
 
     public static String getFileExtension(File file) {
