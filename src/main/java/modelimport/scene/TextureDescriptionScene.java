@@ -40,7 +40,7 @@ public class TextureDescriptionScene extends AliceScene {
 
     private PromptIO promptReader;
 
-    private TextField texturePromptInput;
+    private TextArea texturePromptInput;
 
     private Button btnModel, btnTexture;
 
@@ -113,16 +113,15 @@ public class TextureDescriptionScene extends AliceScene {
         texturePromptDescription.setFont(Font.font(15));
         grid.add(texturePromptDescription, 0, 1);
 
-        texturePromptInput = new TextField();
+        texturePromptInput = new TextArea();
 
         texturePromptInput.setPrefWidth(500);
         texturePromptInput.setPrefHeight(300);
-        texturePromptInput.setAlignment(Pos.TOP_LEFT);
         texturePromptInput.setBorder(new Border(new javafx.scene.layout.BorderStroke(
-                Color.MEDIUMPURPLE, // Border color
+                Color.TRANSPARENT, // Border color
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(3), // CornerRadii
-                new BorderWidths(2)))); // Border width);
+                new BorderWidths(0)))); // Border width);
         texturePromptInput.setStyle("-fx-font-size: 16;");
         //grid.add(texturePromptInput, 0, 2);
 
@@ -142,7 +141,7 @@ public class TextureDescriptionScene extends AliceScene {
                 // Update the word count label
                 wordCountLabel.setText("Word limit: " + (words.length - (words[0].equals("")? 1 : 0)) + "/" + WORD_LIMIT);
         });
-
+        texturePromptInput.setPromptText("Describe the appearance of the 3D model as how it feels or looks. The model shape won’t be edited by this input.");
         texturePromptInput.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 btnTexture.fire();
@@ -159,11 +158,18 @@ public class TextureDescriptionScene extends AliceScene {
         btnRandomize.setMaxWidth(50);
 
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(texturePromptInput, btnRandomize, wordCountLabel);
-        StackPane.setAlignment(btnRandomize, Pos.TOP_RIGHT);
+        stackPane.getChildren().addAll(texturePromptInput, wordCountLabel);
         StackPane.setAlignment(wordCountLabel, Pos.BOTTOM_RIGHT);
-        grid.add(stackPane, 0, 2);
 
+        HBox box = new HBox();
+        box.getChildren().addAll(stackPane, btnRandomize);
+        box.setBorder(new Border(new javafx.scene.layout.BorderStroke(
+                Color.BLUEVIOLET, // Border color
+                BorderStrokeStyle.SOLID, // Border style
+                new CornerRadii(5), // CornerRadii
+                new BorderWidths(2)))); // Border width);
+
+        grid.add(box, 0, 2);
 
         btnModel = new Button("Generate Model");
         btnModel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));

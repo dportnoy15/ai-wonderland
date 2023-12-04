@@ -38,6 +38,8 @@ public class ModelDescriptionScene extends AliceScene {
     private TextField objectPromptInput;
 
     private Label improperWarning;
+    private ImageView improper;
+    private HBox improperMsg;
     
     public ModelDescriptionScene(Stage stage, Scene scene, HelloFX app) {
         super(stage, scene, app);
@@ -119,7 +121,7 @@ public class ModelDescriptionScene extends AliceScene {
         wordCountLabel.setTextFill(Color.WHITE);
 
         objectPromptInput = new TextField();
-        objectPromptInput.setPrefWidth(500);
+        objectPromptInput.setPrefWidth(550);
         objectPromptInput.setPrefHeight(300);
         objectPromptInput.setAlignment(Pos.TOP_LEFT);
         objectPromptInput.setPromptText("e.g., a treasure box");
@@ -154,11 +156,17 @@ public class ModelDescriptionScene extends AliceScene {
 
         grid.add(stackPane, 0, 2);
 
-        improperWarning = new Label("Improper word is detected and deleted!");
+        improper = new ImageView(new Image("file:src/main/pic/ImproperText.png"));
+        improper.setFitWidth(60);
+        improper.setFitHeight(40);
+
+        improperWarning = new Label("Improper input");
         improperWarning.setFont(Font.font(25));
         improperWarning.setTextFill(Color.RED);
-        grid.add(improperWarning, 0, 3);
-        improperWarning.setVisible(false);
+        improperMsg = new HBox();
+        improperMsg.getChildren().addAll(improper, improperWarning);
+        grid.add(improperMsg, 0, 3);
+        improperMsg.setVisible(false);
 
         Button btnRandomize = new Button("Create a random prompt");
         //grid.add(btnRandomize, 2, 1);
@@ -176,7 +184,7 @@ public class ModelDescriptionScene extends AliceScene {
         });
 
         btnPrev.setOnAction((ActionEvent event) -> {
-            improperWarning.setVisible(false);
+            improperMsg.setVisible(false);
             SceneManager.getInstance().setActiveScene(0);
         });
 
@@ -192,10 +200,10 @@ public class ModelDescriptionScene extends AliceScene {
             }
             // Before going to the next page, detect if there exists improper words, if so, delete them and display a warning instead.
             if (isFiltered){
-                improperWarning.setVisible(true);
+                improperMsg.setVisible(true);
                 return;
             }
-            improperWarning.setVisible(false);
+            improperMsg.setVisible(false);
             app.setObjectDescription(objectPrompt);
 
             SceneManager.getInstance().setActiveScene(2);
