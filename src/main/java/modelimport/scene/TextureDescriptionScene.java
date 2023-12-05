@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import javafx.util.Duration;
@@ -122,7 +123,7 @@ public class TextureDescriptionScene extends AliceScene {
                 BorderStrokeStyle.SOLID, // Border style
                 new CornerRadii(3), // CornerRadii
                 new BorderWidths(0)))); // Border width);
-        texturePromptInput.setStyle("-fx-font-size: 16;");
+        texturePromptInput.setStyle("-fx-font-size: 20;");
         //grid.add(texturePromptInput, 0, 2);
 
         Label wordCountLabel = new Label();
@@ -130,6 +131,7 @@ public class TextureDescriptionScene extends AliceScene {
         wordCountLabel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
         //grid.add(wordCountLabel, 1, 3);
         wordCountLabel.setPrefWidth(140);
+        wordCountLabel.setAlignment(Pos.CENTER);
         wordCountLabel.setText("Word limit: 0/10");
         wordCountLabel.setTextFill(Color.WHITE);
         texturePromptInput.textProperty().addListener((observable, oldValue, newValue) -> {

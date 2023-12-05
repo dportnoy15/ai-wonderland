@@ -119,9 +119,10 @@ public class ModelDescriptionScene extends AliceScene {
         wordCountLabel.setPrefWidth(120);
         wordCountLabel.setText("Word limit: 0/3");
         wordCountLabel.setTextFill(Color.WHITE);
+        wordCountLabel.setAlignment(Pos.CENTER);
 
         objectPromptInput = new TextField();
-        objectPromptInput.setPrefWidth(550);
+        objectPromptInput.setPrefWidth(570);
         objectPromptInput.setPrefHeight(300);
         objectPromptInput.setAlignment(Pos.TOP_LEFT);
         objectPromptInput.setPromptText("e.g., a treasure box");
