@@ -75,6 +75,7 @@ public class HelloFX extends Application {
         HelloFX.self = this;
 
         this.stage = stage;
+        stage.setResizable(false);
 
         models = new ArrayList<>();
 
@@ -128,7 +129,7 @@ public class HelloFX extends Application {
         sceneTextureDescription.initLayout();
         SceneManager.getInstance().addScene(sceneTextureDescription);
 
-        stage.setTitle("AI Wonderland");
+        stage.setTitle("AI Model Assistant");
 
         setupProgressWindow();
 
@@ -166,8 +167,12 @@ public class HelloFX extends Application {
         elapsedTime.setFill(Color.WHITE);
         centerPane.add(elapsedTime, 0, 2);
 
-        Button btnStopGen = new Button("Stop");
-        centerPane.add(btnStopGen, 2, 2);
+        Button btnStopGen = new Button("Cancel");
+        btnStopGen.setBackground(Utils.getBackgroundColor(Color.WHITE, 5));
+        btnStopGen.setStyle("-fx-accent: blueviolet;");
+        btnStopGen.setMaxHeight(35);
+        btnStopGen.setMinWidth(70);
+        centerPane.add(btnStopGen, 2, 3);
 
         layout.setStyle("-fx-background-color: transparent;");
         centerPane.setStyle("-fx-background-color: transparent;");

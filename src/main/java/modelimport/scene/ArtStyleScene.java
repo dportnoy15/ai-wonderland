@@ -77,6 +77,7 @@ public class ArtStyleScene extends AliceScene {
 
         Button btnNext = new Button("Describe Model");
         btnNext.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
+        btnNext.setStyle("-fx-font-size: 14;");
 
         btnNext.setMinSize(120, 30);
         btnNext.setTextFill(Color.WHITE);

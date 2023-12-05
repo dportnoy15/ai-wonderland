@@ -173,10 +173,12 @@ public class TextureDescriptionScene extends AliceScene {
 
         grid.add(box, 0, 2);
 
-        btnModel = new Button("Generate Model");
+        btnModel = new Button("Generate");
+        btnModel.setStyle("-fx-font-size: 15;");
         btnModel.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
 
         btnModel.setMinSize(120, 30);
+        btnModel.setMaxSize(120, 30);
         btnModel.setTextFill(Color.WHITE);
 
         btnTexture = new Button("Regenerate Texture");

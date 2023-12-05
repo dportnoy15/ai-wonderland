@@ -89,6 +89,7 @@ public class ModelDescriptionScene extends AliceScene {
         btnPrev.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         Region region = new Region();
         Button btnNext = new Button("Add Details");
+        btnNext.setStyle("-fx-font-size: 14;");
         btnNext.setBackground(Utils.getBackgroundColor(Color.BLUEVIOLET));
         btnNext.setMinSize(120, 30);
         btnNext.setTextFill(Color.WHITE);

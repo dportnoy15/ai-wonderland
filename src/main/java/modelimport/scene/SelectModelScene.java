@@ -69,11 +69,7 @@ public class SelectModelScene extends AliceScene {
         bottomPane.setPrefHeight(320);
 
         Font uiFont = Font.font("Tahoma", FontWeight.NORMAL, 20);
-
-        Label scenetitle = new Label("AI Model Assistant");
-        scenetitle.setFont(uiFont);
         topPane.setAlignment(Pos.CENTER);
-        topPane.getChildren().add(scenetitle);
 
         /* Start screen customization */
 
@@ -85,43 +81,55 @@ public class SelectModelScene extends AliceScene {
 
         randomizeGif = new ImageView(new Image("file:src/main/pic/Generate_3D_Model_GIF3.gif"));
         //randomizeGif = new ImageView(new Image("file:src/main/pic/Generate.png"));
-        randomizeGif.setFitWidth(130);
-        randomizeGif.setFitHeight(130);
+        randomizeGif.setFitWidth(170);
+        randomizeGif.setFitHeight(170);
         Button btnGenerateModel = new Button();
         btnGenerateModel.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
-        btnGenerateModel.setMinSize(200, 150);
+        btnGenerateModel.setMinSize(220, 200);
 
-        Label buttonText = new Label("Generate New Model");
-        buttonText.setFont(Font.font(15));
-        buttonText.setMinSize(150, 20);
+        Label buttonText = new Label("Generate 3D Models");
+        buttonText.setFont(Font.font(20));
+        buttonText.setMinSize(220, 30);
         buttonText.setTextFill(Color.WHITE);
+        buttonText.setAlignment(Pos.CENTER);
 
         StackPane genModelStack = new StackPane();
         genModelStack.setBackground(Utils.getBackgroundColor(Color.BLACK));
         genModelStack.getChildren().addAll(randomizeGif, buttonText, btnGenerateModel);
         StackPane.setAlignment(randomizeGif, Pos.TOP_CENTER);
         StackPane.setAlignment(buttonText, Pos.BOTTOM_CENTER);
-        genModelStack.setMinSize(200, 150);
+        genModelStack.setMinSize(220, 200);
 
         //uploadGif = new ImageView(new Image("file:src/main/pic/Upload.png"));
         uploadGif = new ImageView(new Image("file:src/main/pic/Upload_Model_GIF2.gif"));
-        uploadGif.setFitWidth(130);
-        uploadGif.setFitHeight(130);
+        uploadGif.setFitWidth(170);
+        uploadGif.setFitHeight(170);
         Button btnUploadModel = new Button();
         btnUploadModel.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
-        btnUploadModel.setMinSize(200, 150);
+        btnUploadModel.setMinSize(220, 200);
 
-        Label uploadText = new Label("Upload Local Model");
-        uploadText.setFont(Font.font(15));
-        uploadText.setMinSize(150, 20);
+        Label uploadText = new Label("Import Models to Library");
+        uploadText.setFont(Font.font(18));
+        uploadText.setMinSize(220, 30);
+        uploadText.setAlignment(Pos.CENTER);
         uploadText.setTextFill(Color.WHITE);
+
+        Label supportTypeText = new Label("Accept .GLB, .FBX files");
+        supportTypeText.setFont(Font.font(20));
+        supportTypeText.setMinSize(220, 30);
+        supportTypeText.setAlignment(Pos.CENTER);
+        supportTypeText.setTextFill(Color.BLUEVIOLET);
+
+        VBox v = new VBox();
+        v.getChildren().addAll(uploadText, supportTypeText);
+        v.setMaxHeight(50);
 
         StackPane uploadStack = new StackPane();
         uploadStack.setBackground(Utils.getBackgroundColor(Color.BLACK));
-        uploadStack.getChildren().addAll(uploadGif, uploadText, btnUploadModel);
+        uploadStack.getChildren().addAll(uploadGif, v, btnUploadModel);
         StackPane.setAlignment(uploadGif, Pos.TOP_CENTER);
-        StackPane.setAlignment(uploadText, Pos.BOTTOM_CENTER);
-        uploadStack.setMinSize(200, 150);
+        StackPane.setAlignment(v, Pos.BOTTOM_CENTER);
+        uploadStack.setMinSize(220, 200);
 
         HBox hbBtn = new HBox(200);
         hbBtn.setAlignment(Pos.TOP_CENTER);
