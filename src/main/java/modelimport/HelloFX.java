@@ -13,6 +13,9 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -65,6 +68,11 @@ public class HelloFX extends Application {
     private Stage progressStage;
 
     private boolean isShowingProgress;
+
+
+
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public static void main(String[] args) {
         launch();
@@ -143,6 +151,8 @@ public class HelloFX extends Application {
 
     private void setupProgressWindow() {
         progressStage = new Stage();
+        progressStage.setResizable(false);
+        progressStage.setOnCloseRequest(Event::consume);
         BorderPane layout = new BorderPane();
         Scene progressScene = new Scene(layout, 250, 100);
         progressScene.setFill(Color.color(0.2, 0.2, 0.6, 0.4));
@@ -172,7 +182,25 @@ public class HelloFX extends Application {
         btnStopGen.setStyle("-fx-accent: blueviolet;");
         btnStopGen.setMaxHeight(35);
         btnStopGen.setMinWidth(70);
-        centerPane.add(btnStopGen, 2, 3);
+        centerPane.add(btnStopGen, 2, 2);
+
+        ImageView moveImg = new ImageView(new Image("file:src/main/pic/Move.png"));
+        moveImg.setFitWidth(25);
+        moveImg.setFitHeight(25);
+
+        Button btnMoveWindow = new Button("", moveImg);
+        btnStopGen.setBackground(Utils.getBackgroundColor(Color.WHITE, 2));
+        btnMoveWindow.setMinSize(30, 30);
+        btnMoveWindow.setMaxSize(30, 30);
+        btnMoveWindow.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        btnMoveWindow.setOnMouseDragged((MouseEvent event) -> {
+            progressStage.setX(event.getScreenX() - xOffset);
+            progressStage.setY(event.getScreenY() - yOffset);
+        });
+        centerPane.add(btnMoveWindow, 3, 0);
 
         layout.setStyle("-fx-background-color: transparent;");
         centerPane.setStyle("-fx-background-color: transparent;");
