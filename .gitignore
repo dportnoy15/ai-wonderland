@@ -6,6 +6,7 @@ model-lib/*
 
 3d_model.*
 playtestLog.txt
+alice-integration/batLog.txt
 
 ImportModel/ModelImportOutput.log
 ImportModel/ModelImportError.log
