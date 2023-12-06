@@ -4,7 +4,7 @@ import com.jcraft.jsch.*;
 
 import java.util.Properties;
 
-public class FileUploader {
+public class HttpServerFileUploader {
 
     private final JSch jsch;
 
@@ -14,7 +14,7 @@ public class FileUploader {
     private Session session;
     private ChannelSftp channel;
 
-    public FileUploader(String host, int port) {
+    public HttpServerFileUploader(String host, int port) {
         this.host = host;
         this.port = port;
 

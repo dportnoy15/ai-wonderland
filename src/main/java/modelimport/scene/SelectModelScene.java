@@ -1,6 +1,9 @@
 package modelimport.scene;
 
 import java.io.*;
+import java.net.MalformedURLException;
+
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -23,7 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import modelimport.AliceModel;
 import modelimport.Data;
-import modelimport.FileUploader;
+import modelimport.GDriveFileUploader;
+import modelimport.HttpServerFileUploader;
 import modelimport.HelloFX;
 import modelimport.SceneManager;
 import modelimport.Utils;
@@ -339,7 +343,17 @@ public class SelectModelScene extends AliceScene {
             if (file != null) {
                 System.out.println(file.getAbsolutePath());
 
-                FileUploader uploader = new FileUploader("app.etc.cmu.edu", 15219);
+                GDriveFileUploader uploader = new GDriveFileUploader("1RVAMYoPHcR-DPsFBU54ngQU81dtmNwEo");
+                
+                try {
+                    uploader.uploadModel(file);
+                } catch(IOException ioe) {
+                    System.out.println("Failed to upload to Google Drive");
+                    ioe.printStackTrace();
+                }
+
+                /*
+                HttpServerFileUploader uploader = new HttpServerFileUploader("app.etc.cmu.edu", 15219);
 
                 try {
                     uploader.connect(Data.getUsername(), Data.getPassword());
@@ -373,6 +387,7 @@ public class SelectModelScene extends AliceScene {
                 }
 
                 uploader.disconnect();
+                */
             }
 
             System.out.println("DONE");
