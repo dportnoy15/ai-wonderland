@@ -194,7 +194,7 @@ public class ModelDescriptionScene extends AliceScene {
             String objectPrompt = objectPromptInput.getText();
             boolean isFiltered = false;
             for (String word : languageFilter.wordList) {
-                String replacedPrompt = objectPrompt.replaceAll(Pattern.compile(word, Pattern.CASE_INSENSITIVE).pattern(), "");
+                String replacedPrompt = objectPrompt.replaceAll(Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE).pattern(), "");
                 if (!replacedPrompt.equals(objectPrompt)){
                     isFiltered = true;
                     objectPromptInput.setText(replacedPrompt);
