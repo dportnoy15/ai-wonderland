@@ -5,7 +5,7 @@ argv = sys.argv
 bpy.ops.object.delete(use_global=False)
 
 # this script gets called for Meshy models without any CLI parameters, and assumes the path and filetype
-filetype = "glb"
+filetype = ".glb"
 model_path = "gen-model\model.glb"
 
 # for models uploaded by the user, these values need to be passed in as CLI parameters
