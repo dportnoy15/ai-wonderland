@@ -13,7 +13,7 @@
 # 4. Go back into the directory containing this file and run it using:
 #    - python generate_model_meshy.py {model description}
 
-import sys, time, requests, torch
+import sys, time, requests
 from py4j.java_gateway import JavaGateway, CallbackServerParameters
 
 gateway = JavaGateway(
@@ -80,11 +80,6 @@ def generate_model(api_key, model_description, style_prompt, art_style, negative
     print(f"Thumbnail: {response.json()['thumbnail_url']}", flush=True)
 
     open('gen-model/model.glb', 'wb').write(r.content)
-
-deviceName = "cuda" if torch.cuda.is_available() else "cpu"
-
-print(torch.version.cuda, flush=True)
-print(deviceName, flush=True)
 
 api_key = gateway.entry_point.getApiKey()
 model_description = gateway.entry_point.getObjectDescription()
