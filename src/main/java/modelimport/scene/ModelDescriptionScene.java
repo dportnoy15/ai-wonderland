@@ -162,7 +162,7 @@ public class ModelDescriptionScene extends AliceScene {
         improper.setFitWidth(60);
         improper.setFitHeight(40);
 
-        improperWarning = new Label("Improper input");
+        improperWarning = new Label("Oops, you entered something not allowed!");
         improperWarning.setFont(Font.font(25));
         improperWarning.setTextFill(Color.RED);
         improperMsg = new HBox();

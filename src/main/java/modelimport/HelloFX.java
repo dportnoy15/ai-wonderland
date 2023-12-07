@@ -330,7 +330,19 @@ public class HelloFX extends Application {
     public void setProgress(String statusText, int percent) {
         Platform.runLater(() -> {
             HelloFX.self.status.setVisible(true);
-            HelloFX.self.status.setText(statusText);
+            String text = "";
+            switch (statusText){
+                case "IN_PROGRESS":
+                    text = "In Progress";
+                    break;
+                case "PENDING":
+                    text = "Waiting in line";
+                    break;
+                case "SUCCEEDED":
+                    text = "Succeeded";
+                    break;
+            }
+            HelloFX.self.status.setText(text);
 
             HelloFX.self.progress.setVisible(true);
             HelloFX.self.progress.setProgress(percent / 100f);
