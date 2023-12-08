@@ -438,6 +438,8 @@ public class HelloFX extends Application {
     }
 
     public void showProgressMinimized(boolean showProgress) {
+        isShowingProgress = showProgress;
+        
         if (showProgress) {
             stage.setAlwaysOnTop(true);
             progressStage.show();
@@ -448,8 +450,6 @@ public class HelloFX extends Application {
             progressStage.hide();
             stage.setAlwaysOnTop(false);
         }
-
-        isShowingProgress = showProgress;
     }
 
     public void logModelGeneration(String objectPrompt, String texturePrompt) {
