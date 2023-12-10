@@ -108,11 +108,14 @@ public class SelectModelScene extends AliceScene {
         btnUploadModel.setBackground(Utils.getBackgroundColor(Color.TRANSPARENT, 3));
         btnUploadModel.setMinSize(220, 200);
 
-        Label uploadText = new Label("Import Models to Library");
+        Label uploadText = new Label("Import Local Models to Library");
         uploadText.setFont(Font.font(18));
-        uploadText.setMinSize(220, 30);
+        uploadText.setWrapText(true);
+        uploadText.setMinSize(220, 60);
+        uploadText.setMaxSize(220, 60);
         uploadText.setAlignment(Pos.CENTER);
         uploadText.setTextFill(Color.WHITE);
+        uploadText.setPadding(new Insets(0, 20, 0, 20));
 
         Label supportTypeText = new Label("Accept .GLB, .FBX files");
         supportTypeText.setFont(Font.font(20));
@@ -121,7 +124,7 @@ public class SelectModelScene extends AliceScene {
         supportTypeText.setTextFill(Color.BLUEVIOLET);
 
         VBox v = new VBox();
-        v.getChildren().addAll(uploadText, supportTypeText);
+        v.getChildren().addAll(uploadText);
         v.setMaxHeight(50);
 
         StackPane uploadStack = new StackPane();
